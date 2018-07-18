@@ -1,0 +1,582 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <!-- 
+    Microsoft ResX Schema 
+    
+    Version 2.0
+    
+    The primary goals of this format is to allow a simple XML format 
+    that is mostly human readable. The generation and parsing of the 
+    various data types are done through the TypeConverter classes 
+    associated with the data types.
+    
+    Example:
+    
+    ... ado.net/XML headers & schema ...
+    <resheader name="resmimetype">text/microsoft-resx</resheader>
+    <resheader name="version">2.0</resheader>
+    <resheader name="reader">System.Resources.ResXResourceReader, System.Windows.Forms, ...</resheader>
+    <resheader name="writer">System.Resources.ResXResourceWriter, System.Windows.Forms, ...</resheader>
+    <data name="Name1"><value>this is my long string</value><comment>this is a comment</comment></data>
+    <data name="Color1" type="System.Drawing.Color, System.Drawing">Blue</data>
+    <data name="Bitmap1" mimetype="application/x-microsoft.net.object.binary.base64">
+        <value>[base64 mime encoded serialized .NET Framework object]</value>
+    </data>
+    <data name="Icon1" type="System.Drawing.Icon, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
+        <value>[base64 mime encoded string representing a byte array form of the .NET Framework object]</value>
+        <comment>This is a comment</comment>
+    </data>
+                
+    There are any number of "resheader" rows that contain simple 
+    name/value pairs.
+    
+    Each data row contains a name, and value. The row also contains a 
+    type or mimetype. Type corresponds to a .NET class that support 
+    text/value conversion through the TypeConverter architecture. 
+    Classes that don't support this are serialized and stored with the 
+    mimetype set.
+    
+    The mimetype is used for serialized objects, and tells the 
+    ResXResourceReader how to depersist the object. This is currently not 
+    extensible. For a given mimetype the value must be set accordingly:
+    
+    Note - application/x-microsoft.net.object.binary.base64 is the format 
+    that the ResXResourceWriter will generate, however the reader can 
+    read any of the formats listed below.
+    
+    mimetype: application/x-microsoft.net.object.binary.base64
+    value   : The object must be serialized with 
+            : System.Serialization.Formatters.Binary.BinaryFormatter
+            : and then encoded with base64 encoding.
+    
+    mimetype: application/x-microsoft.net.object.soap.base64
+    value   : The object must be serialized with 
+            : System.Runtime.Serialization.Formatters.Soap.SoapFormatter
+            : and then encoded with base64 encoding.
+
+    mimetype: application/x-microsoft.net.object.bytearray.base64
+    value   : The object must be serialized into a byte array 
+            : using a System.ComponentModel.TypeConverter
+            : and then encoded with base64 encoding.
+    -->
+  <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
+    <xsd:element name="root" msdata:IsDataSet="true">
+      <xsd:complexType>
+        <xsd:choice maxOccurs="unbounded">
+          <xsd:element name="metadata">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" />
+              <xsd:attribute name="type" type="xsd:string" />
+              <xsd:attribute name="mimetype" type="xsd:string" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="assembly">
+            <xsd:complexType>
+              <xsd:attribute name="alias" type="xsd:string" />
+              <xsd:attribute name="name" type="xsd:string" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="data">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+                <xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" msdata:Ordinal="1" />
+              <xsd:attribute name="type" type="xsd:string" msdata:Ordinal="3" />
+              <xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="resheader">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" />
+            </xsd:complexType>
+          </xsd:element>
+        </xsd:choice>
+      </xsd:complexType>
+    </xsd:element>
+  </xsd:schema>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <data name="MainTitle" xml:space="preserve">
+    <value>Config Maker [eng]</value>
+  </data>
+  <data name="Forward" xml:space="preserve">
+    <value>Forward</value>
+  </data>
+  <data name="Back" xml:space="preserve">
+    <value>Back</value>
+  </data>
+  <data name="Moveleft" xml:space="preserve">
+    <value>Move left</value>
+  </data>
+  <data name="Moveright" xml:space="preserve">
+    <value>Move right</value>
+  </data>
+  <data name="Jump" xml:space="preserve">
+    <value>Jump</value>
+  </data>
+  <data name="Duck" xml:space="preserve">
+    <value>Duck</value>
+  </data>
+  <data name="Speed" xml:space="preserve">
+    <value>Speed</value>
+  </data>
+  <data name="Use" xml:space="preserve">
+    <value>Use</value>
+  </data>
+  <data name="ToggleInventoryDisplay" xml:space="preserve">
+    <value>Toggle inventory display</value>
+  </data>
+  <data name="Fire" xml:space="preserve">
+    <value>Fire</value>
+  </data>
+  <data name="SecondaryFire" xml:space="preserve">
+    <value>Secondary fire</value>
+  </data>
+  <data name="SelectPreviousWeapon" xml:space="preserve">
+    <value>Previous weapon</value>
+  </data>
+  <data name="Reload" xml:space="preserve">
+    <value>Reload</value>
+  </data>
+  <data name="SelectNextWeapon" xml:space="preserve">
+    <value>Next weapon</value>
+  </data>
+  <data name="LastWeaponUsed" xml:space="preserve">
+    <value>Last weapon</value>
+  </data>
+  <data name="DropWeapon" xml:space="preserve">
+    <value>Drop</value>
+  </data>
+  <data name="InspectWeapon" xml:space="preserve">
+    <value>Inspect weapon</value>
+  </data>
+  <data name="GraffitiMenu" xml:space="preserve">
+    <value>Graffiti menu</value>
+  </data>
+  <data name="CommandRadio" xml:space="preserve">
+    <value>Command radio</value>
+  </data>
+  <data name="StandartRadio" xml:space="preserve">
+    <value>Standart radio</value>
+  </data>
+  <data name="ReportRadio" xml:space="preserve">
+    <value>Report radio</value>
+  </data>
+  <data name="TeamMessage" xml:space="preserve">
+    <value>Team chat</value>
+  </data>
+  <data name="ChatMessage" xml:space="preserve">
+    <value>Global chat</value>
+  </data>
+  <data name="Microphone" xml:space="preserve">
+    <value>Microphone</value>
+  </data>
+  <data name="BuyMenu" xml:space="preserve">
+    <value>Buy menu</value>
+  </data>
+  <data name="AutoBuy" xml:space="preserve">
+    <value>Auto buy</value>
+  </data>
+  <data name="Rebuy" xml:space="preserve">
+    <value>Rebuy</value>
+  </data>
+  <data name="Scoreboard" xml:space="preserve">
+    <value>Scoreboard</value>
+  </data>
+  <data name="PrimaryWeapon" xml:space="preserve">
+    <value>Primary weapon</value>
+  </data>
+  <data name="SecondaryWeapon" xml:space="preserve">
+    <value>Secondary weapon</value>
+  </data>
+  <data name="Knife" xml:space="preserve">
+    <value>Knife</value>
+  </data>
+  <data name="CycleGrenades" xml:space="preserve">
+    <value>Grenades</value>
+  </data>
+  <data name="Bomb" xml:space="preserve">
+    <value>Bomb</value>
+  </data>
+  <data name="HEGrenade" xml:space="preserve">
+    <value>HE grenade</value>
+  </data>
+  <data name="Flashbang" xml:space="preserve">
+    <value>Flashbang</value>
+  </data>
+  <data name="Smokegrenade" xml:space="preserve">
+    <value>Smoke grenade</value>
+  </data>
+  <data name="DecoyGrenade" xml:space="preserve">
+    <value>Decoy</value>
+  </data>
+  <data name="Molotov" xml:space="preserve">
+    <value>Molotov</value>
+  </data>
+  <data name="Zeus" xml:space="preserve">
+    <value>Zeus</value>
+  </data>
+  <data name="CallVote" xml:space="preserve">
+    <value>Call vote</value>
+  </data>
+  <data name="ChooseTeam" xml:space="preserve">
+    <value>Choose team</value>
+  </data>
+  <data name="ShowTeamEquipment" xml:space="preserve">
+    <value>Show team equipment</value>
+  </data>
+  <data name="ToggleConsole" xml:space="preserve">
+    <value>Console</value>
+  </data>
+  <data name="God" xml:space="preserve">
+    <value>God mode</value>
+  </data>
+  <data name="Noclip" xml:space="preserve">
+    <value>Noclip</value>
+  </data>
+  <data name="Impulse101" xml:space="preserve">
+    <value>Money</value>
+  </data>
+  <data name="Cleardecals" xml:space="preserve">
+    <value>Clear decals</value>
+  </data>
+  <data name="Clear" xml:space="preserve">
+    <value>Clear console</value>
+  </data>
+  <data name="BuyScenario" xml:space="preserve">
+    <value>Buy items</value>
+  </data>
+  <data name="ExtraAlias" xml:space="preserve">
+    <value>Extra alias</value>
+  </data>
+  <data name="ExtraAliasSet" xml:space="preserve">
+    <value>Extra alias set</value>
+  </data>
+  <data name="ExecCustomCmds" xml:space="preserve">
+    <value>Execute command</value>
+  </data>
+  <data name="DisplayDamageOn" xml:space="preserve">
+    <value>Display damage ON</value>
+  </data>
+  <data name="DisplaydamageOff" xml:space="preserve">
+    <value>Display damage OFF</value>
+  </data>
+  <data name="sensitivity" xml:space="preserve">
+    <value>Sensitivity</value>
+  </data>
+  <data name="zoom_sensitivity_ratio_mouse" xml:space="preserve">
+    <value>Zoom sens. ratio</value>
+  </data>
+  <data name="m_rawinput" xml:space="preserve">
+    <value>Raw input</value>
+  </data>
+  <data name="m_customaccel" xml:space="preserve">
+    <value>Custom acceleration</value>
+  </data>
+  <data name="m_customaccel_exponent" xml:space="preserve">
+    <value>Custom acceleration exponent</value>
+  </data>
+  <data name="Pistols" xml:space="preserve">
+    <value>Pistols</value>
+  </data>
+  <data name="Pistol1" xml:space="preserve">
+    <value>Glock/USP</value>
+  </data>
+  <data name="Pistol2" xml:space="preserve">
+    <value>Dual berettas</value>
+  </data>
+  <data name="Pistol3" xml:space="preserve">
+    <value>P250</value>
+  </data>
+  <data name="Pistol4" xml:space="preserve">
+    <value>CZ75/Fiveseven/Tec9</value>
+  </data>
+  <data name="Pistol5" xml:space="preserve">
+    <value>Deagle</value>
+  </data>
+  <data name="Heavy" xml:space="preserve">
+    <value>Heavy</value>
+  </data>
+  <data name="Heavy1" xml:space="preserve">
+    <value>Nova</value>
+  </data>
+  <data name="Heavy2" xml:space="preserve">
+    <value>XM1014</value>
+  </data>
+  <data name="Heavy3" xml:space="preserve">
+    <value>Sawed-Off/Mag7</value>
+  </data>
+  <data name="Heavy4" xml:space="preserve">
+    <value>M249</value>
+  </data>
+  <data name="Heavy5" xml:space="preserve">
+    <value>Negev</value>
+  </data>
+  <data name="SMGs" xml:space="preserve">
+    <value>SMG</value>
+  </data>
+  <data name="Smg1" xml:space="preserve">
+    <value>Mac10/MP9</value>
+  </data>
+  <data name="Smg2" xml:space="preserve">
+    <value>MP7</value>
+  </data>
+  <data name="Smg3" xml:space="preserve">
+    <value>UMP45</value>
+  </data>
+  <data name="Smg4" xml:space="preserve">
+    <value>P90</value>
+  </data>
+  <data name="Smg5" xml:space="preserve">
+    <value>PP-Bizon</value>
+  </data>
+  <data name="Rifles" xml:space="preserve">
+    <value>Rifles</value>
+  </data>
+  <data name="Rifle1" xml:space="preserve">
+    <value>Galil/Famas</value>
+  </data>
+  <data name="Rifle2" xml:space="preserve">
+    <value>AK47/M4</value>
+  </data>
+  <data name="Rifle3" xml:space="preserve">
+    <value>SSG08</value>
+  </data>
+  <data name="Rifle4" xml:space="preserve">
+    <value>SG553/AUG</value>
+  </data>
+  <data name="Rifle5" xml:space="preserve">
+    <value>AWP</value>
+  </data>
+  <data name="Rifle6" xml:space="preserve">
+    <value>G3SG1/SCAR</value>
+  </data>
+  <data name="Gear" xml:space="preserve">
+    <value>Gear</value>
+  </data>
+  <data name="Gear1" xml:space="preserve">
+    <value>West</value>
+  </data>
+  <data name="Gear2" xml:space="preserve">
+    <value>West + helmet</value>
+  </data>
+  <data name="Gear3" xml:space="preserve">
+    <value>Zeus</value>
+  </data>
+  <data name="Grenades" xml:space="preserve">
+    <value>Grenades</value>
+  </data>
+  <data name="Grenade1" xml:space="preserve">
+    <value>Molotov</value>
+  </data>
+  <data name="Grenade2" xml:space="preserve">
+    <value>Decoy</value>
+  </data>
+  <data name="Grenade3" xml:space="preserve">
+    <value>Flashbang</value>
+  </data>
+  <data name="Grenade4" xml:space="preserve">
+    <value>HE</value>
+  </data>
+  <data name="Grenade5" xml:space="preserve">
+    <value>Smoke</value>
+  </data>
+  <data name="Jumpthrow" xml:space="preserve">
+    <value>Jumpthrow script</value>
+  </data>
+  <data name="CycleCrosshair" xml:space="preserve">
+    <value>Cycle crosshairs</value>
+  </data>
+  <data name="CategoryMovement" xml:space="preserve">
+    <value>Movement</value>
+  </data>
+  <data name="CategoryEquipment" xml:space="preserve">
+    <value>Equipment</value>
+  </data>
+  <data name="CategoryCommunication" xml:space="preserve">
+    <value>Communication</value>
+  </data>
+  <data name="CategoryCommonActions" xml:space="preserve">
+    <value>Common actions</value>
+  </data>
+  <data name="CategoryWarmup" xml:space="preserve">
+    <value>Warmup</value>
+  </data>
+  <data name="CategoryOther" xml:space="preserve">
+    <value>Other</value>
+  </data>
+  <data name="On" xml:space="preserve">
+    <value>On</value>
+  </data>
+  <data name="Off" xml:space="preserve">
+    <value>Off</value>
+  </data>
+  <data name="ClientCommands" xml:space="preserve">
+    <value>Client commands</value>
+  </data>
+  <data name="Default" xml:space="preserve">
+    <value>Default</value>
+  </data>
+  <data name="White" xml:space="preserve">
+    <value>White</value>
+  </data>
+  <data name="LightBlue" xml:space="preserve">
+    <value>LightBlue</value>
+  </data>
+  <data name="Blue" xml:space="preserve">
+    <value>Blue</value>
+  </data>
+  <data name="Purple" xml:space="preserve">
+    <value>Purple</value>
+  </data>
+  <data name="Pink" xml:space="preserve">
+    <value>Pink</value>
+  </data>
+  <data name="Red" xml:space="preserve">
+    <value>Red</value>
+  </data>
+  <data name="Orange" xml:space="preserve">
+    <value>Orange</value>
+  </data>
+  <data name="Yellow" xml:space="preserve">
+    <value>Yellow</value>
+  </data>
+  <data name="Green" xml:space="preserve">
+    <value>Green</value>
+  </data>
+  <data name="Aqua" xml:space="preserve">
+    <value>Aqua</value>
+  </data>
+  <data name="Health_Style0" xml:space="preserve">
+    <value>Style 1</value>
+  </data>
+  <data name="Health_Style2" xml:space="preserve">
+    <value>Style 2</value>
+  </data>
+  <data name="Top" xml:space="preserve">
+    <value>Top</value>
+  </data>
+  <data name="Bottom" xml:space="preserve">
+    <value>Bottom</value>
+  </data>
+  <data name="ShowAvatars" xml:space="preserve">
+    <value>Show avatars</value>
+  </data>
+  <data name="ShowCount" xml:space="preserve">
+    <value>Show alive count</value>
+  </data>
+  <data name="Crosshair" xml:space="preserve">
+    <value>Crosshair</value>
+  </data>
+  <data name="KeyDown1_Format" xml:space="preserve">
+    <value>Key {0} pressure</value>
+  </data>
+  <data name="KeyUp1_Format" xml:space="preserve">
+    <value>Key {0} release</value>
+  </data>
+  <data name="KeyDown2_Format" xml:space="preserve">
+    <value>Key {0} pressure when {1} is pressed</value>
+  </data>
+  <data name="KeyUp2_Format" xml:space="preserve">
+    <value>Key {0} release when {1} is pressed</value>
+  </data>
+  <data name="Default_Binding" xml:space="preserve">
+    <value>Default commands</value>
+  </data>
+  <data name="Alias_Binding" xml:space="preserve">
+    <value>Custom aliases</value>
+  </data>
+  <data name="MouseSettings" xml:space="preserve">
+    <value>Mouse settings</value>
+  </data>
+  <data name="SelectConfig_Button" xml:space="preserve">
+    <value>Select config</value>
+  </data>
+  <data name="SaveConfig_Button" xml:space="preserve">
+    <value>Save config</value>
+  </data>
+  <data name="GenerateConfig_Button" xml:space="preserve">
+    <value>Generate .cfg</value>
+  </data>
+  <data name="ConfigName_Hint" xml:space="preserve">
+    <value>Config name</value>
+  </data>
+  <data name="CsgoCfgPath_Hint" xml:space="preserve">
+    <value>Path to csgo/cfg</value>
+  </data>
+  <data name="ActionCategory_Button" xml:space="preserve">
+    <value>Actions</value>
+  </data>
+  <data name="BuyScenarioCategory_Button" xml:space="preserve">
+    <value>Buy scenario</value>
+  </data>
+  <data name="GameSettingsCategory_Button" xml:space="preserve">
+    <value>Game settings</value>
+  </data>
+  <data name="ExtraCategory_Button" xml:space="preserve">
+    <value>Extra</value>
+  </data>
+  <data name="Search_Hint" xml:space="preserve">
+    <value>Search</value>
+  </data>
+  <data name="GenerateCrosshairs_Button" xml:space="preserve">
+    <value>Generate crosshairs</value>
+  </data>
+  <data name="VolumeRegulator" xml:space="preserve">
+    <value>Volume regulator</value>
+  </data>
+  <data name="VolumeIncrease_ComboboxItem" xml:space="preserve">
+    <value>Increase volume</value>
+  </data>
+  <data name="VolumeReduce_ComboboxItem" xml:space="preserve">
+    <value>Reduce volume</value>
+  </data>
+  <data name="Add_Button" xml:space="preserve">
+    <value>Add</value>
+  </data>
+  <data name="Remove_Button" xml:space="preserve">
+    <value>Remove</value>
+  </data>
+  <data name="Keyboard_Binding" xml:space="preserve">
+    <value>Keyboard</value>
+  </data>
+  <data name="From_Label" xml:space="preserve">
+    <value>From</value>
+  </data>
+  <data name="To_Label" xml:space="preserve">
+    <value>To</value>
+  </data>
+  <data name="Step_Label" xml:space="preserve">
+    <value>Step</value>
+  </data>
+  <data name="KeyPressure_Label" xml:space="preserve">
+    <value>Key pressure</value>
+  </data>
+  <data name="KeyRelease_Label" xml:space="preserve">
+    <value>Key release</value>
+  </data>
+  <data name="CommandName" xml:space="preserve">
+    <value>Command name:</value>
+  </data>
+  <data name="PressShift_Hint" xml:space="preserve">
+    <value>Hold Shift for key sequence creating</value>
+  </data>
+</root>

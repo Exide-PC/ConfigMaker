@@ -1,0 +1,595 @@
+﻿<Window x:Class="ConfigMaker.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:system="clr-namespace:System;assembly=mscorlib"
+        xmlns:converters="clr-namespace:ConfigMaker.Converters"
+        xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
+        xmlns:res="clr-namespace:ConfigMaker.Properties"
+        xmlns:local="clr-namespace:ConfigMaker"
+        TextElement.Foreground="{DynamicResource MaterialDesignBody}"
+         TextElement.FontWeight="Regular"
+         TextElement.FontSize="13"
+         TextOptions.TextFormattingMode="Ideal"
+         TextOptions.TextRenderingMode="Auto"
+         Background="{DynamicResource MaterialDesignPaper}"
+         FontFamily="{DynamicResource MaterialDesignFont}"
+        mc:Ignorable="d"
+        Title="" Height="514.4" Width="950" MinHeight="500" MinWidth="950" Loaded="Window_Loaded" Name="mainWindow">
+    <Window.Resources>
+        <converters:NameToEnableConverter x:Key="nameToEnableConverter"/>
+        <converters:IsNullConverter x:Key="isNullConverter"/>
+        <SolidColorBrush x:Key="EnabledBackgroundColor" Color="White"/>
+        <SolidColorBrush x:Key="EnabledBorderColor" Color="Gray"/>
+        <SolidColorBrush x:Key="EnabledBorderColor_MouseOver" Color="#7EB4EA"/>
+        <SolidColorBrush x:Key="DisabledBackgroundColor" Color="WhiteSmoke"/>
+        <SolidColorBrush x:Key="DisabledBorderColor" Color="#C4C6C9"/>
+
+        <SolidColorBrush x:Key="ActiveAttachmentsBorderBrush" Color="Lime"/>
+        <SolidColorBrush x:Key="UnactiveAttachmentsBorderBrush" Color="Gray"/>
+        <SolidColorBrush x:Key="KeyInSequenceBrush" Color="Lime"/>
+        <SolidColorBrush x:Key="FirstKeyInSequence" Color="OrangeRed"/>
+        <SolidColorBrush x:Key="SecondKeyInSequence" Color="Orange"/>
+        <Style x:Key="BubbleButton" TargetType="materialDesign:Chip">
+            <Setter Property="FontSize" Value="10"/>
+            <Setter Property="MinWidth" Value="40"/>
+            <Setter Property="Margin" Value="2"/>
+            <Setter Property="FontSize" Value="15"/>
+            <!--<Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="Button">
+                        <Border CornerRadius="2" BorderThickness="1" BorderBrush="Gray" Width="{Binding}" Height="{Binding}">
+                            <ContentPresenter Content="{TemplateBinding Content}" Margin="1" HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}"/>
+                        </Border>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>-->
+        </Style>
+        <Style x:Key="CustomBorder" TargetType="Border">
+            <!--<Setter Property="Background" Value="{StaticResource MaterialDesignBackground}"/>-->
+            <Setter Property="BorderBrush" Value="{StaticResource PrimaryHueMidBrush}"/>
+            <Setter Property="BorderThickness" Value="2"/>
+            <Style.Triggers>
+                <Trigger Property="IsEnabled" Value="False">
+                    <Setter Property="BorderBrush" Value="{StaticResource MaterialDesignCheckBoxDisabled}"/>
+                </Trigger>
+            </Style.Triggers>
+        </Style>
+        <Style x:Key="TabItemRadioButton" TargetType="RadioButton">
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="RadioButton">
+                        <Button x:Name="button" Style="{StaticResource MaterialDesignFlatButton}">
+                            <ContentPresenter Content="{TemplateBinding Content}"/>
+                        </Button>
+                        <ControlTemplate.Triggers>
+                            <EventTrigger RoutedEvent="ButtonBase.Click" SourceName="button">
+                                <BeginStoryboard>
+                                    <Storyboard>
+                                        <BooleanAnimationUsingKeyFrames Storyboard.TargetProperty="IsChecked">
+                                            <DiscreteBooleanKeyFrame KeyTime="0:0:0" Value="True"/>
+                                        </BooleanAnimationUsingKeyFrames>
+                                    </Storyboard>
+                                </BeginStoryboard>
+                            </EventTrigger>
+                            <Trigger Property="IsChecked" Value="True">
+                                <Trigger.EnterActions>
+                                    <BeginStoryboard>
+                                        <Storyboard>
+                                            <DoubleAnimation To="17" Storyboard.TargetName="button" Storyboard.TargetProperty="FontSize" Duration="0:0:0.100" />
+                                        </Storyboard>
+                                    </BeginStoryboard>
+                                </Trigger.EnterActions>
+                                <Trigger.ExitActions>
+                                    <BeginStoryboard>
+                                        <Storyboard>
+                                            <DoubleAnimation Storyboard.TargetName="button" Storyboard.TargetProperty="FontSize" Duration="0:0:0.100"/>
+                                        </Storyboard>
+                                    </BeginStoryboard>
+                                </Trigger.ExitActions>
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+        <Style x:Key="MaterialDesignTabItem" TargetType="RadioButton">
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="RadioButton">
+                        <Grid>
+                            <Button x:Name="button" Style="{StaticResource MaterialDesignFlatButton}">
+                                <ContentPresenter Content="{TemplateBinding Content}"/>
+                            </Button>
+                            <Border VerticalAlignment="Bottom" Visibility="Hidden" x:Name="Underline" BorderBrush="{StaticResource PrimaryHueMidBrush}" BorderThickness="0 3 0 0"/>
+                        </Grid>
+                        <ControlTemplate.Triggers>
+                            <EventTrigger RoutedEvent="ButtonBase.Click" SourceName="button">
+                                <BeginStoryboard>
+                                    <Storyboard>
+                                        <BooleanAnimationUsingKeyFrames Storyboard.TargetProperty="IsChecked">
+                                            <DiscreteBooleanKeyFrame KeyTime="0:0:0" Value="True"/>
+                                        </BooleanAnimationUsingKeyFrames>
+                                    </Storyboard>
+                                </BeginStoryboard>
+                            </EventTrigger>
+                            <Trigger Property="IsChecked" Value="True">
+                                <Setter TargetName="Underline" Property="Visibility" Value="Visible"/>
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+    </Window.Resources>
+    <Grid>
+        <DockPanel LastChildFill="True" Margin="7">
+            <Grid DockPanel.Dock="Top" Height="50">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="160"/>
+                    <ColumnDefinition Width="160"/>
+                    <ColumnDefinition Width="160"/>
+                    <ColumnDefinition Width="1*"/>
+                </Grid.ColumnDefinitions>
+                <Button Grid.Column="0" Content="{x:Static res:Resources.SelectConfig_Button}" Click="OpenCfgButton_Click"/>
+                <Button Grid.Column="1" Content="{x:Static res:Resources.SaveConfig_Button}" Click="SaveCfgButton_Click"/>
+                <Button Grid.Column="2" Content="{x:Static res:Resources.GenerateConfig_Button}" Click="GenerateConfig"/>
+                <StackPanel Grid.Column="3" Orientation="Vertical">
+                    <StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
+                        <TextBox Width="115" Style="{StaticResource MaterialDesignFloatingHintTextBox}" materialDesign:HintAssist.Hint="{x:Static res:Resources.ConfigName_Hint}" Name="cfgNameBox" Text="ConfigMakerCfg"/>
+                        <TextBox Margin="20,0,0,0" Style="{StaticResource MaterialDesignFloatingHintTextBox}" materialDesign:HintAssist.Hint="{x:Static res:Resources.CsgoCfgPath_Hint}" Name="cfgFolderPath" Text="" Width="300" TextChanged="CfgFolderPath_TextChanged"/>
+                    </StackPanel>
+                </StackPanel>
+            </Grid>
+            <Grid>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="50*"/>
+                    <RowDefinition Height="10*"/>
+                    <RowDefinition Height="28"/>
+                    <RowDefinition Height="35*"/>
+                </Grid.RowDefinitions>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition/>
+                    <ColumnDefinition/>
+                    <ColumnDefinition/>
+                    <ColumnDefinition/>
+                </Grid.ColumnDefinitions>
+                <DockPanel LastChildFill="True" Grid.ColumnSpan="4">
+                    <StackPanel DockPanel.Dock="Top" Orientation="Vertical">
+                        <Border BorderBrush="{StaticResource MaterialDesignDivider}" BorderThickness="0,1,0,0"/>
+                        <StackPanel Orientation="Horizontal">
+                            <RadioButton Name="actionTabButton" IsChecked="True" GroupName="TabGroup" Content="{x:Static res:Resources.ActionCategory_Button}" Style="{StaticResource MaterialDesignTabItem}"/>
+                            <RadioButton Name="buyTabButton" GroupName="TabGroup" Content="{x:Static res:Resources.BuyScenarioCategory_Button}" Style="{StaticResource MaterialDesignTabItem}"/>
+                            <RadioButton Name="gameSettingsTabButton" GroupName="TabGroup" Content="{x:Static res:Resources.GameSettingsCategory_Button}" Style="{StaticResource MaterialDesignTabItem}"/>
+                            <RadioButton Name="extraTabButton" GroupName="TabGroup" Content="{x:Static res:Resources.ExtraCategory_Button}" Style="{StaticResource MaterialDesignTabItem}"/>
+                        </StackPanel>
+                        <Border BorderBrush="{StaticResource MaterialDesignDivider}" BorderThickness="0,1,0,0"/>
+                    </StackPanel>
+                    <Grid Margin="5">
+                        <!--action tab grid-->
+                        <Grid>
+                            <Grid.Style>
+                                <Style TargetType="Grid">
+                                    <Setter Property="Visibility" Value="Collapsed"/>
+                                    <Style.Triggers>
+                                        <DataTrigger Binding="{Binding ElementName=actionTabButton, Path=IsChecked}" Value="True">
+                                            <Setter Property="Visibility" Value="Visible"/>
+                                        </DataTrigger>
+                                    </Style.Triggers>
+                                </Style>
+                            </Grid.Style>
+                            <ScrollViewer VerticalScrollBarVisibility="Disabled" HorizontalScrollBarVisibility="Auto">
+                                <WrapPanel Name="actionsPanel" Orientation="Vertical"/>
+                            </ScrollViewer>
+                        </Grid>
+                        <!--buy tab grid-->
+                        <Grid>
+                            <Grid.Style>
+                                <Style TargetType="Grid">
+                                    <Setter Property="Visibility" Value="Collapsed"/>
+                                    <Style.Triggers>
+                                        <DataTrigger Binding="{Binding ElementName=buyTabButton, Path=IsChecked}" Value="True">
+                                            <Setter Property="Visibility" Value="Visible"/>
+                                        </DataTrigger>
+                                    </Style.Triggers>
+                                </Style>
+                            </Grid.Style>
+                            <Grid>
+                                <StackPanel Name="buyTabStackPanel">
+                                    <!--<WrapPanel Grid.Row="1" IsEnabled="False" Name="buyPanel" Orientation="Horizontal" Margin="5"/>-->
+                                </StackPanel>
+                            </Grid>
+                        </Grid>
+                        <!--game settings tab grid-->
+                        <Grid>
+                            <Grid.Style>
+                                <Style TargetType="Grid">
+                                    <Setter Property="Visibility" Value="Collapsed"/>
+                                    <Style.Triggers>
+                                        <DataTrigger Binding="{Binding ElementName=gameSettingsTabButton, Path=IsChecked}" Value="True">
+                                            <Setter Property="Visibility" Value="Visible"/>
+                                        </DataTrigger>
+                                    </Style.Triggers>
+                                </Style>
+                            </Grid.Style>
+                            <Grid>
+                                <DockPanel>
+                                    <TextBox DockPanel.Dock="Top" Width="180" HorizontalAlignment="Left" materialDesign:HintAssist.Hint="{x:Static res:Resources.Search_Hint}" TextChanged="SearchCmdTextbox"/>
+                                    <ScrollViewer Margin="0,2,0,0">
+                                        <StackPanel Name="settingsTabPanel"/>
+                                        <!--<Grid Name="settingsTabGrid">
+                                            --><!--<Grid.ColumnDefinitions>
+                                                <ColumnDefinition Width="30*"/>
+                                                <ColumnDefinition Width="35*"/>
+                                                <ColumnDefinition Width="25*"/>
+                                                <ColumnDefinition Width="10*"/>
+                                            </Grid.ColumnDefinitions>
+                                            <Grid.RowDefinitions>
+                                                <RowDefinition/>
+                                            </Grid.RowDefinitions>--><!--
+                                        </Grid>-->
+                                    </ScrollViewer>
+                                </DockPanel>
+                            </Grid>
+                        </Grid>
+                        <!--extra tab grid-->
+                        <Grid>
+                            <Grid.Style>
+                                <Style TargetType="Grid">
+                                    <Setter Property="Visibility" Value="Collapsed"/>
+                                    <Style.Triggers>
+                                        <DataTrigger Binding="{Binding ElementName=extraTabButton, Path=IsChecked}" Value="True">
+                                            <Setter Property="Visibility" Value="Visible"/>
+                                        </DataTrigger>
+                                    </Style.Triggers>
+                                </Style>
+                            </Grid.Style>
+                            <Grid>
+                                <ScrollViewer>
+                                    <Grid>
+                                        <StackPanel Margin="3" Orientation="Vertical">
+                                            <StackPanel.Resources>
+                                                <Style TargetType="CheckBox" BasedOn="{StaticResource {x:Type CheckBox}}">
+                                                    <Setter Property="Foreground" Value="{StaticResource PrimaryHueMidForegroundBrush}"/>
+                                                    <Setter Property="Background" Value="{StaticResource MaterialDesignPaper}"/>
+                                                </Style>
+                                            </StackPanel.Resources>
+                                            <GroupBox>
+                                                <GroupBox.Header>
+                                                    <CheckBox Content="{x:Static res:Resources.CycleCrosshair}" Name="cycleChHeaderCheckbox"/>
+                                                </GroupBox.Header>
+                                                <Grid Margin="3">
+                                                    <Grid.Style>
+                                                        <Style TargetType="Grid">
+                                                            <Setter Property="IsEnabled" Value="False"/>
+                                                            <Style.Triggers>
+                                                                <DataTrigger Binding="{Binding ElementName=cycleChHeaderCheckbox, Path=IsChecked}" Value="True">
+                                                                    <Setter Property="IsEnabled" Value="True"/>
+                                                                </DataTrigger>
+                                                            </Style.Triggers>
+                                                        </Style>
+                                                    </Grid.Style>
+                                                    <StackPanel Margin="0,3,0,3" Orientation="Horizontal">
+                                                        <Slider VerticalAlignment="Center" Name="cycleChSlider" Minimum="2" Maximum="10" TickFrequency="1" Value="2" Width="100" IsSnapToTickEnabled="True" />
+                                                        <TextBlock VerticalAlignment="Center" Margin="5,0,5,0" Text="{Binding ElementName=cycleChSlider, Path=Value}"/>
+                                                        <Button Content="{x:Static res:Resources.GenerateCrosshairs_Button}" Click="GenerateRandomCrosshairsButton_Click"/>
+                                                    </StackPanel>
+                                                </Grid>
+                                            </GroupBox>
+                                            <GroupBox>
+                                                <GroupBox.Header>
+                                                    <CheckBox Content="{x:Static res:Resources.VolumeRegulator}" Name="volumeRegulatorCheckbox"/>
+                                                </GroupBox.Header>
+                                                <Grid Margin="3">
+                                                    <Grid.Style>
+                                                        <Style TargetType="Grid">
+                                                            <Setter Property="IsEnabled" Value="False"/>
+                                                            <Style.Triggers>
+                                                                <DataTrigger Binding="{Binding ElementName=volumeRegulatorCheckbox, Path=IsChecked}" Value="True">
+                                                                    <Setter Property="IsEnabled" Value="True"/>
+                                                                </DataTrigger>
+                                                            </Style.Triggers>
+                                                        </Style>
+                                                    </Grid.Style>
+                                                    <StackPanel>
+                                                        <StackPanel Orientation="Horizontal" Height="28">
+                                                            <TextBlock Width="30" Text="{x:Static res:Resources.From_Label}" />
+                                                            <Slider Width="150" Name="minVolumeSlider" Minimum="0" Maximum="0.99" IsSnapToTickEnabled="True" TickFrequency="0.01" Value="0" ValueChanged="VolumeSliderValueChanged"/>
+                                                            <Border Width="30">
+                                                                <TextBlock HorizontalAlignment="Center" Text="{Binding Path=Value, ElementName=minVolumeSlider}"/>
+                                                            </Border>
+                                                            <ComboBox Margin="25,0,0,0" Width="170" Name="volumeDirectionCombobox" SelectedIndex="1">
+                                                                <ComboBoxItem Content="{x:Static res:Resources.VolumeReduce_ComboboxItem}"/>
+                                                                <ComboBoxItem Content="{x:Static res:Resources.VolumeIncrease_ComboboxItem}"/>
+                                                            </ComboBox>
+                                                        </StackPanel>
+                                                        <StackPanel Orientation="Horizontal" Height="28">
+                                                            <TextBlock Width="30" Text="{x:Static res:Resources.To_Label}"/>
+                                                            <Slider Width="150" Name="maxVolumeSlider" Minimum="0.01" Maximum="1" IsSnapToTickEnabled="True" TickFrequency="0.01" Value="1" ValueChanged="VolumeSliderValueChanged"/>
+                                                            <Border Width="30">
+                                                                <TextBlock HorizontalAlignment="Center" Text="{Binding Path=Value, ElementName=maxVolumeSlider}"/>
+                                                            </Border>
+                                                        </StackPanel>
+                                                        <StackPanel Orientation="Horizontal" Height="28">
+                                                            <TextBlock Width="30" Text="{x:Static res:Resources.Step_Label}"/>
+                                                            <Slider Width="150" Name="volumeStepSlider" Minimum="0.01" Maximum="0.5" IsSnapToTickEnabled="True" TickFrequency="0.01" Value="0.01" ValueChanged="VolumeSliderValueChanged"/>
+                                                            <Border Width="30">
+                                                                <TextBlock HorizontalAlignment="Center" Text="{Binding Path=Value, ElementName=volumeStepSlider}"/>
+                                                            </Border>
+                                                        </StackPanel>
+                                                    </StackPanel>
+                                                </Grid>
+                                            </GroupBox>
+                                            <GroupBox>
+                                                <GroupBox.Header>
+                                                    <CheckBox Content="{x:Static res:Resources.ExecCustomCmds}" Name="customCmdHeaderCheckbox"/>
+                                                </GroupBox.Header>
+                                                <Grid Margin="3">
+                                                    <Grid.Style>
+                                                        <Style TargetType="Grid">
+                                                            <Setter Property="IsEnabled" Value="False"/>
+                                                            <Style.Triggers>
+                                                                <DataTrigger Binding="{Binding ElementName=customCmdHeaderCheckbox, Path=IsChecked}" Value="True">
+                                                                    <Setter Property="IsEnabled" Value="True"/>
+                                                                </DataTrigger>
+                                                            </Style.Triggers>
+                                                        </Style>
+                                                    </Grid.Style>
+                                                    <StackPanel Orientation="Vertical">
+                                                        <StackPanel Orientation="Horizontal">
+                                                            <TextBox Name="cmdTextbox" Width="100" TextChanged="CommandNameTextbox_TextChanged"/>
+                                                            <Button Name="addCmdButton" IsEnabled="False" Content="{x:Static res:Resources.Add_Button}" Click="AddCmdButton_Click"/>
+                                                            <Button Content="{x:Static res:Resources.Remove_Button}" Click="DeleteCmdButton_Click">
+                                                                <Button.Style>
+                                                                    <Style TargetType="Button" BasedOn="{StaticResource {x:Type Button}}">
+                                                                        <Style.Triggers>
+                                                                            <DataTrigger Binding="{Binding ElementName=customCmdPanel, Path=Tag, Converter={StaticResource isNullConverter}}" Value="True">
+                                                                                <Setter Property="IsEnabled" Value="False"/>
+                                                                            </DataTrigger>
+                                                                            <DataTrigger Binding="{Binding ElementName=customCmdPanel, Path=Tag, Converter={StaticResource isNullConverter}}" Value="False">
+                                                                                <Setter Property="IsEnabled" Value="True"/>
+                                                                            </DataTrigger>
+                                                                        </Style.Triggers>
+                                                                    </Style>
+                                                                </Button.Style>
+                                                            </Button>
+                                                        </StackPanel>
+                                                        <Border Style="{StaticResource CustomBorder}" Margin="0,2,0,0">
+                                                            <WrapPanel Name="customCmdPanel" Height="70"/>
+                                                        </Border>
+                                                    </StackPanel>
+                                                </Grid>
+                                            </GroupBox>
+                                        </StackPanel>
+                                    </Grid>
+                                </ScrollViewer>
+                            </Grid>
+                        </Grid>
+                    </Grid>
+                </DockPanel>
+                <Grid Grid.Row="1" Grid.ColumnSpan="4">
+                    <Grid.Style>
+                        <Style TargetType="Grid">
+                            <Setter Property="Visibility" Value="Collapsed"/>
+                            <Style.Triggers>
+                                <MultiDataTrigger>
+                                    <MultiDataTrigger.Conditions>
+                                        <Condition Binding="{Binding ElementName=mainWindow, Path=StateBinding}" Value="InvalidState"/>
+                                        <Condition Binding="{Binding ElementName=iKeyboard, Path=IsSelected}" Value="True"/>
+                                    </MultiDataTrigger.Conditions>
+                                    <MultiDataTrigger.Setters>
+                                        <Setter Property="Visibility" Value="Visible"/>
+                                    </MultiDataTrigger.Setters>
+                                </MultiDataTrigger>
+                                <DataTrigger Binding="{Binding ElementName=mainWindow, Path=StateBinding}" Value="KeyDown">
+                                    <Setter Property="Visibility" Value="Visible"/>
+                                </DataTrigger>
+                                <DataTrigger Binding="{Binding ElementName=mainWindow, Path=StateBinding}" Value="KeyUp">
+                                    <Setter Property="Visibility" Value="Visible"/>
+                                </DataTrigger>
+                                <!--<DataTrigger Binding="{Binding ElementName=mainWindow, Path=StateBinding}" Value="Default">
+                                    <Setter Property="Visibility" Value="Collapsed"/>
+                                </DataTrigger>
+                                <DataTrigger Binding="{Binding ElementName=mainWindow, Path=StateBinding}" Value="Alias">
+                                    <Setter Property="Visibility" Value="Collapsed"/>
+                                </DataTrigger>-->
+                            </Style.Triggers>
+                        </Style>
+                    </Grid.Style>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition/>
+                        <ColumnDefinition/>
+                    </Grid.ColumnDefinitions>
+                    <Border Name="onKeyDownAttachmentsBorder" Grid.Column="0" Margin="1" Background="Transparent" BorderThickness="2" MouseLeftButtonUp="AttachmentsBorder_Click">
+                        <Border.Style>
+                            <Style TargetType="Border">
+                                <Setter Property="BorderBrush" Value="{StaticResource MaterialDesignCheckBoxOff}"/>
+                                <Style.Triggers>
+                                    <DataTrigger Binding="{Binding ElementName=mainWindow, Path=StateBinding}" Value="KeyDown">
+                                        <Setter Property="BorderBrush" Value="{StaticResource SecondaryAccentBrush}"/>
+                                    </DataTrigger>
+                                    <!--<DataTrigger Binding="{Binding ElementName=mainWindow, Path=StateBinding}" Value="KeyUp">
+                                        <Setter Property="BorderBrush" Value="{StaticResource MaterialDesignCheckBoxOff}"/>
+                                    </DataTrigger>-->
+                                </Style.Triggers>
+                            </Style>
+                        </Border.Style>
+                        <Grid>
+                            <ScrollViewer>
+                                <WrapPanel Name="onKeyDownAttachmentsPanel"/>
+                            </ScrollViewer>
+                            <TextBlock Name="keyDownPanelLabel" VerticalAlignment="Bottom" HorizontalAlignment="Right" Margin="0,0,18,0" Text="{x:Static res:Resources.KeyPressure_Label}" FontStyle="Italic" FontSize="10"/>
+                        </Grid>
+                    </Border>
+                    <Border Grid.Column="1" Margin="1" Background="Transparent" BorderThickness="2" MouseLeftButtonUp="AttachmentsBorder_Click">
+                        <Border.Style>
+                            <Style TargetType="Border">
+                                <Setter Property="BorderBrush" Value="{StaticResource MaterialDesignCheckBoxOff}"/>
+                                <Style.Triggers>
+                                    <DataTrigger Binding="{Binding ElementName=mainWindow, Path=StateBinding}" Value="KeyUp">
+                                        <Setter Property="BorderBrush" Value="{StaticResource SecondaryAccentBrush}"/>
+                                    </DataTrigger>
+                                </Style.Triggers>
+                            </Style>
+                        </Border.Style>
+                        <Grid>
+                            <ScrollViewer>
+                                <WrapPanel Name="onKeyReleaseAttachmentsPanel"/>
+                            </ScrollViewer>
+                            <TextBlock Name="keyReleasePanelLabel" VerticalAlignment="Bottom" HorizontalAlignment="Right" Margin="0,0,18,0" Text="{x:Static res:Resources.KeyRelease_Label}" FontStyle="Italic" FontSize="10"/>
+                        </Grid>
+                    </Border>
+                </Grid>
+                <Grid Grid.Row="1" Grid.ColumnSpan="4">
+                    <Grid.Style>
+                        <Style TargetType="Grid">
+                            <Setter Property="Visibility" Value="Visible"/>
+                            <Style.Triggers>
+                                <MultiDataTrigger>
+                                    <MultiDataTrigger.Conditions>
+                                        <Condition Binding="{Binding ElementName=mainWindow, Path=StateBinding}" Value="InvalidState"/>
+                                        <Condition Binding="{Binding ElementName=iKeyboard, Path=IsSelected}" Value="True"/>
+                                    </MultiDataTrigger.Conditions>
+                                    <MultiDataTrigger.Setters>
+                                        <Setter Property="Visibility" Value="Collapsed"/>
+                                    </MultiDataTrigger.Setters>
+                                </MultiDataTrigger>
+                                <DataTrigger Binding="{Binding ElementName=mainWindow, Path=StateBinding}" Value="KeyDown">
+                                    <Setter Property="Visibility" Value="Collapsed"/>
+                                </DataTrigger>
+                                <DataTrigger Binding="{Binding ElementName=mainWindow, Path=StateBinding}" Value="KeyUp">
+                                    <Setter Property="Visibility" Value="Collapsed"/>
+                                </DataTrigger>
+                                <!--<DataTrigger Binding="{Binding ElementName=mainWindow, Path=StateBinding}" Value="Default">
+                                    <Setter Property="Visibility" Value="Visible"/>
+                                </DataTrigger>
+                                <DataTrigger Binding="{Binding ElementName=mainWindow, Path=StateBinding}" Value="Alias">
+                                    <Setter Property="Visibility" Value="Visible"/>
+                                </DataTrigger>-->
+                            </Style.Triggers>
+                        </Style>
+                    </Grid.Style>
+                    <Border Grid.Row="2" Grid.Column="0" Grid.ColumnSpan="4" Margin="1" Background="Transparent" BorderThickness="2">
+                        <Border.Style>
+                            <Style TargetType="Border">
+                                <Setter Property="BorderBrush" Value="{StaticResource SecondaryAccentBrush}"/>
+                                <Style.Triggers>
+                                    <!--<DataTrigger Binding="{Binding ElementName=mainWindow, Path=StateBinding}" Value="Default">
+                                        <Setter Property="BorderBrush" Value="{StaticResource SecondaryAccentBrush}"/>
+                                    </DataTrigger>
+                                    <DataTrigger Binding="{Binding ElementName=mainWindow, Path=StateBinding}" Value="Alias">
+                                        <Setter Property="BorderBrush" Value="{StaticResource SecondaryAccentBrush}"/>
+                                    </DataTrigger>-->
+                                    <DataTrigger Binding="{Binding ElementName=mainWindow, Path=StateBinding}" Value="InvalidState">
+                                        <Setter Property="BorderBrush" Value="{StaticResource UnactiveAttachmentsBorderBrush}"/>
+                                    </DataTrigger>
+                                </Style.Triggers>
+                            </Style>
+                        </Border.Style>
+                        <Grid>
+                            <ScrollViewer>
+                                <WrapPanel Name="solidAttachmentsPanel"/>
+                            </ScrollViewer>
+                            <TextBlock Name="solidAttachmentPanelLabel" VerticalAlignment="Bottom" HorizontalAlignment="Right" Margin="0,0,17,0" Text="{x:Static res:Resources.Default_Binding}" FontStyle="Italic" FontSize="10"/>
+                        </Grid>
+                    </Border>
+                </Grid>
+                <Grid x:Name="keyboardGrid" Grid.Row="3" Grid.ColumnSpan="4" Margin="1">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="4*"/>
+                        <ColumnDefinition Width="25*"/>
+                    </Grid.ColumnDefinitions>
+                    <Grid.Style>
+                        <Style TargetType="Grid">
+                            <Setter Property="Visibility" Value="Visible" />
+                            <Style.Triggers>
+                                <!--<DataTrigger Binding="{Binding ElementName=iKeyboard, Path=IsSelected}" Value="True">
+                                    <Setter Property="Visibility" Value="Visible"/>
+                                </DataTrigger>
+                                <DataTrigger Binding="{Binding ElementName=iKeyboard, Path=IsSelected}" Value="False">
+                                    <Setter Property="Visibility" Value="Collapsed"/>
+                                </DataTrigger>-->
+                                <!--Удобнее привязаться к элементу, не спрашивай почему-->
+                                <DataTrigger Binding="{Binding ElementName=iAlias, Path=IsSelected}" Value="True">
+                                    <Setter Property="Visibility" Value="Collapsed"/>
+                                </DataTrigger>
+                                <!--<DataTrigger Binding="{Binding ElementName=mainWindow, Path=StateBinding}" Value="Alias">
+                                    <Setter Property="Visibility" Value="Collapsed"/>
+                                </DataTrigger>-->
+                            </Style.Triggers>
+                        </Style>
+                    </Grid.Style>
+                    <local:VirtualKeyboard x:Name="kb" Grid.ColumnSpan="2" Margin="0,0,-0.4,0.8"/>
+                </Grid>
+                <Grid x:Name="aliasGrid" Grid.Row="3" Grid.ColumnSpan="4" Margin="1">
+                    <Grid.Style>
+                        <Style TargetType="Grid">
+                            <Setter Property="Visibility" Value="Collapsed" />
+                            <Style.Triggers>
+                                <DataTrigger Binding="{Binding ElementName=iAlias, Path=IsSelected}" Value="True">
+                                    <Setter Property="Visibility" Value="Visible"/>
+                                </DataTrigger>
+                                <!--<DataTrigger Binding="{Binding ElementName=iAlias, Path=IsSelected}" Value="True">
+                                    <Setter Property="Visibility" Value="Visible"/>
+                                </DataTrigger>
+                                <DataTrigger Binding="{Binding ElementName=iAlias, Path=IsSelected}" Value="False">
+                                    <Setter Property="Visibility" Value="Collapsed"/>
+                                </DataTrigger>-->
+                            </Style.Triggers>
+                        </Style>
+                    </Grid.Style>
+                    <Grid>
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="30"/>
+                            <RowDefinition Height="1*"/>
+                        </Grid.RowDefinitions>
+                        <StackPanel HorizontalAlignment="Left" VerticalAlignment="Bottom" Orientation="Horizontal">
+                            <TextBlock VerticalAlignment="Center" Text="{x:Static res:Resources.CommandName}"/>
+                            <TextBox x:Name="newAliasNameTextbox" Width="80" Margin="5,0,0,0"/>
+                            <Button Content="{x:Static res:Resources.Add_Button}" IsEnabled="{Binding ElementName=newAliasNameTextbox, Path=Text, Converter={StaticResource nameToEnableConverter}}" Click="AddAliasButton_Click"/>
+                            <Button Content="{x:Static res:Resources.Remove_Button}" Click="DeleteAliasButton_Click">
+                                <Button.Style>
+                                    <Style TargetType="Button" BasedOn="{StaticResource {x:Type Button}}">
+                                        <Setter Property="IsEnabled" Value="False"/>
+                                        <Style.Triggers>
+                                            <DataTrigger Binding="{Binding ElementName=aliasPanel, Path=Tag, Converter={StaticResource isNullConverter}}" Value="True">
+                                                <Setter Property="IsEnabled" Value="False"/>
+                                            </DataTrigger>
+                                            <DataTrigger Binding="{Binding ElementName=aliasPanel, Path=Tag, Converter={StaticResource isNullConverter}}" Value="False">
+                                                <Setter Property="IsEnabled" Value="True"/>
+                                            </DataTrigger>
+                                        </Style.Triggers>
+                                    </Style>
+                                </Button.Style>
+                            </Button>
+                        </StackPanel>
+                        <Border Grid.Row="1" Style="{StaticResource CustomBorder}" Margin="0,2,0,0">
+                            <WrapPanel Name="aliasPanel"/>
+                        </Border>
+                    </Grid>
+                </Grid>
+                <StackPanel Orientation="Horizontal" Grid.Row="2" Grid.ColumnSpan="4">
+                    <ComboBox Name="keyboardAliasCombobox" SelectedIndex="0" Width="190" SelectionChanged="ComboBox_SelectionChanged">
+                        <ComboBoxItem x:Name="iDefault" Content="{x:Static res:Resources.Default_Binding}"/>
+                        <ComboBoxItem x:Name="iKeyboard" Content="{x:Static res:Resources.Keyboard_Binding}"/>
+                        <ComboBoxItem x:Name="iAlias" Content="{x:Static res:Resources.Alias_Binding}"/>
+                    </ComboBox>
+                    <TextBlock VerticalAlignment="Center" Margin="5,3,0,0" TextWrapping="Wrap" Text="{x:Static res:Resources.PressShift_Hint}">
+                        <TextBlock.Style>
+                            <Style TargetType="TextBlock">
+                                <Setter Property="Visibility" Value="Collapsed"/>
+                                <Style.Triggers>
+                                    <DataTrigger Binding="{Binding ElementName=iKeyboard, Path=IsSelected}" Value="True">
+                                        <Setter Property="Visibility" Value="Visible"/>
+                                    </DataTrigger>
+                                </Style.Triggers>
+                            </Style>
+                        </TextBlock.Style>
+                    </TextBlock>
+                </StackPanel>
+                <materialDesign:Snackbar Grid.Row="3" MessageQueue="{materialDesign:MessageQueue}" x:Name="snackbar" />
+            </Grid>
+        </DockPanel>
+    </Grid>
+</Window>

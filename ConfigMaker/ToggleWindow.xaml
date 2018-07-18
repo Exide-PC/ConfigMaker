@@ -1,0 +1,21 @@
+﻿<Window x:Class="ConfigMaker.ToggleWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:ConfigMaker"
+        TextElement.Foreground="{DynamicResource MaterialDesignBody}"
+        TextElement.FontWeight="Regular"
+        TextElement.FontSize="13"
+        TextOptions.TextFormattingMode="Ideal"
+        TextOptions.TextRenderingMode="Auto"
+        Background="{DynamicResource MaterialDesignPaper}"
+        FontFamily="{DynamicResource MaterialDesignFont}"
+        mc:Ignorable="d"
+        Title="ToggleWindow" Height="102.534" Width="314.933" ResizeMode="NoResize" >
+    <Grid>
+        <TextBlock Name="upperText" HorizontalAlignment="Left" Margin="10,10,0,0" TextWrapping="Wrap" Text="Введите значения через пробел" VerticalAlignment="Top"/>
+        <TextBox Height="23" Margin="10,31,89.6,0" TextWrapping="Wrap" VerticalAlignment="Top" TextChanged="TextBox_TextChanged"/>
+        <Button Name="okButton" IsEnabled="False" Content="OK" Margin="0,31,9.8,0" VerticalAlignment="Top" Click="Button_Click" HorizontalAlignment="Right" Width="75" Height="23"/>
+    </Grid>
+</Window>
