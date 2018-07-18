@@ -6,7 +6,7 @@
         xmlns:system="clr-namespace:System;assembly=mscorlib"
         xmlns:converters="clr-namespace:ConfigMaker.Converters"
         xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
-        xmlns:res="clr-namespace:ConfigMaker.Properties"
+         xmlns:res="clr-namespace:ConfigMaker.Properties"
         xmlns:local="clr-namespace:ConfigMaker"
         TextElement.Foreground="{DynamicResource MaterialDesignBody}"
          TextElement.FontWeight="Regular"
@@ -16,7 +16,7 @@
          Background="{DynamicResource MaterialDesignPaper}"
          FontFamily="{DynamicResource MaterialDesignFont}"
         mc:Ignorable="d"
-        Title="" Height="514.4" Width="950" MinHeight="500" MinWidth="950" Loaded="Window_Loaded" Name="mainWindow">
+        Title="{x:Static res:Resources.MainWindow_Title}" Height="514.4" Width="950" MinHeight="500" MinWidth="950" Loaded="Window_Loaded" Name="mainWindow">
     <Window.Resources>
         <converters:NameToEnableConverter x:Key="nameToEnableConverter"/>
         <converters:IsNullConverter x:Key="isNullConverter"/>

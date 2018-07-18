@@ -18,6 +18,8 @@ using System.Windows.Controls.Primitives;
 using Microsoft.Win32;
 using MaterialDesignThemes.Wpf;
 using System.Windows.Documents;
+using Res = ConfigMaker.Properties.Resources;
+using System.Resources;
 
 namespace ConfigMaker
 {
@@ -464,12 +466,14 @@ namespace ConfigMaker
         #region Filling UI with config entry managers
         void InitActionTab()
         {
-            Func<ConfigEntry, string, bool, CheckBox> prepareAction = (entry, cmd, isMeta) =>
+            //// Локальный метод для подготовки и настройки нового чекбокса-контроллера
+            CheckBox PrepareAction(ConfigEntry cfgEntry, string cmd, bool isMeta)
             {
                 CheckBox checkbox = new CheckBox
                 {
-                    Content = CurrentLocale[entry],
-                    Tag = entry
+                    //Content = CurrentLocale[entry],
+                    Content = Localize(cfgEntry),
+                    Tag = cfgEntry
                 };
 
                 string tooltip = isMeta ? $"+{cmd}" : $"{cmd}";
@@ -480,12 +484,12 @@ namespace ConfigMaker
                 checkbox.Click += HandleEntryClick;
                 actionsPanel.Children.Add(checkbox);
                 return checkbox;
-            };
+            }
 
-            // Анонимный метод для добавления действий
+            // Локальный метод для добавления действий
             Action<ConfigEntry, string, bool> addAction = (entry, cmd, isMeta) =>
             {
-                CheckBox checkbox = prepareAction(entry, cmd, isMeta);
+                CheckBox checkbox = PrepareAction(entry, cmd, isMeta);
 
                 EntryUiBinding entryUiBinding = new EntryUiBinding
                 {
@@ -544,14 +548,15 @@ namespace ConfigMaker
                 actionsPanel.Children.Add(border);
             };
 
-            addActionGroupSeparator(CurrentLocale.CommonActions);
+            //addActionGroupSeparator(CurrentLocale.CommonActions);
+            addActionGroupSeparator(Res.CategoryCommonActions);
             addAction(ConfigEntry.Fire, "attack", true);
             addAction(ConfigEntry.SecondaryFire, "attack2", true);
             addAction(ConfigEntry.Reload, "reload", true);
             addAction(ConfigEntry.Use, "use", true);
             addAction(ConfigEntry.DropWeapon, "drop", false);
 
-            addActionGroupSeparator(CurrentLocale.ActionMovement);
+            addActionGroupSeparator(Res.CategoryMovement);
             addAction(ConfigEntry.Forward, "forward", true);
             addAction(ConfigEntry.Back, "back", true);
             addAction(ConfigEntry.Moveleft, "moveleft", true);
@@ -560,7 +565,7 @@ namespace ConfigMaker
             addAction(ConfigEntry.Duck, "duck", true);
             addAction(ConfigEntry.Speed, "speed", true);
 
-            addActionGroupSeparator(CurrentLocale.ActionEquipment);
+            addActionGroupSeparator(Res.CategoryEquipment);
             addAction(ConfigEntry.PrimaryWeapon, "slot1", false);
             addAction(ConfigEntry.SecondaryWeapon, "slot2", false);
             addAction(ConfigEntry.Knife, "slot3", false);
@@ -582,7 +587,7 @@ namespace ConfigMaker
             addAction(ConfigEntry.ShowTeamEquipment, "cl_show_team_equipment", true);
             addAction(ConfigEntry.ToggleInventoryDisplay, "show_loadout_toggle", true);
 
-            addActionGroupSeparator(CurrentLocale.ActionCommunication);
+            addActionGroupSeparator(Res.CategoryCommunication);
             addAction(ConfigEntry.Microphone, "voicerecord", true);
             addAction(ConfigEntry.CommandRadio, "radio1", false);
             addAction(ConfigEntry.StandartRadio, "radio2", false);
@@ -590,12 +595,12 @@ namespace ConfigMaker
             addAction(ConfigEntry.TeamMessage, "messagemode2", false);
             addAction(ConfigEntry.ChatMessage, "messagemode", false);
 
-            addActionGroupSeparator(CurrentLocale.ActionWarmup);
+            addActionGroupSeparator(Res.CategoryWarmup);
             addAction(ConfigEntry.God, "god", false);
             addAction(ConfigEntry.Noclip, "noclip", false);
             addAction(ConfigEntry.Impulse101, "impulse 101", false);
 
-            addActionGroupSeparator(CurrentLocale.Other);
+            addActionGroupSeparator(Res.CategoryOther);
             addAction(ConfigEntry.GraffitiMenu, "spray_menu", true);
             addAction(ConfigEntry.Cleardecals, "r_cleardecals", false);
             addAction(ConfigEntry.Scoreboard, "showscores", true);
@@ -604,9 +609,11 @@ namespace ConfigMaker
             addAction(ConfigEntry.ToggleConsole, "toggleconsole", false);
             addAction(ConfigEntry.Clear, "clear", false);
 
+
+
             // jumpthrow script
             string jumpthrowName = "jumpthrow";
-            CheckBox jumpthrowCheckbox = prepareAction(ConfigEntry.Jumpthrow, jumpthrowName, true);
+            CheckBox jumpthrowCheckbox = PrepareAction(ConfigEntry.Jumpthrow, jumpthrowName, true);
 
             EntryUiBinding jumpthrowBinding = new EntryUiBinding()
             {
@@ -640,7 +647,7 @@ namespace ConfigMaker
 
             // DisplayDamageOn
             string displayDamageOn = "displaydamage_on";
-            CheckBox displayDamageOnCheckbox = prepareAction(ConfigEntry.DisplayDamageOn, displayDamageOn, false);
+            CheckBox displayDamageOnCheckbox = PrepareAction(ConfigEntry.DisplayDamageOn, displayDamageOn, false);
 
             this.entryUiBindings.Add(
                 ConfigEntry.DisplayDamageOn,
@@ -681,7 +688,7 @@ namespace ConfigMaker
 
             // DisplayDamageOff
             string displayDamageOff = "displaydamage_off";
-            CheckBox displayDamageOffCheckbox = prepareAction(ConfigEntry.DisplayDamageOff, displayDamageOff, false);
+            CheckBox displayDamageOffCheckbox = PrepareAction(ConfigEntry.DisplayDamageOff, displayDamageOff, false);
 
             this.entryUiBindings.Add(
                 ConfigEntry.DisplayDamageOff,
@@ -952,6 +959,7 @@ namespace ConfigMaker
                     Source = checkbox
                 };
                 customControlsGrid.SetBinding(Grid.IsEnabledProperty, checkedBinding);
+                // А так же привяжем отдельно наш ToggleTool, т.к. он находится в общем гриде
 
                 settingsTabPanel.Children.Add(cmdControllerGrid);
 
@@ -1611,77 +1619,6 @@ namespace ConfigMaker
             //settingsTabGrid.RowDefinitions.Add(new RowDefinition() { Height = new GridLength(20) });
         }
 
-        void InitAliasController()
-        {
-            EntryUiBinding entryBinding = new EntryUiBinding()
-            {
-                Generate = () =>
-                {
-                    List<ParametrizedEntry<Entry[]>> aliases =
-                    new List<ParametrizedEntry<Entry[]>>();
-
-                    CommandCollection dependencies = new CommandCollection();
-
-                    foreach (ContentControl aliaselement in aliasPanel.Children.OfType<ContentControl>())
-                    {
-                        string aliasName = aliaselement.Content.ToString();
-                        List<Entry> attachedEntries = (List<Entry>)aliaselement.Tag;
-
-                        // Выпишем все зависимости, которые есть для текущего элемента
-                        foreach (Entry entry in attachedEntries)
-                            foreach (Executable dependency in entry.Dependencies)
-                                dependencies.Add(dependency);
-                        
-                        ParametrizedEntry<Entry[]> aliasEntry = new ParametrizedEntry<Entry[]>()
-                        {
-                            PrimaryKey = ConfigEntry.ExtraAlias,
-                            Cmd = new SingleCmd(aliasName),
-                            IsMetaScript = false,
-                            Type = EntryType.Dynamic,
-                            Arg = attachedEntries.ToArray()
-                        };
-
-                        AliasCmd alias = new AliasCmd(
-                            aliaselement.Content.ToString(),
-                            attachedEntries.Select(e => e.Cmd));
-
-                        aliases.Add(aliasEntry);
-                        dependencies.Add(alias);
-                    }
-
-                    // сформируем итоговый элемент конфига
-                    return new ParametrizedEntry<Entry[]>()
-                    {
-                        PrimaryKey = ConfigEntry.ExtraAliasSet,
-                        Cmd = null,
-                        IsMetaScript = false,
-                        Type = EntryType.Dynamic,
-                        Arg = aliases.ToArray(),
-                        Dependencies = dependencies
-                    };
-                },
-                UpdateUI = (entry) =>
-                {
-                    ParametrizedEntry<Entry[]> extendedEntry = (ParametrizedEntry<Entry[]>)entry;
-
-                    Entry[] aliases = extendedEntry.Arg;
-
-                    foreach (Entry alias in aliases)
-                    {
-                        AddAliasButton(
-                            alias.Cmd.ToString(),
-                            (alias as ParametrizedEntry<Entry[]>).Arg.ToList());
-                    }
-                },
-                Restore = () =>
-                {
-                    this.ResetAttachmentPanels();
-                    this.ClearPanel_s(aliasPanel);
-                }
-            };
-            this.entryUiBindings.Add(ConfigEntry.ExtraAliasSet, entryBinding);
-        }
-
         void InitExtra()
         {
             EntryUiBinding customCmdsBinding = new EntryUiBinding()
@@ -1803,7 +1740,7 @@ namespace ConfigMaker
                     cycleChHeaderCheckbox.IsChecked = false;
                     cycleChSlider.Value = cycleChSlider.Minimum;
                 },
-                HandleState = (state) => cycleChHeaderCheckbox.IsEnabled = 
+                HandleState = (state) => cycleChHeaderCheckbox.IsEnabled =
                     state != EntryStateBinding.Default && state != EntryStateBinding.InvalidState
             });
 
@@ -1925,9 +1862,80 @@ namespace ConfigMaker
                 {
                     volumeRegulatorCheckbox.IsChecked = false;
                 },
-                HandleState = (state) => volumeRegulatorCheckbox.IsEnabled = 
+                HandleState = (state) => volumeRegulatorCheckbox.IsEnabled =
                     state != EntryStateBinding.InvalidState && state != EntryStateBinding.Default
             });
+        }
+
+        void InitAliasController()
+        {
+            EntryUiBinding entryBinding = new EntryUiBinding()
+            {
+                Generate = () =>
+                {
+                    List<ParametrizedEntry<Entry[]>> aliases =
+                    new List<ParametrizedEntry<Entry[]>>();
+
+                    CommandCollection dependencies = new CommandCollection();
+
+                    foreach (ContentControl aliaselement in aliasPanel.Children.OfType<ContentControl>())
+                    {
+                        string aliasName = aliaselement.Content.ToString();
+                        List<Entry> attachedEntries = (List<Entry>)aliaselement.Tag;
+
+                        // Выпишем все зависимости, которые есть для текущего элемента
+                        foreach (Entry entry in attachedEntries)
+                            foreach (Executable dependency in entry.Dependencies)
+                                dependencies.Add(dependency);
+                        
+                        ParametrizedEntry<Entry[]> aliasEntry = new ParametrizedEntry<Entry[]>()
+                        {
+                            PrimaryKey = ConfigEntry.ExtraAlias,
+                            Cmd = new SingleCmd(aliasName),
+                            IsMetaScript = false,
+                            Type = EntryType.Dynamic,
+                            Arg = attachedEntries.ToArray()
+                        };
+
+                        AliasCmd alias = new AliasCmd(
+                            aliaselement.Content.ToString(),
+                            attachedEntries.Select(e => e.Cmd));
+
+                        aliases.Add(aliasEntry);
+                        dependencies.Add(alias);
+                    }
+
+                    // сформируем итоговый элемент конфига
+                    return new ParametrizedEntry<Entry[]>()
+                    {
+                        PrimaryKey = ConfigEntry.ExtraAliasSet,
+                        Cmd = null,
+                        IsMetaScript = false,
+                        Type = EntryType.Dynamic,
+                        Arg = aliases.ToArray(),
+                        Dependencies = dependencies
+                    };
+                },
+                UpdateUI = (entry) =>
+                {
+                    ParametrizedEntry<Entry[]> extendedEntry = (ParametrizedEntry<Entry[]>)entry;
+
+                    Entry[] aliases = extendedEntry.Arg;
+
+                    foreach (Entry alias in aliases)
+                    {
+                        AddAliasButton(
+                            alias.Cmd.ToString(),
+                            (alias as ParametrizedEntry<Entry[]>).Arg.ToList());
+                    }
+                },
+                Restore = () =>
+                {
+                    this.ResetAttachmentPanels();
+                    this.ClearPanel_s(aliasPanel);
+                }
+            };
+            this.entryUiBindings.Add(ConfigEntry.ExtraAliasSet, entryBinding);
         }
         #endregion
 
@@ -1983,6 +1991,12 @@ namespace ConfigMaker
                     this.kb.GetButtonByName(currentKeySequence[1]).Style = keyInSequenceStyle;
                 }
             }
+        }
+
+        string Localize(ConfigEntry cfgEntry)
+        {
+            string result = Res.ResourceManager.GetString(cfgEntry.ToString());
+            return result ?? throw new Exception($"Resource key {cfgEntry.ToString()} not found");
         }
 
         string GeneratePrefix()

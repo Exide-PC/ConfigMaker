@@ -369,9 +369,9 @@ namespace ConfigMaker.Properties {
         /// <summary>
         ///   Looks up a localized string similar to Display damage OFF.
         /// </summary>
-        public static string DisplaydamageOff {
+        public static string DisplayDamageOff {
             get {
-                return ResourceManager.GetString("DisplaydamageOff", resourceCulture);
+                return ResourceManager.GetString("DisplayDamageOff", resourceCulture);
             }
         }
         
@@ -855,9 +855,9 @@ namespace ConfigMaker.Properties {
         /// <summary>
         ///   Looks up a localized string similar to Config Maker [eng].
         /// </summary>
-        public static string MainTitle {
+        public static string MainWindow_Title {
             get {
-                return ResourceManager.GetString("MainTitle", resourceCulture);
+                return ResourceManager.GetString("MainWindow_Title", resourceCulture);
             }
         }
         
@@ -1371,6 +1371,24 @@ namespace ConfigMaker.Properties {
         public static string ToggleInventoryDisplay {
             get {
                 return ResourceManager.GetString("ToggleInventoryDisplay", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to .
+        /// </summary>
+        public static string ToggleWindow_Hint {
+            get {
+                return ResourceManager.GetString("ToggleWindow_Hint", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to .
+        /// </summary>
+        public static string ToggleWindow_Title {
+            get {
+                return ResourceManager.GetString("ToggleWindow_Title", resourceCulture);
             }
         }
         

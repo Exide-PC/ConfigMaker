@@ -6,6 +6,9 @@ using System.Threading.Tasks;
 
 namespace ConfigMaker.Csgo.Config
 {
+    /// <summary>
+    /// Во избежание лишнего кода по обслуживанию перевода примем, что название любого элемента из данного перечисления является ключом локализации в ресурсах
+    /// </summary>
     public enum ConfigEntry
     {
         // static

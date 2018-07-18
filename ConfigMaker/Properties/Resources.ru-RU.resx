@@ -117,7 +117,7 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
-  <data name="MainTitle" xml:space="preserve">
+  <data name="MainWindow_Title" xml:space="preserve">
     <value>Config Maker [rus]</value>
   </data>
   <data name="Forward" xml:space="preserve">
@@ -279,7 +279,7 @@
   <data name="DisplayDamageOn" xml:space="preserve">
     <value>Вкл. показ урона</value>
   </data>
-  <data name="DisplaydamageOff" xml:space="preserve">
+  <data name="DisplayDamageOff" xml:space="preserve">
     <value>Выкл. показ урона</value>
   </data>
   <data name="sensitivity" xml:space="preserve">
