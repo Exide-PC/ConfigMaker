@@ -1,6 +1,5 @@
 ﻿using ConfigMaker.Csgo.Commands;
 using ConfigMaker.Csgo.Config;
-using ConfigMaker.Csgo.Localization;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -43,7 +42,7 @@ namespace ConfigMaker
 
         Dictionary<ConfigEntry, EntryUiBinding> entryUiBindings = new Dictionary<ConfigEntry, EntryUiBinding>();
 
-        public static Locale CurrentLocale = null;
+        //public static Locale CurrentLocale = null;
 
         public EntryStateBinding StateBinding
         {
@@ -81,7 +80,7 @@ namespace ConfigMaker
             this.kb.OnKeyboardKeyDown += KeyboardKeyDownHandler;
 
             // Задаем локализацию
-            CurrentLocale = new RussianLocale();
+            //CurrentLocale = new RussianLocale();
 
             InitActionTab();
             InitBuyTab();
@@ -109,8 +108,8 @@ namespace ConfigMaker
                 this.StateBinding = EntryStateBinding.KeyDown;
 
                 // Отредактируем текст у панелей
-                this.keyDownPanelLabel.Text = string.Format(CurrentLocale.KeyDown1Format, currentKeySequence[0].ToUpper());
-                this.keyReleasePanelLabel.Text = string.Format(CurrentLocale.KeyUp1Format, currentKeySequence[0].ToUpper());
+                this.keyDownPanelLabel.Text = string.Format(Res.KeyDown1_Format, currentKeySequence[0].ToUpper());
+                this.keyReleasePanelLabel.Text = string.Format(Res.KeyUp1_Format, currentKeySequence[0].ToUpper());
             }
             else if (currentKeySequence.Keys.Length == 1)
             {
@@ -124,8 +123,8 @@ namespace ConfigMaker
                 string key1Upper = currentKeySequence[0].ToUpper();
                 string key2Upper = currentKeySequence[1].ToUpper();
 
-                this.keyDownPanelLabel.Text = string.Format(CurrentLocale.KeyDown2Format, key2Upper, key1Upper);
-                this.keyReleasePanelLabel.Text = string.Format(CurrentLocale.KeyUp2Format, key2Upper, key1Upper);
+                this.keyDownPanelLabel.Text = string.Format(Res.KeyDown2_Format, key2Upper, key1Upper);
+                this.keyReleasePanelLabel.Text = string.Format(Res.KeyUp2_Format, key2Upper, key1Upper);
             }
 
             ColorizeKeyboard();
@@ -168,10 +167,9 @@ namespace ConfigMaker
                     EntryStateBinding.Default :
                     EntryStateBinding.Alias;
 
-                if (CurrentLocale != null) // Только если локализация уже задана
-                    solidAttachmentPanelLabel.Text = selectedState == EntryStateBinding.Default ?
-                        CurrentLocale.DefaultCmds :
-                        CurrentLocale.AliasCmds;
+                solidAttachmentPanelLabel.Text = selectedState == EntryStateBinding.Default ?
+                    Res.CommandsByDefault_Hint :
+                    Res.CommandsInAlias_Hint;
 
                 this.currentKeySequence = null;
                 this.ColorizeKeyboard();
@@ -1540,53 +1538,53 @@ namespace ConfigMaker
                 //Grid.SetRow(block, settingsTabGrid.RowDefinitions.Count - 1);
             };
 
-            Locale loc = CurrentLocale;
-            string[] offOn = new string[] { loc.Off, loc.On };
+            //Locale Res = CurrentLocale;
+            string[] toggleStrings = new string[] { Res.Off, Res.On };
             
-            addGroupHeader(loc.MouseSettings);
+            addGroupHeader(Res.CategoryMouseSettings);
             addTextboxNumberCmdController(ConfigEntry.sensitivity, 2.5, false);
             addTextboxNumberCmdController(ConfigEntry.zoom_sensitivity_ratio_mouse, 1, false);
-            addComboboxCmdController(ConfigEntry.m_rawinput, offOn, 1, true);
-            addComboboxCmdController(ConfigEntry.m_customaccel, offOn, 0, true);
+            addComboboxCmdController(ConfigEntry.m_rawinput, toggleStrings, 1, true);
+            addComboboxCmdController(ConfigEntry.m_customaccel, toggleStrings, 0, true);
             addIntervalCmdController(ConfigEntry.m_customaccel_exponent, 0.05, 10, 0.05, 1.05);
 
-            addGroupHeader(loc.ClientCommands);
-            addComboboxCmdController(ConfigEntry.cl_autowepswitch, offOn, 1, true);
+            addGroupHeader(Res.CategoryClientCommands);
+            addComboboxCmdController(ConfigEntry.cl_autowepswitch, toggleStrings, 1, true);
             addIntervalCmdController(ConfigEntry.cl_bob_lower_amt, 5, 30, 1, 21);
             addIntervalCmdController(ConfigEntry.cl_bobamt_lat, 0.1, 2, 0.1, 0.4);
             addIntervalCmdController(ConfigEntry.cl_bobamt_vert, 0.1, 2, 0.1, 0.25);
             addIntervalCmdController(ConfigEntry.cl_bobcycle, 0.1, 2, 0.01, 0.98);
             addTextboxNumberCmdController(ConfigEntry.cl_clanid, 0, true);
-            addComboboxCmdController(ConfigEntry.cl_color, new string[] { loc.Yellow, loc.Purple, loc.Green, loc.Blue, loc.Orange }, 0, true);
-            addComboboxCmdController(ConfigEntry.cl_dm_buyrandomweapons, offOn, 1, true);
-            addComboboxCmdController(ConfigEntry.cl_draw_only_deathnotices, offOn, 1, true);
+            addComboboxCmdController(ConfigEntry.cl_color, new string[] { Res.Yellow, Res.Purple, Res.Green, Res.Blue, Res.Orange }, 0, true);
+            addComboboxCmdController(ConfigEntry.cl_dm_buyrandomweapons, toggleStrings, 1, true);
+            addComboboxCmdController(ConfigEntry.cl_draw_only_deathnotices, toggleStrings, 1, true);
             addComboboxCmdController(ConfigEntry.cl_hud_color,
-                new string[] { loc.Default, loc.White, loc.LightBlue, loc.Blue, loc.Purple, loc.Pink, loc.Red, loc.Orange, loc.Yellow, loc.Green, loc.Aqua }, 0, true);
-            addComboboxCmdController(ConfigEntry.cl_hud_healthammo_style, new string[] { loc.Health_Style0, loc.Health_Style1 }, 0, true);
+                new string[] { Res.Default, Res.White, Res.LightBlue, Res.Blue, Res.Purple, Res.Pink, Res.Red, Res.Orange, Res.Yellow, Res.Green, Res.Aqua }, 0, true);
+            addComboboxCmdController(ConfigEntry.cl_hud_healthammo_style, new string[] { Res.Health_Style0, Res.Health_Style1 }, 0, true);
             addIntervalCmdController(ConfigEntry.cl_hud_radar_scale, 0.8, 1.3, 0.1, 1);
             addIntervalCmdController(ConfigEntry.cl_hud_background_alpha, 0, 1, 0.1, 1);
-            addComboboxCmdController(ConfigEntry.cl_hud_playercount_pos, new string[] { loc.Top, loc.Bottom }, 0, true);
-            addComboboxCmdController(ConfigEntry.cl_hud_playercount_showcount, new string[] { loc.ShowAvatars, loc.ShowCount}, 0, true);
-            addComboboxCmdController(ConfigEntry.cl_loadout_colorweaponnames, offOn, 0, true);
-            addComboboxCmdController(ConfigEntry.cl_mute_enemy_team, offOn, 0, true);
+            addComboboxCmdController(ConfigEntry.cl_hud_playercount_pos, new string[] { Res.Top, Res.Bottom }, 0, true);
+            addComboboxCmdController(ConfigEntry.cl_hud_playercount_showcount, new string[] { Res.ShowAvatars, Res.ShowCount}, 0, true);
+            addComboboxCmdController(ConfigEntry.cl_loadout_colorweaponnames, toggleStrings, 0, true);
+            addComboboxCmdController(ConfigEntry.cl_mute_enemy_team, toggleStrings, 0, true);
             addTextboxNumberCmdController(ConfigEntry.cl_pdump, -1, true);
-            addComboboxCmdController(ConfigEntry.cl_radar_always_centered, offOn, 0, true);
+            addComboboxCmdController(ConfigEntry.cl_radar_always_centered, toggleStrings, 0, true);
             addIntervalCmdController(ConfigEntry.cl_radar_icon_scale_min, 0.4, 1, 0.01, 0.7);
             addIntervalCmdController(ConfigEntry.cl_radar_scale, 0.25, 1, 0.01, 0.7);
-            addComboboxCmdController(ConfigEntry.cl_righthand, offOn, 0, true);
-            addComboboxCmdController(ConfigEntry.cl_showfps, offOn, 0, true);
-            addComboboxCmdController(ConfigEntry.cl_show_clan_in_death_notice, offOn, 0, true);
-            addComboboxCmdController(ConfigEntry.cl_showpos, offOn, 0, true);
-            addComboboxCmdController(ConfigEntry.cl_teammate_colors_show, offOn, 0, true);
-            addComboboxCmdController(ConfigEntry.cl_teamid_overhead_always, offOn, 0, true);
+            addComboboxCmdController(ConfigEntry.cl_righthand, toggleStrings, 0, true);
+            addComboboxCmdController(ConfigEntry.cl_showfps, toggleStrings, 0, true);
+            addComboboxCmdController(ConfigEntry.cl_show_clan_in_death_notice, toggleStrings, 0, true);
+            addComboboxCmdController(ConfigEntry.cl_showpos, toggleStrings, 0, true);
+            addComboboxCmdController(ConfigEntry.cl_teammate_colors_show, toggleStrings, 0, true);
+            addComboboxCmdController(ConfigEntry.cl_teamid_overhead_always, toggleStrings, 0, true);
             addIntervalCmdController(ConfigEntry.cl_teamid_overhead_name_alpha, 0, 255, 1, 100);
             addIntervalCmdController(ConfigEntry.cl_timeout, 4, 30, 1, 30);
-            addComboboxCmdController(ConfigEntry.cl_use_opens_buy_menu, offOn, 1, true);
+            addComboboxCmdController(ConfigEntry.cl_use_opens_buy_menu, toggleStrings, 1, true);
             addIntervalCmdController(ConfigEntry.cl_viewmodel_shift_left_amt, 0.5, 2, 0.05, 1.5);
             addIntervalCmdController(ConfigEntry.cl_viewmodel_shift_right_amt, 0.25, 2, 0.05, 0.75);
 
-            addGroupHeader(loc.Crosshair);
-            addComboboxCmdController(ConfigEntry.cl_crosshair_drawoutline, offOn, 0, true);
+            addGroupHeader(Res.CategoryCrosshair);
+            addComboboxCmdController(ConfigEntry.cl_crosshair_drawoutline, toggleStrings, 0, true);
             addIntervalCmdController(ConfigEntry.cl_crosshair_dynamic_maxdist_splitratio, 0, 1, 0.1, 0.35);
             addIntervalCmdController(ConfigEntry.cl_crosshair_dynamic_splitalpha_innermod, 0, 1, 0.01, 1);
             addIntervalCmdController(ConfigEntry.cl_crosshair_dynamic_splitalpha_outermod, 0.3, 1, 0.01, 0.5);
@@ -1594,27 +1592,27 @@ namespace ConfigMaker
             addIntervalCmdController(ConfigEntry.cl_crosshair_outlinethickness, 0.1, 3, 0.1, 1);
             addTextboxNumberCmdController(ConfigEntry.cl_crosshair_sniper_width, 1, false);
             addIntervalCmdController(ConfigEntry.cl_crosshairalpha, 0, 255, 1, 200);
-            addComboboxCmdController(ConfigEntry.cl_crosshairdot, offOn, 1, true);
-            addComboboxCmdController(ConfigEntry.cl_crosshairgap, offOn, 1, true);
-            addComboboxCmdController(ConfigEntry.cl_crosshair_t, offOn, 1, true);
-            addComboboxCmdController(ConfigEntry.cl_crosshairgap_useweaponvalue, offOn, 1, true);
+            addComboboxCmdController(ConfigEntry.cl_crosshairdot, toggleStrings, 1, true);
+            addComboboxCmdController(ConfigEntry.cl_crosshairgap, toggleStrings, 1, true);
+            addComboboxCmdController(ConfigEntry.cl_crosshair_t, toggleStrings, 1, true);
+            addComboboxCmdController(ConfigEntry.cl_crosshairgap_useweaponvalue, toggleStrings, 1, true);
             addTextboxNumberCmdController(ConfigEntry.cl_crosshairsize, 5, false);
             addIntervalCmdController(ConfigEntry.cl_crosshairstyle, 0, 5, 1, 2);
             addTextboxNumberCmdController(ConfigEntry.cl_crosshairthickness, 0.5, false);
-            addComboboxCmdController(ConfigEntry.cl_crosshairusealpha, offOn, 1, true);
+            addComboboxCmdController(ConfigEntry.cl_crosshairusealpha, toggleStrings, 1, true);
             addTextboxNumberCmdController(ConfigEntry.cl_fixedcrosshairgap, 3, false);
 
             // текстовые аргументы
-            addGroupHeader(loc.Other);
+            addGroupHeader(Res.CategoryOther);
             addTextboxStringCmdController(ConfigEntry.say, "vk.com/exideprod");
             addTextboxStringCmdController(ConfigEntry.say_team, "Hello world!");
             addTextboxStringCmdController(ConfigEntry.connect, "12.34.56.78:27015");
 
-            addGroupHeader("net_graph");
-            addComboboxCmdController(ConfigEntry.net_graph, offOn, 0, true);
+            addGroupHeader(Res.CategoryNetGraphSettings);
+            addComboboxCmdController(ConfigEntry.net_graph, toggleStrings, 0, true);
             addTextboxNumberCmdController(ConfigEntry.net_graphheight, 64, true);
             addTextboxNumberCmdController(ConfigEntry.net_graphpos, 1, true);
-            addComboboxCmdController(ConfigEntry.net_graphproportionalfont, offOn, 0, true);
+            addComboboxCmdController(ConfigEntry.net_graphproportionalfont, toggleStrings, 0, true);
 
             //settingsTabGrid.RowDefinitions.Add(new RowDefinition() { Height = new GridLength(20) });
         }
@@ -1996,7 +1994,8 @@ namespace ConfigMaker
         string Localize(ConfigEntry cfgEntry)
         {
             string result = Res.ResourceManager.GetString(cfgEntry.ToString());
-            return result ?? throw new Exception($"Resource key {cfgEntry.ToString()} not found");
+            return result ?? cfgEntry.ToString();
+            //return result ?? throw new Exception($"Resource key {cfgEntry.ToString()} not found");
         }
 
         string GeneratePrefix()
@@ -2197,7 +2196,7 @@ namespace ConfigMaker
 
                 ButtonBase chip = new Chip
                 {
-                    Content = CurrentLocale[cfgEntry]
+                    Content = Localize(cfgEntry) //CurrentLocale[cfgEntry]
                 };
                 chip.Click += HandleAttachedEntryClick;
                 chip.Style = (Style)this.Resources["BubbleButton"];

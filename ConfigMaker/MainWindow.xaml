@@ -491,7 +491,7 @@
                             <ScrollViewer>
                                 <WrapPanel Name="solidAttachmentsPanel"/>
                             </ScrollViewer>
-                            <TextBlock Name="solidAttachmentPanelLabel" VerticalAlignment="Bottom" HorizontalAlignment="Right" Margin="0,0,17,0" Text="{x:Static res:Resources.Default_Binding}" FontStyle="Italic" FontSize="10"/>
+                            <TextBlock Name="solidAttachmentPanelLabel" VerticalAlignment="Bottom" HorizontalAlignment="Right" Margin="0,0,17,0" Text="{x:Static res:Resources.CommandsByDefault_Hint}" FontStyle="Italic" FontSize="10"/>
                         </Grid>
                     </Border>
                 </Grid>

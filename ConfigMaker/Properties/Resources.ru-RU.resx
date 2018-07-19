@@ -432,7 +432,7 @@
   <data name="Off" xml:space="preserve">
     <value>Выкл.</value>
   </data>
-  <data name="ClientCommands" xml:space="preserve">
+  <data name="CategoryClientCommands" xml:space="preserve">
     <value>Команды клиента</value>
   </data>
   <data name="Default" xml:space="preserve">
@@ -471,7 +471,7 @@
   <data name="Health_Style0" xml:space="preserve">
     <value>Стиль 1</value>
   </data>
-  <data name="Health_Style2" xml:space="preserve">
+  <data name="Health_Style1" xml:space="preserve">
     <value>Стиль 2</value>
   </data>
   <data name="Top" xml:space="preserve">
@@ -486,7 +486,7 @@
   <data name="ShowCount" xml:space="preserve">
     <value>Показывать число живых</value>
   </data>
-  <data name="Crosshair" xml:space="preserve">
+  <data name="CategoryCrosshair" xml:space="preserve">
     <value>Прицел</value>
   </data>
   <data name="KeyDown1_Format" xml:space="preserve">
@@ -507,7 +507,7 @@
   <data name="Alias_Binding" xml:space="preserve">
     <value>Пользовательские команды</value>
   </data>
-  <data name="MouseSettings" xml:space="preserve">
+  <data name="CategoryMouseSettings" xml:space="preserve">
     <value>Настройки мыши</value>
   </data>
   <data name="SelectConfig_Button" xml:space="preserve">
@@ -581,5 +581,20 @@
   </data>
   <data name="PressShift_Hint" xml:space="preserve">
     <value>Зажмите Shift для выбора сочетания клавиш</value>
+  </data>
+  <data name="CommandsByDefault_Hint" xml:space="preserve">
+    <value>Команды, вызываемые по умолчанию</value>
+  </data>
+  <data name="CommandsInAlias_Hint" xml:space="preserve">
+    <value>Команды, привязанные к пользовательскому алиасу</value>
+  </data>
+  <data name="ToggleWindow_Hint" xml:space="preserve">
+    <value>Введите значения через пробел</value>
+  </data>
+  <data name="ToggleWindow_Title" xml:space="preserve">
+    <value>Toggle Tool </value>
+  </data>
+  <data name="CategoryNetGraphSettings" xml:space="preserve">
+    <value>Настройки net_graph</value>
   </data>
 </root>

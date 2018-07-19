@@ -77,8 +77,6 @@
     <Compile Include="Csgo\Config\ConfigManager.cs" />
     <Compile Include="Csgo\Config\Entries\BindEntry.cs" />
     <Compile Include="Csgo\Config\KeySequence.cs" />
-    <Compile Include="Csgo\Localization\Locale.cs" />
-    <Compile Include="Csgo\Localization\RussianLocale.cs" />
     <Compile Include="EntryUiBinding.cs" />
     <Compile Include="GameSettingsRow.cs" />
     <Compile Include="Converters\IsNullConverter.cs" />

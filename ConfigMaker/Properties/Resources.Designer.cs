@@ -178,6 +178,15 @@ namespace ConfigMaker.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Client commands.
+        /// </summary>
+        public static string CategoryClientCommands {
+            get {
+                return ResourceManager.GetString("CategoryClientCommands", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Common actions.
         /// </summary>
         public static string CategoryCommonActions {
@@ -196,6 +205,15 @@ namespace ConfigMaker.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Crosshair.
+        /// </summary>
+        public static string CategoryCrosshair {
+            get {
+                return ResourceManager.GetString("CategoryCrosshair", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Equipment.
         /// </summary>
         public static string CategoryEquipment {
@@ -205,11 +223,29 @@ namespace ConfigMaker.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Mouse settings.
+        /// </summary>
+        public static string CategoryMouseSettings {
+            get {
+                return ResourceManager.GetString("CategoryMouseSettings", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Movement.
         /// </summary>
         public static string CategoryMovement {
             get {
                 return ResourceManager.GetString("CategoryMovement", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to net_graph settings.
+        /// </summary>
+        public static string CategoryNetGraphSettings {
+            get {
+                return ResourceManager.GetString("CategoryNetGraphSettings", resourceCulture);
             }
         }
         
@@ -268,15 +304,6 @@ namespace ConfigMaker.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Client commands.
-        /// </summary>
-        public static string ClientCommands {
-            get {
-                return ResourceManager.GetString("ClientCommands", resourceCulture);
-            }
-        }
-        
-        /// <summary>
         ///   Looks up a localized string similar to Command name:.
         /// </summary>
         public static string CommandName {
@@ -295,20 +322,29 @@ namespace ConfigMaker.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Commands executed by default.
+        /// </summary>
+        public static string CommandsByDefault_Hint {
+            get {
+                return ResourceManager.GetString("CommandsByDefault_Hint", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Commands bound to custom alias.
+        /// </summary>
+        public static string CommandsInAlias_Hint {
+            get {
+                return ResourceManager.GetString("CommandsInAlias_Hint", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Config name.
         /// </summary>
         public static string ConfigName_Hint {
             get {
                 return ResourceManager.GetString("ConfigName_Hint", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Crosshair.
-        /// </summary>
-        public static string Crosshair {
-            get {
-                return ResourceManager.GetString("Crosshair", resourceCulture);
             }
         }
         
@@ -630,9 +666,9 @@ namespace ConfigMaker.Properties {
         /// <summary>
         ///   Looks up a localized string similar to Style 2.
         /// </summary>
-        public static string Health_Style2 {
+        public static string Health_Style1 {
             get {
-                return ResourceManager.GetString("Health_Style2", resourceCulture);
+                return ResourceManager.GetString("Health_Style1", resourceCulture);
             }
         }
         
@@ -876,15 +912,6 @@ namespace ConfigMaker.Properties {
         public static string Molotov {
             get {
                 return ResourceManager.GetString("Molotov", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Mouse settings.
-        /// </summary>
-        public static string MouseSettings {
-            get {
-                return ResourceManager.GetString("MouseSettings", resourceCulture);
             }
         }
         
@@ -1375,7 +1402,7 @@ namespace ConfigMaker.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to .
+        ///   Looks up a localized string similar to Type values separated with space.
         /// </summary>
         public static string ToggleWindow_Hint {
             get {
@@ -1384,7 +1411,7 @@ namespace ConfigMaker.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to .
+        ///   Looks up a localized string similar to Toggle Tool .
         /// </summary>
         public static string ToggleWindow_Title {
             get {

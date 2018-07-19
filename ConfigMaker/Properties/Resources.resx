@@ -429,7 +429,7 @@
   <data name="Off" xml:space="preserve">
     <value>Off</value>
   </data>
-  <data name="ClientCommands" xml:space="preserve">
+  <data name="CategoryClientCommands" xml:space="preserve">
     <value>Client commands</value>
   </data>
   <data name="Default" xml:space="preserve">
@@ -468,7 +468,7 @@
   <data name="Health_Style0" xml:space="preserve">
     <value>Style 1</value>
   </data>
-  <data name="Health_Style2" xml:space="preserve">
+  <data name="Health_Style1" xml:space="preserve">
     <value>Style 2</value>
   </data>
   <data name="Top" xml:space="preserve">
@@ -483,7 +483,7 @@
   <data name="ShowCount" xml:space="preserve">
     <value>Show alive count</value>
   </data>
-  <data name="Crosshair" xml:space="preserve">
+  <data name="CategoryCrosshair" xml:space="preserve">
     <value>Crosshair</value>
   </data>
   <data name="KeyDown1_Format" xml:space="preserve">
@@ -504,7 +504,7 @@
   <data name="Alias_Binding" xml:space="preserve">
     <value>Custom aliases</value>
   </data>
-  <data name="MouseSettings" xml:space="preserve">
+  <data name="CategoryMouseSettings" xml:space="preserve">
     <value>Mouse settings</value>
   </data>
   <data name="SelectConfig_Button" xml:space="preserve">
@@ -580,9 +580,18 @@
     <value>Hold Shift for key sequence creating</value>
   </data>
   <data name="ToggleWindow_Hint" xml:space="preserve">
-    <value></value>
+    <value>Type values separated with space</value>
   </data>
   <data name="ToggleWindow_Title" xml:space="preserve">
-    <value></value>
+    <value>Toggle Tool </value>
+  </data>
+  <data name="CommandsInAlias_Hint" xml:space="preserve">
+    <value>Commands bound to custom alias</value>
+  </data>
+  <data name="CommandsByDefault_Hint" xml:space="preserve">
+    <value>Commands executed by default</value>
+  </data>
+  <data name="CategoryNetGraphSettings" xml:space="preserve">
+    <value>net_graph settings</value>
   </data>
 </root>
