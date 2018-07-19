@@ -731,7 +731,7 @@ namespace ConfigMaker
             // Добавляем главный чекбокс
             CheckBox mainCheckbox = new CheckBox
             {
-                Content = CurrentLocale.BuyScenarioDescription,
+                Content = Localize(ConfigEntry.BuyScenario), //CurrentLocale.BuyScenarioDescription,
                 Tag = ConfigEntry.BuyScenario
             };
             mainCheckbox.Click += HandleEntryClick;
@@ -838,46 +838,46 @@ namespace ConfigMaker
                 currentPanel.Children.Add(border);
             };
 
-            addGroupSeparator(CurrentLocale.Pistols);
-            addWeapon("glock", CurrentLocale.Pistol1);
-            addWeapon("elite", CurrentLocale.Pistol2);
-            addWeapon("p250", CurrentLocale.Pistol3);
-            addWeapon("fn57", CurrentLocale.Pistol4);
-            addWeapon("deagle", CurrentLocale.Pistol5);
+            addGroupSeparator(Res.Pistols);
+            addWeapon("glock", Res.Pistol1);
+            addWeapon("elite", Res.Pistol2);
+            addWeapon("p250", Res.Pistol3);
+            addWeapon("fn57", Res.Pistol4);
+            addWeapon("deagle", Res.Pistol5);
 
-            addGroupSeparator(CurrentLocale.Heavy);
-            addWeapon("nova", CurrentLocale.Heavy1);
-            addWeapon("xm1014", CurrentLocale.Heavy2);
-            addWeapon("mag7", CurrentLocale.Heavy3);
-            addWeapon("m249", CurrentLocale.Heavy4);
-            addWeapon("negev", CurrentLocale.Heavy5);
+            addGroupSeparator(Res.Heavy);
+            addWeapon("nova", Res.Heavy1);
+            addWeapon("xm1014", Res.Heavy2);
+            addWeapon("mag7", Res.Heavy3);
+            addWeapon("m249", Res.Heavy4);
+            addWeapon("negev", Res.Heavy5);
 
-            addGroupSeparator(CurrentLocale.SMGs);
-            addWeapon("mac10", CurrentLocale.Smg1);
-            addWeapon("mp7", CurrentLocale.Smg2);
-            addWeapon("ump45", CurrentLocale.Smg3);
-            addWeapon("p90", CurrentLocale.Smg4);
-            addWeapon("bizon", CurrentLocale.Smg5);
+            addGroupSeparator(Res.SMGs);
+            addWeapon("mac10", Res.Smg1);
+            addWeapon("mp7", Res.Smg2);
+            addWeapon("ump45", Res.Smg3);
+            addWeapon("p90", Res.Smg4);
+            addWeapon("bizon", Res.Smg5);
 
-            addGroupSeparator(CurrentLocale.Rifles);
-            addWeapon("famas", CurrentLocale.Rifle1);
-            addWeapon("ak47", CurrentLocale.Rifle2);
-            addWeapon("ssg08", CurrentLocale.Rifle3);
-            addWeapon("aug", CurrentLocale.Rifle4);
-            addWeapon("awp", CurrentLocale.Rifle5);
-            addWeapon("g3sg1", CurrentLocale.Rifle6);
+            addGroupSeparator(Res.Rifles);
+            addWeapon("famas", Res.Rifle1);
+            addWeapon("ak47", Res.Rifle2);
+            addWeapon("ssg08", Res.Rifle3);
+            addWeapon("aug", Res.Rifle4);
+            addWeapon("awp", Res.Rifle5);
+            addWeapon("g3sg1", Res.Rifle6);
 
-            addGroupSeparator(CurrentLocale.Gear);
-            addWeapon("vest", CurrentLocale.Gear1);
-            addWeapon("vesthelm", CurrentLocale.Gear2);
-            addWeapon("taser", CurrentLocale.Gear3);
+            addGroupSeparator(Res.Gear);
+            addWeapon("vest", Res.Gear1);
+            addWeapon("vesthelm", Res.Gear2);
+            addWeapon("taser", Res.Gear3);
 
-            addGroupSeparator(CurrentLocale.Grenades);
-            addWeapon("molotov", CurrentLocale.Grenade1);
-            addWeapon("decoy", CurrentLocale.Grenade2);
-            addWeapon("flashbang", CurrentLocale.Grenade3);
-            addWeapon("hegrenade", CurrentLocale.Grenade4);
-            addWeapon("smokegrenade", CurrentLocale.Grenade5);
+            addGroupSeparator(Res.Grenades);
+            addWeapon("molotov", Res.Grenade1);
+            addWeapon("decoy", Res.Grenade2);
+            addWeapon("flashbang", Res.Grenade3);
+            addWeapon("hegrenade", Res.Grenade4);
+            addWeapon("smokegrenade", Res.Grenade5);
         }
         
         void InitGameSettingsTab()
