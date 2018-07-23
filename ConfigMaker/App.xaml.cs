@@ -15,8 +15,6 @@ namespace ConfigMaker
     {
         public App()
         {
-            // Временно используем английскую локализацию для отладки перевода. TODO: REMOVE
-            System.Threading.Thread.CurrentThread.CurrentUICulture = System.Globalization.CultureInfo.GetCultureInfo("en-US");
             InitializeComponent();
         }
     }

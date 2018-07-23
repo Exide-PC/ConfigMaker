@@ -328,7 +328,14 @@ namespace ConfigMaker.Csgo.Config
                     dependencies.Enqueue(new Dependency() { Name = key1MetaScriptName, Commands = key1MetaCmd });
                 }
 
-                // Непосредственно сгенерируем конфиг
+
+                // --- Сгенерируем сам конфиг ---
+
+                // Выведем в консоль фирменный комментарий
+                writer.WriteLine("echo \"\"");
+                writer.WriteLine("echo \"Config is created by Exide's Config Maker [blog.exideprod.com | vk.com/exideprod]\"");
+                writer.WriteLine("echo \"\"");
+                writer.WriteLine();
 
                 // Выпишем зависимости
                 writer.WriteLine("// --- Dependencies ---");
@@ -367,6 +374,10 @@ namespace ConfigMaker.Csgo.Config
                     writer.WriteLine(entry.Cmd.ToString());
 
                 writer.WriteLine();
+
+                writer.WriteLine("echo \"\"");
+                writer.WriteLine("echo \"Config is loaded! Enjoy:D\"");
+                writer.WriteLine("echo \"\"");
 
             } // Закрываем файловый поток      
         }
