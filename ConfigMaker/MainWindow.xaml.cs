@@ -295,7 +295,7 @@ namespace ConfigMaker
             string prefix = GeneratePrefix();
             Random rnd = new Random();
 
-            Func<ConfigEntry, double, double, bool, string> generateRandomCmd = (entry, from, to, asInteger) =>
+            string GenerateRandomCmd(ConfigEntry entry, double from, double to, bool asInteger)
             {
                 double randomValue;
 
@@ -317,16 +317,16 @@ namespace ConfigMaker
 
                 string[] lines = new string[]
                 {
-                    generateRandomCmd(ConfigEntry.cl_crosshair_drawoutline, 0, 1, true),
-                    generateRandomCmd(ConfigEntry.cl_crosshair_outlinethickness, 1, 2, true),
-                    generateRandomCmd(ConfigEntry.cl_crosshair_sniper_width, 1, 5, true),
-                    generateRandomCmd(ConfigEntry.cl_crosshairalpha, 200, 255, true),
-                    generateRandomCmd(ConfigEntry.cl_crosshairdot, 0, 1, true),
-                    generateRandomCmd(ConfigEntry.cl_crosshairgap, 0, 1, true),
-                    generateRandomCmd(ConfigEntry.cl_crosshair_t, 0, 1, true),
-                    generateRandomCmd(ConfigEntry.cl_crosshairsize, -5, 5, true),
-                    generateRandomCmd(ConfigEntry.cl_crosshairstyle, 0, 5, true),
-                    generateRandomCmd(ConfigEntry.cl_crosshairthickness, 1, 3, true)
+                    GenerateRandomCmd(ConfigEntry.cl_crosshair_drawoutline, 0, 1, true),
+                    GenerateRandomCmd(ConfigEntry.cl_crosshair_outlinethickness, 1, 2, true),
+                    GenerateRandomCmd(ConfigEntry.cl_crosshair_sniper_width, 1, 5, true),
+                    GenerateRandomCmd(ConfigEntry.cl_crosshairalpha, 200, 255, true),
+                    GenerateRandomCmd(ConfigEntry.cl_crosshairdot, 0, 1, true),
+                    GenerateRandomCmd(ConfigEntry.cl_crosshairgap, 0, 1, true),
+                    GenerateRandomCmd(ConfigEntry.cl_crosshair_t, 0, 1, true),
+                    GenerateRandomCmd(ConfigEntry.cl_crosshairsize, -5, 5, true),
+                    GenerateRandomCmd(ConfigEntry.cl_crosshairstyle, 0, 5, true),
+                    GenerateRandomCmd(ConfigEntry.cl_crosshairthickness, 1, 3, true)
                 };
 
                 if (File.Exists(crosshairName)) File.Delete(crosshairName);
@@ -485,7 +485,7 @@ namespace ConfigMaker
             }
 
             // Локальный метод для добавления действий
-            Action<ConfigEntry, string, bool> addAction = (entry, cmd, isMeta) =>
+            void AddAction(ConfigEntry entry, string cmd, bool isMeta)
             {
                 CheckBox checkbox = PrepareAction(entry, cmd, isMeta);
 
@@ -521,7 +521,7 @@ namespace ConfigMaker
             };
 
             // Метод для добавления новой категории.
-            Action<string> addActionGroupSeparator = (text) =>
+            void AddActionGroupSeparator(string text)
             {
                 //    currentPanel = new StackPanel();
                 //    actionsPanel.Children.Add(currentPanel);
@@ -547,65 +547,65 @@ namespace ConfigMaker
             };
 
             //addActionGroupSeparator(CurrentLocale.CommonActions);
-            addActionGroupSeparator(Res.CategoryCommonActions);
-            addAction(ConfigEntry.Fire, "attack", true);
-            addAction(ConfigEntry.SecondaryFire, "attack2", true);
-            addAction(ConfigEntry.Reload, "reload", true);
-            addAction(ConfigEntry.Use, "use", true);
-            addAction(ConfigEntry.DropWeapon, "drop", false);
+            AddActionGroupSeparator(Res.CategoryCommonActions);
+            AddAction(ConfigEntry.Fire, "attack", true);
+            AddAction(ConfigEntry.SecondaryFire, "attack2", true);
+            AddAction(ConfigEntry.Reload, "reload", true);
+            AddAction(ConfigEntry.Use, "use", true);
+            AddAction(ConfigEntry.DropWeapon, "drop", false);
 
-            addActionGroupSeparator(Res.CategoryMovement);
-            addAction(ConfigEntry.Forward, "forward", true);
-            addAction(ConfigEntry.Back, "back", true);
-            addAction(ConfigEntry.Moveleft, "moveleft", true);
-            addAction(ConfigEntry.Moveright, "moveright", true);
-            addAction(ConfigEntry.Jump, "jump", true);
-            addAction(ConfigEntry.Duck, "duck", true);
-            addAction(ConfigEntry.Speed, "speed", true);
+            AddActionGroupSeparator(Res.CategoryMovement);
+            AddAction(ConfigEntry.Forward, "forward", true);
+            AddAction(ConfigEntry.Back, "back", true);
+            AddAction(ConfigEntry.Moveleft, "moveleft", true);
+            AddAction(ConfigEntry.Moveright, "moveright", true);
+            AddAction(ConfigEntry.Jump, "jump", true);
+            AddAction(ConfigEntry.Duck, "duck", true);
+            AddAction(ConfigEntry.Speed, "speed", true);
 
-            addActionGroupSeparator(Res.CategoryEquipment);
-            addAction(ConfigEntry.PrimaryWeapon, "slot1", false);
-            addAction(ConfigEntry.SecondaryWeapon, "slot2", false);
-            addAction(ConfigEntry.Knife, "slot3", false);
-            addAction(ConfigEntry.CycleGrenades, "slot4", false);
-            addAction(ConfigEntry.Bomb, "slot5", false);
-            addAction(ConfigEntry.HEGrenade, "slot6", false);
-            addAction(ConfigEntry.Flashbang, "slot7", false);
-            addAction(ConfigEntry.Smokegrenade, "slot8", false);
-            addAction(ConfigEntry.DecoyGrenade, "slot9", false);
-            addAction(ConfigEntry.Molotov, "slot10", false);
-            addAction(ConfigEntry.Zeus, "slot11", false);
-            addAction(ConfigEntry.SelectPreviousWeapon, "invprev", false);
-            addAction(ConfigEntry.SelectNextWeapon, "invnext", false);
-            addAction(ConfigEntry.LastWeaponUsed, "lastinv", false);
-            addAction(ConfigEntry.InspectWeapon, "lookatweapon", true);
-            addAction(ConfigEntry.BuyMenu, "buymenu", false);
-            addAction(ConfigEntry.AutoBuy, "autobuy", false);
-            addAction(ConfigEntry.Rebuy, "rebuy", false);
-            addAction(ConfigEntry.ShowTeamEquipment, "cl_show_team_equipment", true);
-            addAction(ConfigEntry.ToggleInventoryDisplay, "show_loadout_toggle", true);
+            AddActionGroupSeparator(Res.CategoryEquipment);
+            AddAction(ConfigEntry.PrimaryWeapon, "slot1", false);
+            AddAction(ConfigEntry.SecondaryWeapon, "slot2", false);
+            AddAction(ConfigEntry.Knife, "slot3", false);
+            AddAction(ConfigEntry.CycleGrenades, "slot4", false);
+            AddAction(ConfigEntry.Bomb, "slot5", false);
+            AddAction(ConfigEntry.HEGrenade, "slot6", false);
+            AddAction(ConfigEntry.Flashbang, "slot7", false);
+            AddAction(ConfigEntry.Smokegrenade, "slot8", false);
+            AddAction(ConfigEntry.DecoyGrenade, "slot9", false);
+            AddAction(ConfigEntry.Molotov, "slot10", false);
+            AddAction(ConfigEntry.Zeus, "slot11", false);
+            AddAction(ConfigEntry.SelectPreviousWeapon, "invprev", false);
+            AddAction(ConfigEntry.SelectNextWeapon, "invnext", false);
+            AddAction(ConfigEntry.LastWeaponUsed, "lastinv", false);
+            AddAction(ConfigEntry.InspectWeapon, "lookatweapon", true);
+            AddAction(ConfigEntry.BuyMenu, "buymenu", false);
+            AddAction(ConfigEntry.AutoBuy, "autobuy", false);
+            AddAction(ConfigEntry.Rebuy, "rebuy", false);
+            AddAction(ConfigEntry.ShowTeamEquipment, "cl_show_team_equipment", true);
+            AddAction(ConfigEntry.ToggleInventoryDisplay, "show_loadout_toggle", true);
 
-            addActionGroupSeparator(Res.CategoryCommunication);
-            addAction(ConfigEntry.Microphone, "voicerecord", true);
-            addAction(ConfigEntry.CommandRadio, "radio1", false);
-            addAction(ConfigEntry.StandartRadio, "radio2", false);
-            addAction(ConfigEntry.ReportRadio, "radio3", false);
-            addAction(ConfigEntry.TeamMessage, "messagemode2", false);
-            addAction(ConfigEntry.ChatMessage, "messagemode", false);
+            AddActionGroupSeparator(Res.CategoryCommunication);
+            AddAction(ConfigEntry.Microphone, "voicerecord", true);
+            AddAction(ConfigEntry.CommandRadio, "radio1", false);
+            AddAction(ConfigEntry.StandartRadio, "radio2", false);
+            AddAction(ConfigEntry.ReportRadio, "radio3", false);
+            AddAction(ConfigEntry.TeamMessage, "messagemode2", false);
+            AddAction(ConfigEntry.ChatMessage, "messagemode", false);
 
-            addActionGroupSeparator(Res.CategoryWarmup);
-            addAction(ConfigEntry.God, "god", false);
-            addAction(ConfigEntry.Noclip, "noclip", false);
-            addAction(ConfigEntry.Impulse101, "impulse 101", false);
+            AddActionGroupSeparator(Res.CategoryWarmup);
+            AddAction(ConfigEntry.God, "god", false);
+            AddAction(ConfigEntry.Noclip, "noclip", false);
+            AddAction(ConfigEntry.Impulse101, "impulse 101", false);
 
-            addActionGroupSeparator(Res.CategoryOther);
-            addAction(ConfigEntry.GraffitiMenu, "spray_menu", true);
-            addAction(ConfigEntry.Cleardecals, "r_cleardecals", false);
-            addAction(ConfigEntry.Scoreboard, "showscores", true);
-            addAction(ConfigEntry.CallVote, "callvote", false);
-            addAction(ConfigEntry.ChooseTeam, "teammenu", false);
-            addAction(ConfigEntry.ToggleConsole, "toggleconsole", false);
-            addAction(ConfigEntry.Clear, "clear", false);
+            AddActionGroupSeparator(Res.CategoryOther);
+            AddAction(ConfigEntry.GraffitiMenu, "spray_menu", true);
+            AddAction(ConfigEntry.Cleardecals, "r_cleardecals", false);
+            AddAction(ConfigEntry.Scoreboard, "showscores", true);
+            AddAction(ConfigEntry.CallVote, "callvote", false);
+            AddAction(ConfigEntry.ChooseTeam, "teammenu", false);
+            AddAction(ConfigEntry.ToggleConsole, "toggleconsole", false);
+            AddAction(ConfigEntry.Clear, "clear", false);
 
 
 
@@ -747,8 +747,8 @@ namespace ConfigMaker
             buyPanel.SetBinding(WrapPanel.IsEnabledProperty, enabledBinding);
 
 
-            // Анонимный метод для получения всех чекбоксов с оружием
-            Func<List<CheckBox>> getWeaponCheckboxes = () =>
+            // Локальный метод для получения всех чекбоксов с оружием
+            List<CheckBox> GetWeaponCheckboxes()
             {
                 return buyPanel.Children.OfType<StackPanel>()
                 .SelectMany(s => s.Children.OfType<CheckBox>()).ToList();
@@ -765,13 +765,13 @@ namespace ConfigMaker
                     string[] weapons = extendedEntry.Arg;
 
                     // зададим состояние чекбоксов согласно аргументам
-                    getWeaponCheckboxes().ForEach(c => c.IsChecked = weapons.Contains(((string)c.Tag)));
+                    GetWeaponCheckboxes().ForEach(c => c.IsChecked = weapons.Contains(((string)c.Tag)));
                     // не забываем про главный чекбокс
                     mainCheckbox.IsChecked = true;
                 },
                 Generate = () =>
                 {
-                    string[] weaponsToBuy = getWeaponCheckboxes()
+                    string[] weaponsToBuy = GetWeaponCheckboxes()
                     .Where(c => (bool)c.IsChecked).Select(c => (string)c.Tag).ToArray();
 
                     List<SingleCmd> buyCmds = weaponsToBuy.Select(weapon => new SingleCmd($"buy {weapon}")).ToList();
@@ -791,7 +791,7 @@ namespace ConfigMaker
                 Restore = () =>
                 {
                     mainCheckbox.IsChecked = false;
-                    getWeaponCheckboxes().ForEach(c => c.IsChecked = false);
+                    GetWeaponCheckboxes().ForEach(c => c.IsChecked = false);
                 },
                 HandleState = (state) => mainCheckbox.IsEnabled = state != EntryStateBinding.InvalidState
             };
@@ -800,7 +800,7 @@ namespace ConfigMaker
 
             StackPanel currentPanel = null;
 
-            Action<string, string> addWeapon = (weaponId, localizedName) =>
+            void AddWeapon(string weaponId, string localizedName)
             {
                 CheckBox weaponCheckbox = new CheckBox
                 {
@@ -818,7 +818,7 @@ namespace ConfigMaker
             };
 
             // Метод для добавления новой категории. Определяет новый stackpanel и создает текстовую метку
-            Action<string> addGroupSeparator = (text) =>
+            void AddGroupSeparator(string text)
             {
                 currentPanel = new StackPanel();
                 buyPanel.Children.Add(currentPanel);
@@ -836,53 +836,53 @@ namespace ConfigMaker
                 currentPanel.Children.Add(border);
             };
 
-            addGroupSeparator(Res.Pistols);
-            addWeapon("glock", Res.Pistol1);
-            addWeapon("elite", Res.Pistol2);
-            addWeapon("p250", Res.Pistol3);
-            addWeapon("fn57", Res.Pistol4);
-            addWeapon("deagle", Res.Pistol5);
+            AddGroupSeparator(Res.Pistols);
+            AddWeapon("glock", Res.Pistol1);
+            AddWeapon("elite", Res.Pistol2);
+            AddWeapon("p250", Res.Pistol3);
+            AddWeapon("fn57", Res.Pistol4);
+            AddWeapon("deagle", Res.Pistol5);
 
-            addGroupSeparator(Res.Heavy);
-            addWeapon("nova", Res.Heavy1);
-            addWeapon("xm1014", Res.Heavy2);
-            addWeapon("mag7", Res.Heavy3);
-            addWeapon("m249", Res.Heavy4);
-            addWeapon("negev", Res.Heavy5);
+            AddGroupSeparator(Res.Heavy);
+            AddWeapon("nova", Res.Heavy1);
+            AddWeapon("xm1014", Res.Heavy2);
+            AddWeapon("mag7", Res.Heavy3);
+            AddWeapon("m249", Res.Heavy4);
+            AddWeapon("negev", Res.Heavy5);
 
-            addGroupSeparator(Res.SMGs);
-            addWeapon("mac10", Res.Smg1);
-            addWeapon("mp7", Res.Smg2);
-            addWeapon("ump45", Res.Smg3);
-            addWeapon("p90", Res.Smg4);
-            addWeapon("bizon", Res.Smg5);
+            AddGroupSeparator(Res.SMGs);
+            AddWeapon("mac10", Res.Smg1);
+            AddWeapon("mp7", Res.Smg2);
+            AddWeapon("ump45", Res.Smg3);
+            AddWeapon("p90", Res.Smg4);
+            AddWeapon("bizon", Res.Smg5);
 
-            addGroupSeparator(Res.Rifles);
-            addWeapon("famas", Res.Rifle1);
-            addWeapon("ak47", Res.Rifle2);
-            addWeapon("ssg08", Res.Rifle3);
-            addWeapon("aug", Res.Rifle4);
-            addWeapon("awp", Res.Rifle5);
-            addWeapon("g3sg1", Res.Rifle6);
+            AddGroupSeparator(Res.Rifles);
+            AddWeapon("famas", Res.Rifle1);
+            AddWeapon("ak47", Res.Rifle2);
+            AddWeapon("ssg08", Res.Rifle3);
+            AddWeapon("aug", Res.Rifle4);
+            AddWeapon("awp", Res.Rifle5);
+            AddWeapon("g3sg1", Res.Rifle6);
 
-            addGroupSeparator(Res.Gear);
-            addWeapon("vest", Res.Gear1);
-            addWeapon("vesthelm", Res.Gear2);
-            addWeapon("taser", Res.Gear3);
+            AddGroupSeparator(Res.Gear);
+            AddWeapon("vest", Res.Gear1);
+            AddWeapon("vesthelm", Res.Gear2);
+            AddWeapon("taser", Res.Gear3);
 
-            addGroupSeparator(Res.Grenades);
-            addWeapon("molotov", Res.Grenade1);
-            addWeapon("decoy", Res.Grenade2);
-            addWeapon("flashbang", Res.Grenade3);
-            addWeapon("hegrenade", Res.Grenade4);
-            addWeapon("smokegrenade", Res.Grenade5);
+            AddGroupSeparator(Res.Grenades);
+            AddWeapon("molotov", Res.Grenade1);
+            AddWeapon("decoy", Res.Grenade2);
+            AddWeapon("flashbang", Res.Grenade3);
+            AddWeapon("hegrenade", Res.Grenade4);
+            AddWeapon("smokegrenade", Res.Grenade5);
         }
         
         void InitGameSettingsTab()
         {
             double rowHeight = 30;
 
-            Func<ConfigEntry, bool, Tuple<TextBlock, Grid, Button, CheckBox>> prepareNewRow = (cfgEntry, needToggle) =>
+            Tuple<TextBlock, Grid, Button, CheckBox> PrepareNewRow(ConfigEntry cfgEntry, bool needToggle)
             {
                 Grid cmdControllerGrid = new Grid
                 {
@@ -964,13 +964,14 @@ namespace ConfigMaker
                 return new Tuple<TextBlock, Grid, Button, CheckBox>(resultCmd, customControlsGrid, toggleButton, checkbox);
             };
 
-            Action<ConfigEntry, double, double, double, double> addIntervalCmdController = (cfgEntry, from, to, step, defaultValue) =>
+            
+            void AddIntervalCmdController(ConfigEntry cfgEntry, double from, double to, double step, double defaultValue)
             {
                 //int rowNum = settingsTabGrid.RowDefinitions.Count;
 
                 // подготовим рутинно создаваемые элементы
                 //var tuple = prepareNewRow(cfgEntry);
-                var tuple = prepareNewRow(cfgEntry, true);
+                var tuple = PrepareNewRow(cfgEntry, true);
                 TextBlock resultCmdBlock = tuple.Item1;
                 Grid sliderGrid = tuple.Item2;
                 Button toggleButton = tuple.Item3;
@@ -1144,11 +1145,11 @@ namespace ConfigMaker
                 slider.Value = defaultValue;
             };
             
-            Action<ConfigEntry, string[], int, bool> addComboboxCmdController = (cfgEntry, names, defaultIndex, isIntegerArg) =>
+            void AddComboboxCmdController(ConfigEntry cfgEntry, string[] names, int defaultIndex, bool isIntegerArg)
             {
                 //int rowNum = settingsTabGrid.RowDefinitions.Count;
                 //var tuple = prepareNewRow(cfgEntry);
-                var tuple = prepareNewRow(cfgEntry, true);
+                var tuple = PrepareNewRow(cfgEntry, true);
                 TextBlock resultCmdBlock = tuple.Item1;
                 Grid comboboxGrid = tuple.Item2;
                 Button toggleButton = tuple.Item3;
@@ -1297,11 +1298,11 @@ namespace ConfigMaker
                 combobox.SelectedIndex = defaultIndex;                
             };
 
-            Action<ConfigEntry, double, bool> addTextboxNumberCmdController = (cfgEntry, defaultValue, asInteger) =>
+            void addTextboxNumberCmdController(ConfigEntry cfgEntry, double defaultValue, bool asInteger)
             {
                 //int rowNum = settingsTabGrid.RowDefinitions.Count;
                 //var tuple = prepareNewRow(cfgEntry);
-                var tuple = prepareNewRow(cfgEntry, true);
+                var tuple = PrepareNewRow(cfgEntry, true);
                 TextBlock resultCmdBlock = tuple.Item1;
                 Grid textboxGrid = tuple.Item2;
                 Button toggleButton = tuple.Item3;
@@ -1447,11 +1448,11 @@ namespace ConfigMaker
                 textbox.Text = fixedDefaultStrValue;
             };
 
-            Action<ConfigEntry, string> addTextboxStringCmdController = (cfgEntry, defaultValue) =>
+            void addTextboxStringCmdController(ConfigEntry cfgEntry, string defaultValue)
             {
                 //int rowNum = settingsTabGrid.RowDefinitions.Count;
                 //var tuple = prepareNewRow(cfgEntry);
-                var tuple = prepareNewRow(cfgEntry, false);
+                var tuple = PrepareNewRow(cfgEntry, false);
                 TextBlock resultCmdBlock = tuple.Item1;
                 Grid textBoxGrid = tuple.Item2;
                 CheckBox checkbox = tuple.Item4;
@@ -1520,7 +1521,7 @@ namespace ConfigMaker
                 textbox.Text = defaultValue;
             };
 
-            Action<string> addGroupHeader = (text) =>
+            void addGroupHeader(string text)
             {
                 //settingsTabGrid.RowDefinitions.Add(
                 //new RowDefinition()
@@ -1544,62 +1545,62 @@ namespace ConfigMaker
             addGroupHeader(Res.CategoryMouseSettings);
             addTextboxNumberCmdController(ConfigEntry.sensitivity, 2.5, false);
             addTextboxNumberCmdController(ConfigEntry.zoom_sensitivity_ratio_mouse, 1, false);
-            addComboboxCmdController(ConfigEntry.m_rawinput, toggleStrings, 1, true);
-            addComboboxCmdController(ConfigEntry.m_customaccel, toggleStrings, 0, true);
-            addIntervalCmdController(ConfigEntry.m_customaccel_exponent, 0.05, 10, 0.05, 1.05);
+            AddComboboxCmdController(ConfigEntry.m_rawinput, toggleStrings, 1, true);
+            AddComboboxCmdController(ConfigEntry.m_customaccel, toggleStrings, 0, true);
+            AddIntervalCmdController(ConfigEntry.m_customaccel_exponent, 0.05, 10, 0.05, 1.05);
 
             addGroupHeader(Res.CategoryClientCommands);
-            addComboboxCmdController(ConfigEntry.cl_autowepswitch, toggleStrings, 1, true);
-            addIntervalCmdController(ConfigEntry.cl_bob_lower_amt, 5, 30, 1, 21);
-            addIntervalCmdController(ConfigEntry.cl_bobamt_lat, 0.1, 2, 0.1, 0.4);
-            addIntervalCmdController(ConfigEntry.cl_bobamt_vert, 0.1, 2, 0.1, 0.25);
-            addIntervalCmdController(ConfigEntry.cl_bobcycle, 0.1, 2, 0.01, 0.98);
+            AddComboboxCmdController(ConfigEntry.cl_autowepswitch, toggleStrings, 1, true);
+            AddIntervalCmdController(ConfigEntry.cl_bob_lower_amt, 5, 30, 1, 21);
+            AddIntervalCmdController(ConfigEntry.cl_bobamt_lat, 0.1, 2, 0.1, 0.4);
+            AddIntervalCmdController(ConfigEntry.cl_bobamt_vert, 0.1, 2, 0.1, 0.25);
+            AddIntervalCmdController(ConfigEntry.cl_bobcycle, 0.1, 2, 0.01, 0.98);
             addTextboxNumberCmdController(ConfigEntry.cl_clanid, 0, true);
-            addComboboxCmdController(ConfigEntry.cl_color, new string[] { Res.Yellow, Res.Purple, Res.Green, Res.Blue, Res.Orange }, 0, true);
-            addComboboxCmdController(ConfigEntry.cl_dm_buyrandomweapons, toggleStrings, 1, true);
-            addComboboxCmdController(ConfigEntry.cl_draw_only_deathnotices, toggleStrings, 1, true);
-            addComboboxCmdController(ConfigEntry.cl_hud_color,
+            AddComboboxCmdController(ConfigEntry.cl_color, new string[] { Res.Yellow, Res.Purple, Res.Green, Res.Blue, Res.Orange }, 0, true);
+            AddComboboxCmdController(ConfigEntry.cl_dm_buyrandomweapons, toggleStrings, 1, true);
+            AddComboboxCmdController(ConfigEntry.cl_draw_only_deathnotices, toggleStrings, 1, true);
+            AddComboboxCmdController(ConfigEntry.cl_hud_color,
                 new string[] { Res.Default, Res.White, Res.LightBlue, Res.Blue, Res.Purple, Res.Pink, Res.Red, Res.Orange, Res.Yellow, Res.Green, Res.Aqua }, 0, true);
-            addComboboxCmdController(ConfigEntry.cl_hud_healthammo_style, new string[] { Res.Health_Style0, Res.Health_Style1 }, 0, true);
-            addIntervalCmdController(ConfigEntry.cl_hud_radar_scale, 0.8, 1.3, 0.1, 1);
-            addIntervalCmdController(ConfigEntry.cl_hud_background_alpha, 0, 1, 0.1, 1);
-            addComboboxCmdController(ConfigEntry.cl_hud_playercount_pos, new string[] { Res.Top, Res.Bottom }, 0, true);
-            addComboboxCmdController(ConfigEntry.cl_hud_playercount_showcount, new string[] { Res.ShowAvatars, Res.ShowCount}, 0, true);
-            addComboboxCmdController(ConfigEntry.cl_loadout_colorweaponnames, toggleStrings, 0, true);
-            addComboboxCmdController(ConfigEntry.cl_mute_enemy_team, toggleStrings, 0, true);
+            AddComboboxCmdController(ConfigEntry.cl_hud_healthammo_style, new string[] { Res.Health_Style0, Res.Health_Style1 }, 0, true);
+            AddIntervalCmdController(ConfigEntry.cl_hud_radar_scale, 0.8, 1.3, 0.1, 1);
+            AddIntervalCmdController(ConfigEntry.cl_hud_background_alpha, 0, 1, 0.1, 1);
+            AddComboboxCmdController(ConfigEntry.cl_hud_playercount_pos, new string[] { Res.Top, Res.Bottom }, 0, true);
+            AddComboboxCmdController(ConfigEntry.cl_hud_playercount_showcount, new string[] { Res.ShowAvatars, Res.ShowCount}, 0, true);
+            AddComboboxCmdController(ConfigEntry.cl_loadout_colorweaponnames, toggleStrings, 0, true);
+            AddComboboxCmdController(ConfigEntry.cl_mute_enemy_team, toggleStrings, 0, true);
             addTextboxNumberCmdController(ConfigEntry.cl_pdump, -1, true);
-            addComboboxCmdController(ConfigEntry.cl_radar_always_centered, toggleStrings, 0, true);
-            addIntervalCmdController(ConfigEntry.cl_radar_icon_scale_min, 0.4, 1, 0.01, 0.7);
-            addIntervalCmdController(ConfigEntry.cl_radar_scale, 0.25, 1, 0.01, 0.7);
-            addComboboxCmdController(ConfigEntry.cl_righthand, toggleStrings, 0, true);
-            addComboboxCmdController(ConfigEntry.cl_showfps, toggleStrings, 0, true);
-            addComboboxCmdController(ConfigEntry.cl_show_clan_in_death_notice, toggleStrings, 0, true);
-            addComboboxCmdController(ConfigEntry.cl_showpos, toggleStrings, 0, true);
-            addComboboxCmdController(ConfigEntry.cl_teammate_colors_show, toggleStrings, 0, true);
-            addComboboxCmdController(ConfigEntry.cl_teamid_overhead_always, toggleStrings, 0, true);
-            addIntervalCmdController(ConfigEntry.cl_teamid_overhead_name_alpha, 0, 255, 1, 100);
-            addIntervalCmdController(ConfigEntry.cl_timeout, 4, 30, 1, 30);
-            addComboboxCmdController(ConfigEntry.cl_use_opens_buy_menu, toggleStrings, 1, true);
-            addIntervalCmdController(ConfigEntry.cl_viewmodel_shift_left_amt, 0.5, 2, 0.05, 1.5);
-            addIntervalCmdController(ConfigEntry.cl_viewmodel_shift_right_amt, 0.25, 2, 0.05, 0.75);
+            AddComboboxCmdController(ConfigEntry.cl_radar_always_centered, toggleStrings, 0, true);
+            AddIntervalCmdController(ConfigEntry.cl_radar_icon_scale_min, 0.4, 1, 0.01, 0.7);
+            AddIntervalCmdController(ConfigEntry.cl_radar_scale, 0.25, 1, 0.01, 0.7);
+            AddComboboxCmdController(ConfigEntry.cl_righthand, toggleStrings, 0, true);
+            AddComboboxCmdController(ConfigEntry.cl_showfps, toggleStrings, 0, true);
+            AddComboboxCmdController(ConfigEntry.cl_show_clan_in_death_notice, toggleStrings, 0, true);
+            AddComboboxCmdController(ConfigEntry.cl_showpos, toggleStrings, 0, true);
+            AddComboboxCmdController(ConfigEntry.cl_teammate_colors_show, toggleStrings, 0, true);
+            AddComboboxCmdController(ConfigEntry.cl_teamid_overhead_always, toggleStrings, 0, true);
+            AddIntervalCmdController(ConfigEntry.cl_teamid_overhead_name_alpha, 0, 255, 1, 100);
+            AddIntervalCmdController(ConfigEntry.cl_timeout, 4, 30, 1, 30);
+            AddComboboxCmdController(ConfigEntry.cl_use_opens_buy_menu, toggleStrings, 1, true);
+            AddIntervalCmdController(ConfigEntry.cl_viewmodel_shift_left_amt, 0.5, 2, 0.05, 1.5);
+            AddIntervalCmdController(ConfigEntry.cl_viewmodel_shift_right_amt, 0.25, 2, 0.05, 0.75);
 
             addGroupHeader(Res.CategoryCrosshair);
-            addComboboxCmdController(ConfigEntry.cl_crosshair_drawoutline, toggleStrings, 0, true);
-            addIntervalCmdController(ConfigEntry.cl_crosshair_dynamic_maxdist_splitratio, 0, 1, 0.1, 0.35);
-            addIntervalCmdController(ConfigEntry.cl_crosshair_dynamic_splitalpha_innermod, 0, 1, 0.01, 1);
-            addIntervalCmdController(ConfigEntry.cl_crosshair_dynamic_splitalpha_outermod, 0.3, 1, 0.01, 0.5);
+            AddComboboxCmdController(ConfigEntry.cl_crosshair_drawoutline, toggleStrings, 0, true);
+            AddIntervalCmdController(ConfigEntry.cl_crosshair_dynamic_maxdist_splitratio, 0, 1, 0.1, 0.35);
+            AddIntervalCmdController(ConfigEntry.cl_crosshair_dynamic_splitalpha_innermod, 0, 1, 0.01, 1);
+            AddIntervalCmdController(ConfigEntry.cl_crosshair_dynamic_splitalpha_outermod, 0.3, 1, 0.01, 0.5);
             addTextboxNumberCmdController(ConfigEntry.cl_crosshair_dynamic_splitdist, 7, true);
-            addIntervalCmdController(ConfigEntry.cl_crosshair_outlinethickness, 0.1, 3, 0.1, 1);
+            AddIntervalCmdController(ConfigEntry.cl_crosshair_outlinethickness, 0.1, 3, 0.1, 1);
             addTextboxNumberCmdController(ConfigEntry.cl_crosshair_sniper_width, 1, false);
-            addIntervalCmdController(ConfigEntry.cl_crosshairalpha, 0, 255, 1, 200);
-            addComboboxCmdController(ConfigEntry.cl_crosshairdot, toggleStrings, 1, true);
-            addComboboxCmdController(ConfigEntry.cl_crosshairgap, toggleStrings, 1, true);
-            addComboboxCmdController(ConfigEntry.cl_crosshair_t, toggleStrings, 1, true);
-            addComboboxCmdController(ConfigEntry.cl_crosshairgap_useweaponvalue, toggleStrings, 1, true);
+            AddIntervalCmdController(ConfigEntry.cl_crosshairalpha, 0, 255, 1, 200);
+            AddComboboxCmdController(ConfigEntry.cl_crosshairdot, toggleStrings, 1, true);
+            AddComboboxCmdController(ConfigEntry.cl_crosshairgap, toggleStrings, 1, true);
+            AddComboboxCmdController(ConfigEntry.cl_crosshair_t, toggleStrings, 1, true);
+            AddComboboxCmdController(ConfigEntry.cl_crosshairgap_useweaponvalue, toggleStrings, 1, true);
             addTextboxNumberCmdController(ConfigEntry.cl_crosshairsize, 5, false);
-            addIntervalCmdController(ConfigEntry.cl_crosshairstyle, 0, 5, 1, 2);
+            AddIntervalCmdController(ConfigEntry.cl_crosshairstyle, 0, 5, 1, 2);
             addTextboxNumberCmdController(ConfigEntry.cl_crosshairthickness, 0.5, false);
-            addComboboxCmdController(ConfigEntry.cl_crosshairusealpha, toggleStrings, 1, true);
+            AddComboboxCmdController(ConfigEntry.cl_crosshairusealpha, toggleStrings, 1, true);
             addTextboxNumberCmdController(ConfigEntry.cl_fixedcrosshairgap, 3, false);
 
             // текстовые аргументы
@@ -1609,17 +1610,18 @@ namespace ConfigMaker
             addTextboxStringCmdController(ConfigEntry.connect, "12.34.56.78:27015");
 
             addGroupHeader(Res.CategoryNetGraphSettings);
-            addComboboxCmdController(ConfigEntry.net_graph, toggleStrings, 0, true);
+            AddComboboxCmdController(ConfigEntry.net_graph, toggleStrings, 0, true);
             addTextboxNumberCmdController(ConfigEntry.net_graphheight, 64, true);
             addTextboxNumberCmdController(ConfigEntry.net_graphpos, 1, true);
-            addComboboxCmdController(ConfigEntry.net_graphproportionalfont, toggleStrings, 0, true);
-
-            //settingsTabGrid.RowDefinitions.Add(new RowDefinition() { Height = new GridLength(20) });
+            AddComboboxCmdController(ConfigEntry.net_graphproportionalfont, toggleStrings, 0, true);
         }
 
         void InitExtra()
         {
-            EntryUiBinding customCmdsBinding = new EntryUiBinding()
+            // custom command execution
+            this.customCmdHeaderCheckbox.Click += HandleEntryClick;
+            this.customCmdHeaderCheckbox.Tag = ConfigEntry.ExecCustomCmds;
+            this.entryUiBindings.Add(ConfigEntry.ExecCustomCmds, new EntryUiBinding()
             {
                 AttachedCheckbox = customCmdHeaderCheckbox,
                 Focus = () => extraTabButton.IsChecked = true,
@@ -1664,16 +1666,11 @@ namespace ConfigMaker
                         addCmdButton.RaiseEvent(new RoutedEventArgs(ButtonBase.ClickEvent));
                     }
                 }
-            };
-            this.customCmdHeaderCheckbox.Click += HandleEntryClick;
-            this.customCmdHeaderCheckbox.Tag = ConfigEntry.ExecCustomCmds;
-            this.entryUiBindings.Add(ConfigEntry.ExecCustomCmds, customCmdsBinding);
-
+            });
 
             // cycle crosshairs
             this.cycleChHeaderCheckbox.Click += HandleEntryClick;
             this.cycleChHeaderCheckbox.Tag = ConfigEntry.CycleCrosshair;
-
             this.entryUiBindings.Add(ConfigEntry.CycleCrosshair, new EntryUiBinding()
             {
                 AttachedCheckbox = cycleChHeaderCheckbox,
@@ -1751,7 +1748,6 @@ namespace ConfigMaker
             // volume regulator
             this.volumeRegulatorCheckbox.Click += HandleEntryClick;
             this.volumeRegulatorCheckbox.Tag = ConfigEntry.VolumeRegulator;
-
             this.entryUiBindings.Add(ConfigEntry.VolumeRegulator, new EntryUiBinding()
             {
                 AttachedCheckbox = volumeRegulatorCheckbox,
@@ -1867,7 +1863,7 @@ namespace ConfigMaker
 
         void InitAliasController()
         {
-            EntryUiBinding entryBinding = new EntryUiBinding()
+            this.entryUiBindings.Add(ConfigEntry.ExtraAliasSet, new EntryUiBinding()
             {
                 Generate = () =>
                 {
@@ -1885,7 +1881,7 @@ namespace ConfigMaker
                         foreach (Entry entry in attachedEntries)
                             foreach (Executable dependency in entry.Dependencies)
                                 dependencies.Add(dependency);
-                        
+
                         ParametrizedEntry<Entry[]> aliasEntry = new ParametrizedEntry<Entry[]>()
                         {
                             PrimaryKey = ConfigEntry.ExtraAlias,
@@ -1932,8 +1928,7 @@ namespace ConfigMaker
                     this.ResetAttachmentPanels();
                     this.ClearPanel_s(aliasPanel);
                 }
-            };
-            this.entryUiBindings.Add(ConfigEntry.ExtraAliasSet, entryBinding);
+            });
         }
         #endregion
 
@@ -2190,7 +2185,7 @@ namespace ConfigMaker
             // Очистим панели и сбросим настройки интерфейса
             ResetAttachmentPanels();
 
-            Action<ConfigEntry, WrapPanel> addButton = (cfgEntry, panel) =>
+            void AddAttachment(ConfigEntry cfgEntry, WrapPanel panel)
             {
                 // Создадим новую кнопку и зададим нужный стиль
 
@@ -2224,9 +2219,9 @@ namespace ConfigMaker
                 {
                     // Добавим в нужную панель
                     if (entry.OnKeyDown != null)
-                        addButton(entry.PrimaryKey, onKeyDownAttachmentsPanel);
+                        AddAttachment(entry.PrimaryKey, onKeyDownAttachmentsPanel);
                     else
-                        addButton(entry.PrimaryKey, onKeyReleaseAttachmentsPanel);
+                        AddAttachment(entry.PrimaryKey, onKeyReleaseAttachmentsPanel);
 
                     // Обновим интерфейс согласно элементам, привязанным к текущему состоянию
                     attachedEntries.Where(e => this.IsEntryAttachedToCurrentState(e))
@@ -2242,7 +2237,7 @@ namespace ConfigMaker
                 // Теперь заполним панели новыми элементами
                 attachedEntries.ForEach(entry =>
                 {
-                    addButton(entry.PrimaryKey, solidAttachmentsPanel);
+                    AddAttachment(entry.PrimaryKey, solidAttachmentsPanel);
                     // Обновим интерфейс согласно элементам, привязанным к текущему состоянию
                     this.entryUiBindings[entry.PrimaryKey].UpdateUI(entry);
                 });
@@ -2256,7 +2251,7 @@ namespace ConfigMaker
 
                 attachedEntries.ForEach(entry =>
                 {
-                    addButton(entry.PrimaryKey, solidAttachmentsPanel);
+                    AddAttachment(entry.PrimaryKey, solidAttachmentsPanel);
                     // Обновим интерфейс согласно элементам, привязанным к текущему состоянию
                     this.entryUiBindings[entry.PrimaryKey].UpdateUI(entry);
                 });
