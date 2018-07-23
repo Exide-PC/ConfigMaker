@@ -17,6 +17,8 @@
     <UserControl.Resources>
         <SolidColorBrush x:Key="DefaultKeyBackground" Color="#FFDDDDDD"/>
         <Style TargetType="Button" BasedOn="{StaticResource MaterialDesignRaisedLightButton}">
+            <!--<Setter Property="Background" Value="{StaticResource MaterialDesignCardBackground}"/>-->
+            <!--<Setter Property="BorderThickness" Value="2"/>-->
             <Setter Property="Margin" Value="2"/>
             <Setter Property="Grid.ColumnSpan" Value="2"/>
             <Setter Property="FontSize" Value="12"/>

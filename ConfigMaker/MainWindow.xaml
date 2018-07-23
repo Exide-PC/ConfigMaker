@@ -20,31 +20,12 @@
     <Window.Resources>
         <converters:NameToEnableConverter x:Key="nameToEnableConverter"/>
         <converters:IsNullConverter x:Key="isNullConverter"/>
-        <SolidColorBrush x:Key="EnabledBackgroundColor" Color="White"/>
-        <SolidColorBrush x:Key="EnabledBorderColor" Color="Gray"/>
-        <SolidColorBrush x:Key="EnabledBorderColor_MouseOver" Color="#7EB4EA"/>
-        <SolidColorBrush x:Key="DisabledBackgroundColor" Color="WhiteSmoke"/>
-        <SolidColorBrush x:Key="DisabledBorderColor" Color="#C4C6C9"/>
 
-        <SolidColorBrush x:Key="ActiveAttachmentsBorderBrush" Color="Lime"/>
-        <SolidColorBrush x:Key="UnactiveAttachmentsBorderBrush" Color="Gray"/>
-        <SolidColorBrush x:Key="KeyInSequenceBrush" Color="Lime"/>
-        <SolidColorBrush x:Key="FirstKeyInSequence" Color="OrangeRed"/>
-        <SolidColorBrush x:Key="SecondKeyInSequence" Color="Orange"/>
         <Style x:Key="BubbleButton" TargetType="materialDesign:Chip">
             <Setter Property="FontSize" Value="10"/>
             <Setter Property="MinWidth" Value="40"/>
             <Setter Property="Margin" Value="2"/>
             <Setter Property="FontSize" Value="15"/>
-            <!--<Setter Property="Template">
-                <Setter.Value>
-                    <ControlTemplate TargetType="Button">
-                        <Border CornerRadius="2" BorderThickness="1" BorderBrush="Gray" Width="{Binding}" Height="{Binding}">
-                            <ContentPresenter Content="{TemplateBinding Content}" Margin="1" HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}"/>
-                        </Border>
-                    </ControlTemplate>
-                </Setter.Value>
-            </Setter>-->
         </Style>
         <Style x:Key="CustomBorder" TargetType="Border">
             <!--<Setter Property="Background" Value="{StaticResource MaterialDesignBackground}"/>-->
@@ -53,6 +34,18 @@
             <Style.Triggers>
                 <Trigger Property="IsEnabled" Value="False">
                     <Setter Property="BorderBrush" Value="{StaticResource MaterialDesignCheckBoxDisabled}"/>
+                </Trigger>
+            </Style.Triggers>
+        </Style>
+        <Style x:Key="AttachmentBorder" TargetType="Border">
+            <Setter Property="BorderBrush" Value="{StaticResource MaterialDesignCheckBoxDisabled}"/>
+            <Setter Property="BorderThickness" Value="2"/>
+            <Setter Property="Background" Value="Transparent"/>
+            <Setter Property="Margin" Value="1"/>
+            <Setter Property="local:SelectionAssistant.IsSelected" Value="False"/>
+            <Style.Triggers>
+                <Trigger Property="local:SelectionAssistant.IsSelected" Value="True">
+                    <Setter Property="BorderBrush" Value="{StaticResource SecondaryAccentBrush}"/>
                 </Trigger>
             </Style.Triggers>
         </Style>
@@ -388,12 +381,6 @@
                                 <DataTrigger Binding="{Binding ElementName=mainWindow, Path=StateBinding}" Value="KeyUp">
                                     <Setter Property="Visibility" Value="Visible"/>
                                 </DataTrigger>
-                                <!--<DataTrigger Binding="{Binding ElementName=mainWindow, Path=StateBinding}" Value="Default">
-                                    <Setter Property="Visibility" Value="Collapsed"/>
-                                </DataTrigger>
-                                <DataTrigger Binding="{Binding ElementName=mainWindow, Path=StateBinding}" Value="Alias">
-                                    <Setter Property="Visibility" Value="Collapsed"/>
-                                </DataTrigger>-->
                             </Style.Triggers>
                         </Style>
                     </Grid.Style>
@@ -401,17 +388,13 @@
                         <ColumnDefinition/>
                         <ColumnDefinition/>
                     </Grid.ColumnDefinitions>
-                    <Border Name="onKeyDownAttachmentsBorder" Grid.Column="0" Margin="1" Background="Transparent" BorderThickness="2" MouseLeftButtonUp="AttachmentsBorder_Click">
+                    <Border Tag="KeyDown" Grid.Column="0" MouseLeftButtonUp="AttachmentsBorder_Click">
                         <Border.Style>
-                            <Style TargetType="Border">
-                                <Setter Property="BorderBrush" Value="{StaticResource MaterialDesignCheckBoxOff}"/>
+                            <Style TargetType="Border" BasedOn="{StaticResource AttachmentBorder}">
                                 <Style.Triggers>
                                     <DataTrigger Binding="{Binding ElementName=mainWindow, Path=StateBinding}" Value="KeyDown">
-                                        <Setter Property="BorderBrush" Value="{StaticResource SecondaryAccentBrush}"/>
+                                        <Setter Property="local:SelectionAssistant.IsSelected" Value="True"/>
                                     </DataTrigger>
-                                    <!--<DataTrigger Binding="{Binding ElementName=mainWindow, Path=StateBinding}" Value="KeyUp">
-                                        <Setter Property="BorderBrush" Value="{StaticResource MaterialDesignCheckBoxOff}"/>
-                                    </DataTrigger>-->
                                 </Style.Triggers>
                             </Style>
                         </Border.Style>
@@ -422,13 +405,12 @@
                             <TextBlock Name="keyDownPanelLabel" VerticalAlignment="Bottom" HorizontalAlignment="Right" Margin="0,0,18,0" Text="{x:Static res:Resources.KeyPressure_Label}" FontStyle="Italic" FontSize="10"/>
                         </Grid>
                     </Border>
-                    <Border Grid.Column="1" Margin="1" Background="Transparent" BorderThickness="2" MouseLeftButtonUp="AttachmentsBorder_Click">
+                    <Border Tag="KeyUp" Grid.Column="1" MouseLeftButtonUp="AttachmentsBorder_Click">
                         <Border.Style>
-                            <Style TargetType="Border">
-                                <Setter Property="BorderBrush" Value="{StaticResource MaterialDesignCheckBoxOff}"/>
+                            <Style TargetType="Border" BasedOn="{StaticResource AttachmentBorder}">
                                 <Style.Triggers>
                                     <DataTrigger Binding="{Binding ElementName=mainWindow, Path=StateBinding}" Value="KeyUp">
-                                        <Setter Property="BorderBrush" Value="{StaticResource SecondaryAccentBrush}"/>
+                                        <Setter Property="local:SelectionAssistant.IsSelected" Value="True"/>
                                     </DataTrigger>
                                 </Style.Triggers>
                             </Style>
@@ -461,28 +443,16 @@
                                 <DataTrigger Binding="{Binding ElementName=mainWindow, Path=StateBinding}" Value="KeyUp">
                                     <Setter Property="Visibility" Value="Collapsed"/>
                                 </DataTrigger>
-                                <!--<DataTrigger Binding="{Binding ElementName=mainWindow, Path=StateBinding}" Value="Default">
-                                    <Setter Property="Visibility" Value="Visible"/>
-                                </DataTrigger>
-                                <DataTrigger Binding="{Binding ElementName=mainWindow, Path=StateBinding}" Value="Alias">
-                                    <Setter Property="Visibility" Value="Visible"/>
-                                </DataTrigger>-->
                             </Style.Triggers>
                         </Style>
                     </Grid.Style>
-                    <Border Grid.Row="2" Grid.Column="0" Grid.ColumnSpan="4" Margin="1" Background="Transparent" BorderThickness="2">
+                    <Border Grid.Row="2" Grid.Column="0" Grid.ColumnSpan="4">
                         <Border.Style>
-                            <Style TargetType="Border">
-                                <Setter Property="BorderBrush" Value="{StaticResource SecondaryAccentBrush}"/>
+                            <Style TargetType="Border" BasedOn="{StaticResource AttachmentBorder}">
+                                <Setter Property="local:SelectionAssistant.IsSelected" Value="True"/>
                                 <Style.Triggers>
-                                    <!--<DataTrigger Binding="{Binding ElementName=mainWindow, Path=StateBinding}" Value="Default">
-                                        <Setter Property="BorderBrush" Value="{StaticResource SecondaryAccentBrush}"/>
-                                    </DataTrigger>
-                                    <DataTrigger Binding="{Binding ElementName=mainWindow, Path=StateBinding}" Value="Alias">
-                                        <Setter Property="BorderBrush" Value="{StaticResource SecondaryAccentBrush}"/>
-                                    </DataTrigger>-->
                                     <DataTrigger Binding="{Binding ElementName=mainWindow, Path=StateBinding}" Value="InvalidState">
-                                        <Setter Property="BorderBrush" Value="{StaticResource UnactiveAttachmentsBorderBrush}"/>
+                                        <Setter Property="local:SelectionAssistant.IsSelected" Value="False"/>
                                     </DataTrigger>
                                 </Style.Triggers>
                             </Style>
@@ -504,19 +474,10 @@
                         <Style TargetType="Grid">
                             <Setter Property="Visibility" Value="Visible" />
                             <Style.Triggers>
-                                <!--<DataTrigger Binding="{Binding ElementName=iKeyboard, Path=IsSelected}" Value="True">
-                                    <Setter Property="Visibility" Value="Visible"/>
-                                </DataTrigger>
-                                <DataTrigger Binding="{Binding ElementName=iKeyboard, Path=IsSelected}" Value="False">
-                                    <Setter Property="Visibility" Value="Collapsed"/>
-                                </DataTrigger>-->
                                 <!--Удобнее привязаться к элементу, не спрашивай почему-->
                                 <DataTrigger Binding="{Binding ElementName=iAlias, Path=IsSelected}" Value="True">
                                     <Setter Property="Visibility" Value="Collapsed"/>
                                 </DataTrigger>
-                                <!--<DataTrigger Binding="{Binding ElementName=mainWindow, Path=StateBinding}" Value="Alias">
-                                    <Setter Property="Visibility" Value="Collapsed"/>
-                                </DataTrigger>-->
                             </Style.Triggers>
                         </Style>
                     </Grid.Style>
@@ -530,12 +491,6 @@
                                 <DataTrigger Binding="{Binding ElementName=iAlias, Path=IsSelected}" Value="True">
                                     <Setter Property="Visibility" Value="Visible"/>
                                 </DataTrigger>
-                                <!--<DataTrigger Binding="{Binding ElementName=iAlias, Path=IsSelected}" Value="True">
-                                    <Setter Property="Visibility" Value="Visible"/>
-                                </DataTrigger>
-                                <DataTrigger Binding="{Binding ElementName=iAlias, Path=IsSelected}" Value="False">
-                                    <Setter Property="Visibility" Value="Collapsed"/>
-                                </DataTrigger>-->
                             </Style.Triggers>
                         </Style>
                     </Grid.Style>

@@ -81,6 +81,7 @@
     <Compile Include="GameSettingsRow.cs" />
     <Compile Include="Converters\IsNullConverter.cs" />
     <Compile Include="Converters\NameToEnableConverter.cs" />
+    <Compile Include="SelectionAssistant.cs" />
     <Compile Include="StateUiBinding.cs" />
     <Compile Include="ToggleWindow.xaml.cs">
       <DependentUpon>ToggleWindow.xaml</DependentUpon>

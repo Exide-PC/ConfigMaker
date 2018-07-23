@@ -140,7 +140,7 @@ namespace ConfigMaker
                 return;
 
             Border border = (Border)sender;
-            bool isKeyDownBinding = border.Name == onKeyDownAttachmentsBorder.Name;
+            bool isKeyDownBinding = ((FrameworkElement)sender).Tag as string == EntryStateBinding.KeyDown.ToString();
 
             this.StateBinding = isKeyDownBinding ? EntryStateBinding.KeyDown : EntryStateBinding.KeyUp;
 
@@ -1938,9 +1938,7 @@ namespace ConfigMaker
             // сбрасываем цвета перед обновлением
             this.kb.ResetButtons();
 
-            SolidColorBrush keyInSequenceBrush = (SolidColorBrush)this.Resources["KeyInSequenceBrush"];
-            SolidColorBrush firstKeyBrush = (SolidColorBrush)this.Resources["FirstKeyInSequence"];
-            SolidColorBrush secondKeyBrush = (SolidColorBrush)this.Resources["SecondKeyInSequence"];
+            SolidColorBrush keyInSequenceBrush = (SolidColorBrush)this.FindResource("SecondaryAccentBrush");
 
             Style firstKeyStyle = this.kb.AdaptButtonStyle((Style)this.FindResource("MaterialDesignRaisedButton"));
             Style secondKeyStyle = this.kb.AdaptButtonStyle((Style)this.FindResource("MaterialDesignRaisedDarkButton"));
