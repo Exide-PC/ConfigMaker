@@ -1830,50 +1830,57 @@ namespace ConfigMaker
         void ColorizeKeyboard()
         {
             // сбрасываем цвета перед обновлением
-            this.kb.ResetButtons();
+            foreach (Button key in this.kb)
+            {
+                key.ClearValue(ButtonBase.BackgroundProperty);
+                key.ClearValue(ButtonBase.ForegroundProperty);
+            }
 
-            SolidColorBrush keyInSequenceBrush = (SolidColorBrush)this.FindResource("SecondaryAccentBrush");
+            SolidColorBrush keyInSequenceBackground = (SolidColorBrush)this.FindResource("SecondaryAccentBrush");
+            SolidColorBrush keyInSequenceForeground = (SolidColorBrush)this.FindResource("SecondaryAccentForegroundBrush");
+            
+            SolidColorBrush firstKeyBackground = (SolidColorBrush)this.FindResource("PrimaryHueMidBrush");
+            SolidColorBrush firstKeyForeground = (SolidColorBrush)this.FindResource("PrimaryHueMidForegroundBrush");
 
-            Style firstKeyStyle = this.kb.AdaptButtonStyle((Style)this.FindResource("MaterialDesignRaisedButton"));
-            Style secondKeyStyle = this.kb.AdaptButtonStyle((Style)this.FindResource("MaterialDesignRaisedDarkButton"));
-            Style keyInSequenceStyle = this.kb.AdaptButtonStyle((Style)this.FindResource("MaterialDesignRaisedAccentButton"));
+            SolidColorBrush secondKeyBackground = (SolidColorBrush)this.FindResource("PrimaryHueDarkBrush");
+            SolidColorBrush secondKeyForeground = (SolidColorBrush)this.FindResource("PrimaryHueDarkForegroundBrush");
 
             // Все элементы конфига
             var allEntries = this.cfgManager.Entries;
 
-            // Если последовательность не задана, то закрасим красным все кнопки, которые 1-е в последовательности
-            //if (this.currentKeySequence == null)
-            //{
+            // Закрасим первым цветом все кнопки, которые 1-е в последовательности
             allEntries.ToList()
             .ForEach(pair =>
             {
-                //this.kb.GetButtonByName(pair.Key.Keys[0]).BaseColor = firstKeyBrush; // TODO
-                this.kb.GetButtonByName(pair.Key.Keys[0]).Style = firstKeyStyle;
+                Button button = this.kb.GetButtonByName(pair.Key.Keys[0]);
+                button.Background = firstKeyBackground;
+                button.Foreground = firstKeyForeground;
             });
-            //}
-            // Если последовательность из 1 кнопки - закрасим оранжевым все кнопки, 
+
+            // Если в текущей последовательности 1 кнопка - закрасим вторым цветом все кнопки, 
             // которые связаны с текущей и являются вторыми в последовательности
             if (currentKeySequence != null && this.currentKeySequence.Keys.Length == 1)
             {
                 allEntries.Where(p => p.Key.Keys.Length == 2 && p.Key.Keys[0] == currentKeySequence[0]).ToList()
                .ForEach(pair =>
                {
-                   //this.kb.GetButtonByName(pair.Key.Keys[1]).BaseColor = secondKeyBrush; // TODO
-                   this.kb.GetButtonByName(pair.Key.Keys[1]).Style = secondKeyStyle;
+                   Button button = this.kb.GetButtonByName(pair.Key.Keys[1]);
+                   button.Background = secondKeyBackground;
+                   button.Foreground = secondKeyForeground;
                });
             }
 
-            // ВЫделим теперь все кнопки в текущей последовательности
+            // Теперь выделим акцентным цветом все кнопки в текущей последовательности
             if (currentKeySequence != null)
             {
-                //this.kb.GetButtonByName(currentKeySequence[0]).BaseColor = keyInSequenceBrush; // TODO
-                this.kb.GetButtonByName(currentKeySequence[0]).Style = keyInSequenceStyle;
+                Button seqKey1 = this.kb.GetButtonByName(currentKeySequence[0]);
+                seqKey1.Background = keyInSequenceBackground;
+                seqKey1.Foreground = keyInSequenceForeground;
                 if (currentKeySequence.Keys.Length == 2)
                 {
-                    ConfigMaker.Converters.ColorConverter colorConverter = new ConfigMaker.Converters.ColorConverter();
-                    SolidColorBrush darkerBrush = (SolidColorBrush)colorConverter.Convert(keyInSequenceBrush, null, "Darker", null);
-                    //this.kb.GetButtonByName(currentKeySequence[1]).BaseColor = darkerBrush; // TODO
-                    this.kb.GetButtonByName(currentKeySequence[1]).Style = keyInSequenceStyle;
+                    Button seqKey2 = this.kb.GetButtonByName(currentKeySequence[1]);
+                    seqKey2.Background = keyInSequenceBackground;
+                    seqKey2.Foreground = keyInSequenceForeground;
                 }
             }
         }

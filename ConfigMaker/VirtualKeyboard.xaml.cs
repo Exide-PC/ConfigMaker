@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -18,21 +19,12 @@ namespace ConfigMaker
     /// <summary>
     /// Interaction logic for VirtualKeyboard.xaml
     /// </summary>
-    public partial class VirtualKeyboard : UserControl
+    public partial class VirtualKeyboard : UserControl, IEnumerable<Button>
     {
         public VirtualKeyboard()
         {
             InitializeComponent();
-
-            this.defaultStyle = (Style)this.Resources[typeof(Button)];
-
-            //foreach (UIElement element in this.grid.Children.OfType<Button>())
-            //{
-            //    ((CustomButton)element).Click += CustomButton_Click;
-            //}
         }
-
-        Style defaultStyle;
 
         [Flags]
         public enum SpecialKey
@@ -55,44 +47,17 @@ namespace ConfigMaker
 
             this.OnKeyboardKeyDown?.Invoke(this, new KeyboardClickRoutedEvtArgs(e, flags));
         }
-        
-        public Style AdaptButtonStyle(Style style)
-        {
-            // Создадим новый стиль, базирующийся на исходном
-            Style adapted = new Style(typeof(Button), style);
-
-            // И дополним его сеттерами каноничного стиля
-            foreach (var setter in this.defaultStyle.Setters)
-                adapted.Setters.Add(setter);
-
-            return adapted;
-        }
-
-        public Button[] GetEnabledButtons()
-        {
-            return this.grid.Children.Cast<Button>().Where(b => b.IsEnabled).ToArray();
-        }
 
         public Button GetButtonByName(string key)
         {
             key = key.ToLower();
-
             return this.grid.Children.OfType<Button>().FirstOrDefault(b => ((string)b.Tag).ToLower() == key);
         }
 
-        public void ResetButtons()
-        {
-            foreach (Button b in this.grid.Children.OfType<Button>())
-                b.Style = this.defaultStyle;
-            //foreach (Button b in this.grid.Children.OfType<Button>())
-            //    b.BaseColor = (SolidColorBrush)this.Resources["DefaultKeyBackground"];
-        }
 
-        public void ResetButton(string key)
-        {
-            Button selectedButton = this.GetButtonByName(key);
-            selectedButton.Style = this.defaultStyle;
-        }
+        public IEnumerator<Button> GetEnumerator() => this.grid.Children.OfType<Button>().GetEnumerator();
+
+        IEnumerator IEnumerable.GetEnumerator() => this.GetEnumerator();
 
         public event EventHandler<KeyboardClickRoutedEvtArgs> OnKeyboardKeyDown;
 
