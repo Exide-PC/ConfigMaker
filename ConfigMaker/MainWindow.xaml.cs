@@ -42,8 +42,6 @@ namespace ConfigMaker
 
         Dictionary<ConfigEntry, EntryUiBinding> entryUiBindings = new Dictionary<ConfigEntry, EntryUiBinding>();
 
-        //public static Locale CurrentLocale = null;
-
         public EntryStateBinding StateBinding
         {
             get => (EntryStateBinding) GetValue(StateBindingProperty);
@@ -78,9 +76,6 @@ namespace ConfigMaker
         {
             // Добавляем слушателя на нажатие виртуальной клавиатуры
             this.kb.OnKeyboardKeyDown += KeyboardKeyDownHandler;
-
-            // Задаем локализацию
-            //CurrentLocale = new RussianLocale();
 
             InitActionTab();
             InitBuyTab();
@@ -156,10 +151,6 @@ namespace ConfigMaker
             {
                 // При выборе клавиатуры по умолчанию не выбрана последовательность
                 this.StateBinding = EntryStateBinding.InvalidState;
-                //if (this.currentKeySequence != null)
-                //    this.StateBinding = EntryStateBinding.KeyDown;
-                //else
-                //    this.StateBinding = EntryStateBinding.InvalidState;
             }
             else
             {
@@ -469,7 +460,6 @@ namespace ConfigMaker
             {
                 CheckBox checkbox = new CheckBox
                 {
-                    //Content = CurrentLocale[entry],
                     Content = Localize(cfgEntry),
                     Tag = cfgEntry
                 };
@@ -493,7 +483,7 @@ namespace ConfigMaker
                 {
                     AttachedCheckbox = checkbox,
                     // генерируем каждый раз новый элемент во избежание замыкания
-                    Generate = () => //isMeta ? genMetaEntry(entry, cmd) : genCmdEntry(entry, cmd),
+                    Generate = () =>
                     {
                         return new Entry()
                         {
@@ -523,11 +513,7 @@ namespace ConfigMaker
             // Метод для добавления новой категории.
             void AddActionGroupSeparator(string text)
             {
-                //    currentPanel = new StackPanel();
-                //    actionsPanel.Children.Add(currentPanel);
-
                 TextBlock block = new TextBlock();
-                //Bold bold = new Bold(new Run(text));
                 Italic bold = new Italic(new Run(text));
                 block.Inlines.Add(bold);
 
@@ -537,7 +523,6 @@ namespace ConfigMaker
                     HorizontalAlignment = HorizontalAlignment.Center
                 };
 
-                //currentPanel.Children.Add(border);
                 if (actionsPanel.Children.Count != 0)
                 {
                     // Если элемент не первый - добавляем пустую строку в роли разделителя
@@ -546,7 +531,6 @@ namespace ConfigMaker
                 actionsPanel.Children.Add(border);
             };
 
-            //addActionGroupSeparator(CurrentLocale.CommonActions);
             AddActionGroupSeparator(Res.CategoryCommonActions);
             AddAction(ConfigEntry.Fire, "attack", true);
             AddAction(ConfigEntry.SecondaryFire, "attack2", true);
@@ -729,7 +713,7 @@ namespace ConfigMaker
             // Добавляем главный чекбокс
             CheckBox mainCheckbox = new CheckBox
             {
-                Content = Localize(ConfigEntry.BuyScenario), //CurrentLocale.BuyScenarioDescription,
+                Content = Localize(ConfigEntry.BuyScenario),
                 Tag = ConfigEntry.BuyScenario
             };
             mainCheckbox.Click += HandleEntryClick;
@@ -894,15 +878,6 @@ namespace ConfigMaker
                 cmdControllerGrid.ColumnDefinitions.Add(new ColumnDefinition() { Width = new GridLength(10, GridUnitType.Star) });
                 cmdControllerGrid.Tag = cfgEntry;
 
-                //// Текст с локализированным описанием команды
-                //TextBlock localizedName = new TextBlock();
-                //localizedName.HorizontalAlignment = HorizontalAlignment.Center;
-                //localizedName.VerticalAlignment = VerticalAlignment.Center;
-                //localizedName.Inlines.Add(CurrentLocale[cfgEntry]); //cfgEntry.ToString()); // TODO
-                //settingsTabGrid.Children.Add(localizedName);
-                //Grid.SetColumn(localizedName, 0);
-                //Grid.SetRow(localizedName, rowNum);
-
                 // Текст с результирующей командой
                 TextBlock resultCmd = new TextBlock
                 {
@@ -967,10 +942,6 @@ namespace ConfigMaker
             
             void AddIntervalCmdController(ConfigEntry cfgEntry, double from, double to, double step, double defaultValue)
             {
-                //int rowNum = settingsTabGrid.RowDefinitions.Count;
-
-                // подготовим рутинно создаваемые элементы
-                //var tuple = prepareNewRow(cfgEntry);
                 var tuple = PrepareNewRow(cfgEntry, true);
                 TextBlock resultCmdBlock = tuple.Item1;
                 Grid sliderGrid = tuple.Item2;
@@ -1024,13 +995,6 @@ namespace ConfigMaker
                 sliderGrid.Children.Add(maxBorder);
                 Grid.SetColumn(maxBorder, 2);
 
-                //кнопка с настройками переключателя
-                //Button toggleButton = new Button();
-                //toggleButton.Content = "⇄";
-                //toggleButton.Style = (Style) this.FindResource("MaterialDesignFlatButton");
-                //sliderGrid.Children.Add(toggleButton);
-                //Grid.SetColumn(toggleButton, 3);
-
                 toggleButton.Click += (_, __) =>
                 {
                     ToggleWindow toggleWindow = new ToggleWindow(isInteger, from, to);
@@ -1055,10 +1019,6 @@ namespace ConfigMaker
                     }
                 };
 
-                //settingsTabGrid.Children.Add(sliderGrid);
-                //Grid.SetColumn(sliderGrid, 2);
-                //Grid.SetRow(sliderGrid, rowNum);
-
                 slider.IsSnapToTickEnabled = true;
                 slider.TickFrequency = step;
 
@@ -1075,9 +1035,6 @@ namespace ConfigMaker
                     if ((bool)checkbox.IsChecked) // Добавляем в конфиг только если это сделал сам пользователь
                         this.AddEntry(cfgEntry);
                 };
-                //Binding enabledBinding = new Binding("IsChecked");
-                //enabledBinding.Source = checkbox;
-                //sliderGrid.SetBinding(Grid.IsEnabledProperty, enabledBinding);
 
                 // обработчик интерфейса
                 EntryUiBinding entryBinding = new EntryUiBinding()
@@ -1147,8 +1104,6 @@ namespace ConfigMaker
             
             void AddComboboxCmdController(ConfigEntry cfgEntry, string[] names, int defaultIndex, bool isIntegerArg)
             {
-                //int rowNum = settingsTabGrid.RowDefinitions.Count;
-                //var tuple = prepareNewRow(cfgEntry);
                 var tuple = PrepareNewRow(cfgEntry, true);
                 TextBlock resultCmdBlock = tuple.Item1;
                 Grid comboboxGrid = tuple.Item2;
@@ -1169,17 +1124,6 @@ namespace ConfigMaker
                 // Если надо предусмотреть функцию toggle, то расширяем сетку и добавляем кнопку
                 if (isIntegerArg)
                 {
-                    //comboboxGrid.ColumnDefinitions[0].Width = new GridLength(1, GridUnitType.Star);
-                    //comboboxGrid.ColumnDefinitions.Add(new ColumnDefinition());
-                    //comboboxGrid.ColumnDefinitions[1].Width = new GridLength(15);
-                   
-                    //Button toggleButton = new Button();
-                    //toggleButton.Content = "⇄";
-                    //toggleButton.Style = null;
-
-                    //comboboxGrid.Children.Add(toggleButton);
-                    //Grid.SetColumn(toggleButton, 1);
-
                     toggleButton.Click += (_, __) =>
                     {
                         ToggleWindow toggleWindow = new ToggleWindow(true, 0, names.Length - 1);
@@ -1199,14 +1143,6 @@ namespace ConfigMaker
                         }
                     };
                 }
-
-                //settingsTabGrid.Children.Add(comboboxGrid);
-                //Grid.SetColumn(comboboxGrid, 2);
-                //Grid.SetRow(comboboxGrid, rowNum);
-
-                //Binding enabledBinding = new Binding("IsChecked");
-                //enabledBinding.Source = checkbox;
-                //comboboxGrid.SetBinding(Grid.IsEnabledProperty, enabledBinding);
 
                 // Зададим элементы комбобокса
                 names.ToList().ForEach(name => combobox.Items.Add(name));
@@ -1300,8 +1236,6 @@ namespace ConfigMaker
 
             void addTextboxNumberCmdController(ConfigEntry cfgEntry, double defaultValue, bool asInteger)
             {
-                //int rowNum = settingsTabGrid.RowDefinitions.Count;
-                //var tuple = prepareNewRow(cfgEntry);
                 var tuple = PrepareNewRow(cfgEntry, true);
                 TextBlock resultCmdBlock = tuple.Item1;
                 Grid textboxGrid = tuple.Item2;
@@ -1317,23 +1251,6 @@ namespace ConfigMaker
                     MaxHeight = rowHeight
                 };
                 textboxGrid.Children.Add(textbox);
-
-                //settingsTabGrid.Children.Add(textboxGrid);
-                //Grid.SetRow(textboxGrid, rowNum);
-                //Grid.SetColumn(textboxGrid, 2);
-
-                // Добавим кнопку для генерации переключателя
-                //textboxGrid.ColumnDefinitions.Add(new ColumnDefinition());
-                //textboxGrid.ColumnDefinitions.Add(new ColumnDefinition());
-                //textboxGrid.ColumnDefinitions[0].Width = new GridLength(1, GridUnitType.Star);
-                //textboxGrid.ColumnDefinitions[1].Width = new GridLength(15);
-
-                //Button toggleButton = new Button();
-                //toggleButton.Content = "⇄";
-                //toggleButton.Style = null;
-
-                //textboxGrid.Children.Add(toggleButton);
-                //Grid.SetColumn(toggleButton, 1);
 
                 toggleButton.Click += (_, __) =>
                 {
@@ -1358,10 +1275,6 @@ namespace ConfigMaker
 
                     }
                 };
-
-                //Binding enabledBinding = new Binding("IsChecked");
-                //enabledBinding.Source = checkbox;
-                //textboxGrid.SetBinding(Grid.IsEnabledProperty, enabledBinding);
 
                 textbox.TextChanged += (obj, args) =>
                 {
@@ -1450,8 +1363,6 @@ namespace ConfigMaker
 
             void addTextboxStringCmdController(ConfigEntry cfgEntry, string defaultValue)
             {
-                //int rowNum = settingsTabGrid.RowDefinitions.Count;
-                //var tuple = prepareNewRow(cfgEntry);
                 var tuple = PrepareNewRow(cfgEntry, false);
                 TextBlock resultCmdBlock = tuple.Item1;
                 Grid textBoxGrid = tuple.Item2;
@@ -1461,14 +1372,8 @@ namespace ConfigMaker
                 {
                     MaxHeight = rowHeight
                 };
-                //settingsTabGrid.Children.Add(textbox);
-                textBoxGrid.Children.Add(textbox);
-                //Grid.SetRow(textbox, rowNum);
-                //Grid.SetColumn(textbox, 2);
 
-                //Binding enabledBinding = new Binding("IsChecked");
-                //enabledBinding.Source = checkbox;
-                //textbox.SetBinding(TextBox.IsEnabledProperty, enabledBinding);
+                textBoxGrid.Children.Add(textbox);
 
                 textbox.TextChanged += (obj, args) =>
                 {
@@ -1523,23 +1428,13 @@ namespace ConfigMaker
 
             void addGroupHeader(string text)
             {
-                //settingsTabGrid.RowDefinitions.Add(
-                //new RowDefinition()
-                //{
-                //    Height = new GridLength(25)
-                //});
-
                 TextBlock block = new TextBlock();
                 block.Inlines.Add(new Bold(new Run(text)));
                 block.HorizontalAlignment = HorizontalAlignment.Center;
                 block.VerticalAlignment = VerticalAlignment.Center;
-                //settingsTabGrid.Children.Add(block);
                 settingsTabPanel.Children.Add(block);
-                //Grid.SetColumnSpan(block, 4);
-                //Grid.SetRow(block, settingsTabGrid.RowDefinitions.Count - 1);
             };
 
-            //Locale Res = CurrentLocale;
             string[] toggleStrings = new string[] { Res.Off, Res.On };
             
             addGroupHeader(Res.CategoryMouseSettings);
@@ -1707,7 +1602,6 @@ namespace ConfigMaker
 
                     // Задаем начальную команду для алиаса
                     CommandCollection dependencies = new CommandCollection();
-                    //dependencies.Add(new AliasCmd(scriptName, new SingleCmd(iterationNames[1])));
 
                     // И добавим в конец все итерации нашего цикла
                     foreach (Executable iteration in crosshairLoop)
@@ -2198,7 +2092,6 @@ namespace ConfigMaker
                 chip.Height = 17;
                 
                 // Добавим в нужную панель
-                //panel.Children.Add(button);
                 panel.Children.Add(chip);
             };
 
@@ -2305,13 +2198,6 @@ namespace ConfigMaker
         {
             if (aliasPanel.Children.OfType<ButtonBase>().Any(b => b.Content.ToString() == name))
                 return;
-
-            //Button button = new Button();
-            //button.Content = name;
-            //// TODO: ОТДЕЛЬНЫЙ СТИЛЬ ДЛЯ КНОПОК С АЛИАСАМИ
-            //button.Tag = attachedEntries;
-            //button.Style = (Style)this.Resources["BubbleButton"];
-            //button.FontSize = 15; // Сделаем шрифт побольше, нежели задано в стиле
 
             Chip chip = new Chip
             {
