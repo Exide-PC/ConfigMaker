@@ -24,6 +24,14 @@ namespace ConfigMaker
         public VirtualKeyboard()
         {
             InitializeComponent();
+
+            this.allButtons = this.grid.Children.OfType<Button>() // возьмем кнопки из основой сетки
+                .Concat(mouseGrid.Children.OfType<Button>()) // объединим с кнопками в сетке с клавишами мыши
+                .Where(b => b.Tag != null); // и выберем те, для которых задан тег
+
+            // зададим всплывающий тултип для всех клавиш
+            foreach (Button b in this.allButtons)
+                b.ToolTip = b.Tag as string;
         }
 
         [Flags]
@@ -33,6 +41,9 @@ namespace ConfigMaker
             Shift = 0x0010,
             Alt = 0x0011
         }
+
+        // для быстродействия сохраним все кнопки отдельно
+        private IEnumerable<Button> allButtons;
 
         private void Button_Click(object sender, RoutedEventArgs e)
         {
@@ -51,11 +62,10 @@ namespace ConfigMaker
         public Button GetButtonByName(string key)
         {
             key = key.ToLower();
-            return this.grid.Children.OfType<Button>().FirstOrDefault(b => ((string)b.Tag).ToLower() == key);
+            return allButtons.FirstOrDefault(b => ((string)b.Tag).ToLower() == key);
         }
 
-
-        public IEnumerator<Button> GetEnumerator() => this.grid.Children.OfType<Button>().GetEnumerator();
+        public IEnumerator<Button> GetEnumerator() => this.allButtons.GetEnumerator();
 
         IEnumerator IEnumerable.GetEnumerator() => this.GetEnumerator();
 
