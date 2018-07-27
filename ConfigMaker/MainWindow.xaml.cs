@@ -514,7 +514,7 @@ namespace ConfigMaker
             void AddActionGroupSeparator(string text)
             {
                 TextBlock block = new TextBlock();
-                Italic bold = new Italic(new Run(text));
+                Inline bold = new Bold(new Run(text));
                 block.Inlines.Add(bold);
 
                 Border border = new Border
@@ -523,11 +523,6 @@ namespace ConfigMaker
                     HorizontalAlignment = HorizontalAlignment.Center
                 };
 
-                if (actionsPanel.Children.Count != 0)
-                {
-                    // Если элемент не первый - добавляем пустую строку в роли разделителя
-                    actionsPanel.Children.Add(new TextBlock());
-                }
                 actionsPanel.Children.Add(border);
             };
 
@@ -808,7 +803,7 @@ namespace ConfigMaker
                 buyPanel.Children.Add(currentPanel);
 
                 TextBlock block = new TextBlock();
-                Italic bold = new Italic(new Run(text));
+                Inline bold = new Bold(new Run(text));
                 block.Inlines.Add(bold);
 
                 Border border = new Border
