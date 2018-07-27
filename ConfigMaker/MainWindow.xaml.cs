@@ -450,6 +450,11 @@ namespace ConfigMaker
                 }
             }
         }
+
+        private void AboutButton_Click(object sender, RoutedEventArgs e)
+        {
+            new AboutWindow().ShowDialog();
+        }
         #endregion
 
         #region Filling UI with config entry managers

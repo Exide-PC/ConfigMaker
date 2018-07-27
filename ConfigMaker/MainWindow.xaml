@@ -6,7 +6,7 @@
         xmlns:system="clr-namespace:System;assembly=mscorlib"
         xmlns:converters="clr-namespace:ConfigMaker.Converters"
         xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
-         xmlns:res="clr-namespace:ConfigMaker.Properties"
+        xmlns:res="clr-namespace:ConfigMaker.Properties"
         xmlns:local="clr-namespace:ConfigMaker"
         TextElement.Foreground="{DynamicResource MaterialDesignBody}"
          TextElement.FontWeight="Regular"
@@ -123,9 +123,11 @@
                 <DockPanel LastChildFill="True">
                     <materialDesign:PopupBox DockPanel.Dock="Right" PlacementMode="BottomAndAlignRightEdges">
                         <StackPanel>
-                            <Button Grid.Column="0" Content="{x:Static res:Resources.SelectConfig_Button}" Click="OpenCfgButton_Click"/>
-                            <Button Grid.Column="1" Content="{x:Static res:Resources.SaveConfig_Button}" Click="SaveCfgButton_Click"/>
-                            <Button Grid.Column="2" Content="{x:Static res:Resources.GenerateConfig_Button}" Click="GenerateConfig"/>
+                            <Button Content="{x:Static res:Resources.SelectConfig_Button}" Click="OpenCfgButton_Click"/>
+                            <Button Content="{x:Static res:Resources.SaveConfig_Button}" Click="SaveCfgButton_Click"/>
+                            <Button Content="{x:Static res:Resources.GenerateConfig_Button}" Click="GenerateConfig"/>
+                            <Border BorderBrush="{StaticResource MaterialDesignDivider}" BorderThickness="0,1,0,0"/>
+                            <Button Content="{x:Static res:Resources.About_Button}" Click="AboutButton_Click"/>
                         </StackPanel>
                     </materialDesign:PopupBox>
                     <TextBlock Text="ConfigMaker by Exide"  Style="{StaticResource MaterialDesignHeadlineTextBlock}"/>
@@ -133,11 +135,10 @@
             </materialDesign:ColorZone>
             <Grid Margin="5 0 5 3">
                 <Grid.RowDefinitions>
-                    <RowDefinition Height="50*"/>
-                    <RowDefinition Height="10*"/>
+                    <RowDefinition Height="55*"/>
+                    <RowDefinition Height="15*"/>
                     <RowDefinition Height="28"/>
-                    <RowDefinition Height="35*"/>
-                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="30*"/>
                 </Grid.RowDefinitions>
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition/>
@@ -551,7 +552,6 @@
                         </TextBlock.Style>
                     </TextBlock>
                 </StackPanel>
-                <materialDesign:Snackbar Grid.Row="3" MessageQueue="{materialDesign:MessageQueue}" x:Name="snackbar" />
             </Grid>
         </DockPanel>
     </Grid>

@@ -61,6 +61,15 @@ namespace ConfigMaker.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to About.
+        /// </summary>
+        public static string About_Button {
+            get {
+                return ResourceManager.GetString("About_Button", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Actions.
         /// </summary>
         public static string ActionCategory_Button {
