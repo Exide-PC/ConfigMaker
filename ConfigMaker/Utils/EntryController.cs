@@ -1,5 +1,5 @@
 ﻿using ConfigMaker.Csgo.Config;
-using ConfigMaker.Csgo.Config.interfaces;
+using ConfigMaker.Csgo.Config.Entries.interfaces;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -7,9 +7,9 @@ using System.Text;
 using System.Threading.Tasks;
 using static ConfigMaker.MainWindow;
 
-namespace ConfigMaker
+namespace ConfigMaker.Utils
 {
-    class EntryUiBinding
+    class EntryController
     {
         public System.Windows.Controls.CheckBox AttachedCheckbox { get; set; } = null;
         public Action<IEntry> UpdateUI { get; set; }

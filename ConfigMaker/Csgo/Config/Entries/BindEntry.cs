@@ -1,5 +1,6 @@
 ﻿using ConfigMaker.Csgo.Commands;
-using ConfigMaker.Csgo.Config.interfaces;
+using ConfigMaker.Csgo.Config.Entries.interfaces;
+using ConfigMaker.Csgo.Config.Enums;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -28,7 +29,7 @@ namespace ConfigMaker.Csgo.Config.Entries
         
         Executable IEntry.Cmd
         {
-            get => OnKeyDown != null ? OnKeyDown : OnKeyRelease;
+            get => OnKeyDown ?? OnKeyRelease;
             set { } // OnKeyDown/OnKeyRelease задается отдельно 
         }
 

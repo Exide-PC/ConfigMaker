@@ -1,15 +1,14 @@
 ﻿using ConfigMaker.Csgo.Commands;
 using ConfigMaker.Csgo.Config.Entries;
-using ConfigMaker.Csgo.Config.interfaces;
 using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Xml.Serialization;
 using System.Xml;
 using System.Xml.Schema;
+using ConfigMaker.Csgo.Config.Enums;
+using ConfigMaker.Csgo.Config.Entries.interfaces;
 
 namespace ConfigMaker.Csgo.Config
 {

@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace ConfigMaker.Csgo.Config
+namespace ConfigMaker.Csgo.Config.Enums
 {
     /// <summary>
     /// Во избежание лишнего кода по обслуживанию перевода примем, что название любого элемента из данного перечисления является ключом локализации в ресурсах

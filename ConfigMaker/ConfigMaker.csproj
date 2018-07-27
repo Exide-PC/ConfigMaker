@@ -65,15 +65,14 @@
     <Compile Include="AboutWindow.xaml.cs">
       <DependentUpon>AboutWindow.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Converters\TagToFontWeightConverter.cs" />
-    <Compile Include="Converters\ColorConverter.cs" />
+    <Compile Include="Utils\Converters\TagToFontWeightConverter.cs" />
     <Compile Include="Csgo\Config\Entries\Entry.cs" />
     <Compile Include="Csgo\Config\Entries\ParametrizedEntry.cs" />
-    <Compile Include="Csgo\Config\EntryType.cs" />
-    <Compile Include="Csgo\Config\interfaces\IEntry.cs" />
-    <Compile Include="Csgo\Config\interfaces\IParametrizedEntry.cs" />
+    <Compile Include="Csgo\Config\Enums\EntryType.cs" />
+    <Compile Include="Csgo\Config\Entries\interfaces\IEntry.cs" />
+    <Compile Include="Csgo\Config\Entries\interfaces\IParametrizedEntry.cs" />
     <Compile Include="Csgo\Config\Entries\ParametrizedBindEntry.cs" />
-    <Compile Include="Csgo\Config\ConfigEntry.cs" />
+    <Compile Include="Csgo\Config\Enums\ConfigEntry.cs" />
     <Compile Include="Csgo\Commands\CommandCollection.cs" />
     <Compile Include="Csgo\Commands\MetaCmd.cs" />
     <Compile Include="Csgo\Commands\SingleCmd.cs" />
@@ -84,12 +83,10 @@
     <Compile Include="Csgo\Config\ConfigManager.cs" />
     <Compile Include="Csgo\Config\Entries\BindEntry.cs" />
     <Compile Include="Csgo\Config\KeySequence.cs" />
-    <Compile Include="EntryUiBinding.cs" />
-    <Compile Include="GameSettingsRow.cs" />
-    <Compile Include="Converters\IsNullConverter.cs" />
-    <Compile Include="Converters\NameToEnableConverter.cs" />
-    <Compile Include="SelectionAssistant.cs" />
-    <Compile Include="StateUiBinding.cs" />
+    <Compile Include="Utils\EntryController.cs" />
+    <Compile Include="Utils\Converters\IsNullConverter.cs" />
+    <Compile Include="Utils\Converters\AliasNameVerifier.cs" />
+    <Compile Include="Utils\SelectionAssistant.cs" />
     <Compile Include="ToggleWindow.xaml.cs">
       <DependentUpon>ToggleWindow.xaml</DependentUpon>
     </Compile>

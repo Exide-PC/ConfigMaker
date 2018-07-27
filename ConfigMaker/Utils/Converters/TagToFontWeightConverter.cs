@@ -8,7 +8,7 @@ using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Data;
 
-namespace ConfigMaker.Converters
+namespace ConfigMaker.Utils.Converters
 {
     [ValueConversion(typeof(Button), typeof(FontWeight))]
     class TagToFontWeightConverter : IValueConverter

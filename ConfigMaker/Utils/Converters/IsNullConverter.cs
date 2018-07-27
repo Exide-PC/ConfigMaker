@@ -4,17 +4,17 @@ using System.Globalization;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Windows;
 using System.Windows.Data;
 
-namespace ConfigMaker.Converters
+namespace ConfigMaker.Utils.Converters
 {
-    [ValueConversion(typeof(string), typeof(bool))]
-    public class NameToEnableConverter : IValueConverter
+    [ValueConversion(typeof(object), typeof(bool))]
+    class IsNullConverter : IValueConverter
     {
         public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
         {
-            string aliasName = (string)value;
-            return Csgo.Commands.Executable.IsValidAliasName(aliasName);
+            return value == null;
         }
 
         public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)

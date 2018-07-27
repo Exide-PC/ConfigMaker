@@ -4,7 +4,8 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:system="clr-namespace:System;assembly=mscorlib"
-        xmlns:converters="clr-namespace:ConfigMaker.Converters"
+        xmlns:converters="clr-namespace:ConfigMaker.Utils.Converters"
+        xmlns:utils="clr-namespace:ConfigMaker.Utils"
         xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
         xmlns:res="clr-namespace:ConfigMaker.Properties"
         xmlns:local="clr-namespace:ConfigMaker"
@@ -18,9 +19,8 @@
         mc:Ignorable="d"
         Title="" Height="500" Width="1000" MinHeight="500" MinWidth="1000" Loaded="Window_Loaded" Name="mainWindow" WindowState="Maximized">
     <Window.Resources>
-        <converters:NameToEnableConverter x:Key="nameToEnableConverter"/>
+        <converters:AliasNameVerifier x:Key="nameToEnableConverter"/>
         <converters:IsNullConverter x:Key="isNullConverter"/>
-
         <Style x:Key="BubbleButton" TargetType="materialDesign:Chip">
             <Setter Property="FontSize" Value="10"/>
             <Setter Property="MinWidth" Value="40"/>
@@ -42,9 +42,9 @@
             <Setter Property="BorderThickness" Value="2"/>
             <Setter Property="Background" Value="Transparent"/>
             <Setter Property="Margin" Value="1"/>
-            <Setter Property="local:SelectionAssistant.IsSelected" Value="False"/>
+            <Setter Property="utils:SelectionAssistant.IsSelected" Value="False"/>
             <Style.Triggers>
-                <Trigger Property="local:SelectionAssistant.IsSelected" Value="True">
+                <Trigger Property="utils:SelectionAssistant.IsSelected" Value="True">
                     <Setter Property="BorderBrush" Value="{StaticResource SecondaryAccentBrush}"/>
                 </Trigger>
             </Style.Triggers>
@@ -192,9 +192,7 @@
                                 </Style>
                             </Grid.Style>
                             <Grid>
-                                <StackPanel Name="buyTabStackPanel">
-                                    <!--<WrapPanel Grid.Row="1" IsEnabled="False" Name="buyPanel" Orientation="Horizontal" Margin="5"/>-->
-                                </StackPanel>
+                                <StackPanel Name="buyTabStackPanel"/>
                             </Grid>
                         </Grid>
                         <!--game settings tab grid-->
@@ -217,20 +215,8 @@
                                             <materialDesign:PackIcon VerticalAlignment="Center" Opacity="0.70" Kind="Magnify"/>
                                         </StackPanel>
                                     </materialDesign:ColorZone>
-                                            <!--<TextBox DockPanel.Dock="Top" Width="180" HorizontalAlignment="Left" materialDesign:HintAssist.Hint="{x:Static res:Resources.Search_Hint}" TextChanged="SearchCmdTextbox"/>-->
                                     <ScrollViewer Margin="0,2,0,0">
                                         <StackPanel Name="settingsTabPanel"/>
-                                        <!--<Grid Name="settingsTabGrid">
-                                            --><!--<Grid.ColumnDefinitions>
-                                                <ColumnDefinition Width="30*"/>
-                                                <ColumnDefinition Width="35*"/>
-                                                <ColumnDefinition Width="25*"/>
-                                                <ColumnDefinition Width="10*"/>
-                                            </Grid.ColumnDefinitions>
-                                            <Grid.RowDefinitions>
-                                                <RowDefinition/>
-                                            </Grid.RowDefinitions>--><!--
-                                        </Grid>-->
                                     </ScrollViewer>
                                 </DockPanel>
                             </Grid>
@@ -402,7 +388,7 @@
                             <Style TargetType="Border" BasedOn="{StaticResource AttachmentBorder}">
                                 <Style.Triggers>
                                     <DataTrigger Binding="{Binding ElementName=mainWindow, Path=StateBinding}" Value="KeyDown">
-                                        <Setter Property="local:SelectionAssistant.IsSelected" Value="True"/>
+                                        <Setter Property="utils:SelectionAssistant.IsSelected" Value="True"/>
                                     </DataTrigger>
                                 </Style.Triggers>
                             </Style>
@@ -419,7 +405,7 @@
                             <Style TargetType="Border" BasedOn="{StaticResource AttachmentBorder}">
                                 <Style.Triggers>
                                     <DataTrigger Binding="{Binding ElementName=mainWindow, Path=StateBinding}" Value="KeyUp">
-                                        <Setter Property="local:SelectionAssistant.IsSelected" Value="True"/>
+                                        <Setter Property="utils:SelectionAssistant.IsSelected" Value="True"/>
                                     </DataTrigger>
                                 </Style.Triggers>
                             </Style>
@@ -458,10 +444,10 @@
                     <Border Grid.Row="2" Grid.Column="0" Grid.ColumnSpan="4">
                         <Border.Style>
                             <Style TargetType="Border" BasedOn="{StaticResource AttachmentBorder}">
-                                <Setter Property="local:SelectionAssistant.IsSelected" Value="True"/>
+                                <Setter Property="utils:SelectionAssistant.IsSelected" Value="True"/>
                                 <Style.Triggers>
                                     <DataTrigger Binding="{Binding ElementName=mainWindow, Path=StateBinding}" Value="InvalidState">
-                                        <Setter Property="local:SelectionAssistant.IsSelected" Value="False"/>
+                                        <Setter Property="utils:SelectionAssistant.IsSelected" Value="False"/>
                                     </DataTrigger>
                                 </Style.Triggers>
                             </Style>

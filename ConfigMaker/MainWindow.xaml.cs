@@ -10,15 +10,16 @@ using System.Windows.Controls;
 using System.Windows.Media;
 using System.Globalization;
 using System.Windows.Data;
-using ConfigMaker.Csgo.Config.interfaces;
 using ConfigMaker.Csgo.Config.Entries;
-using ConfigMaker.Converters;
+using ConfigMaker.Utils.Converters;
 using System.Windows.Controls.Primitives;
 using Microsoft.Win32;
 using MaterialDesignThemes.Wpf;
 using System.Windows.Documents;
 using Res = ConfigMaker.Properties.Resources;
-using System.Resources;
+using ConfigMaker.Csgo.Config.Enums;
+using ConfigMaker.Csgo.Config.Entries.interfaces;
+using ConfigMaker.Utils;
 
 namespace ConfigMaker
 {
@@ -40,7 +41,7 @@ namespace ConfigMaker
         ConfigManager cfgManager = new ConfigManager();
         KeySequence currentKeySequence = null;
 
-        Dictionary<ConfigEntry, EntryUiBinding> entryUiBindings = new Dictionary<ConfigEntry, EntryUiBinding>();
+        Dictionary<ConfigEntry, EntryController> entryUiBindings = new Dictionary<ConfigEntry, EntryController>();
 
         public EntryStateBinding StateBinding
         {
@@ -484,7 +485,7 @@ namespace ConfigMaker
             {
                 CheckBox checkbox = PrepareAction(entry, cmd, isMeta);
 
-                EntryUiBinding entryUiBinding = new EntryUiBinding
+                EntryController entryUiBinding = new EntryController
                 {
                     AttachedCheckbox = checkbox,
                     // генерируем каждый раз новый элемент во избежание замыкания
@@ -597,7 +598,7 @@ namespace ConfigMaker
             string jumpthrowName = "jumpthrow";
             CheckBox jumpthrowCheckbox = PrepareAction(ConfigEntry.Jumpthrow, jumpthrowName, true);
 
-            EntryUiBinding jumpthrowBinding = new EntryUiBinding()
+            EntryController jumpthrowBinding = new EntryController()
             {
                 AttachedCheckbox = jumpthrowCheckbox,
                 Focus = () =>
@@ -633,7 +634,7 @@ namespace ConfigMaker
 
             this.entryUiBindings.Add(
                 ConfigEntry.DisplayDamageOn,
-                new EntryUiBinding()
+                new EntryController()
                 {
                     AttachedCheckbox = displayDamageOnCheckbox,
                     Focus = () =>
@@ -674,7 +675,7 @@ namespace ConfigMaker
 
             this.entryUiBindings.Add(
                 ConfigEntry.DisplayDamageOff,
-                new EntryUiBinding()
+                new EntryController()
                 {
                     AttachedCheckbox = displayDamageOffCheckbox,
                     Focus = () =>
@@ -739,7 +740,7 @@ namespace ConfigMaker
             };
 
             // Обработчик интерфейса настроек закупки
-            EntryUiBinding buyEntryBinding = new EntryUiBinding()
+            EntryController buyEntryBinding = new EntryController()
             {
                 AttachedCheckbox = mainCheckbox,
                 Focus = () => buyTabButton.IsChecked = true,
@@ -1037,7 +1038,7 @@ namespace ConfigMaker
                 };
 
                 // обработчик интерфейса
-                EntryUiBinding entryBinding = new EntryUiBinding()
+                EntryController entryBinding = new EntryController()
                 {
                     AttachedCheckbox = checkbox,
                     Focus = () =>
@@ -1148,7 +1149,7 @@ namespace ConfigMaker
                 names.ToList().ForEach(name => combobox.Items.Add(name));
 
                 // Создадим обработчика пораньше, т.к. он понадобится уже при задании начального индекса комбобокса
-                EntryUiBinding entryBinding = new EntryUiBinding()
+                EntryController entryBinding = new EntryController()
                 {
                     AttachedCheckbox = checkbox,
                     Focus = () =>
@@ -1293,7 +1294,7 @@ namespace ConfigMaker
                         AddEntry(cfgEntry);
                 };
 
-                EntryUiBinding entryBinding = new EntryUiBinding()
+                EntryController entryBinding = new EntryController()
                 {
                     AttachedCheckbox = checkbox,
                     Focus = () =>
@@ -1386,7 +1387,7 @@ namespace ConfigMaker
                         AddEntry(cfgEntry);
                 };
 
-                EntryUiBinding entryBinding = new EntryUiBinding()
+                EntryController entryBinding = new EntryController()
                 {
                     AttachedCheckbox = checkbox,
                     Focus = () =>
@@ -1516,7 +1517,7 @@ namespace ConfigMaker
             // custom command execution
             this.customCmdHeaderCheckbox.Click += HandleEntryClick;
             this.customCmdHeaderCheckbox.Tag = ConfigEntry.ExecCustomCmds;
-            this.entryUiBindings.Add(ConfigEntry.ExecCustomCmds, new EntryUiBinding()
+            this.entryUiBindings.Add(ConfigEntry.ExecCustomCmds, new EntryController()
             {
                 AttachedCheckbox = customCmdHeaderCheckbox,
                 Focus = () => extraTabButton.IsChecked = true,
@@ -1566,7 +1567,7 @@ namespace ConfigMaker
             // cycle crosshairs
             this.cycleChHeaderCheckbox.Click += HandleEntryClick;
             this.cycleChHeaderCheckbox.Tag = ConfigEntry.CycleCrosshair;
-            this.entryUiBindings.Add(ConfigEntry.CycleCrosshair, new EntryUiBinding()
+            this.entryUiBindings.Add(ConfigEntry.CycleCrosshair, new EntryController()
             {
                 AttachedCheckbox = cycleChHeaderCheckbox,
                 Focus = () =>
@@ -1642,7 +1643,7 @@ namespace ConfigMaker
             // volume regulator
             this.volumeRegulatorCheckbox.Click += HandleEntryClick;
             this.volumeRegulatorCheckbox.Tag = ConfigEntry.VolumeRegulator;
-            this.entryUiBindings.Add(ConfigEntry.VolumeRegulator, new EntryUiBinding()
+            this.entryUiBindings.Add(ConfigEntry.VolumeRegulator, new EntryController()
             {
                 AttachedCheckbox = volumeRegulatorCheckbox,
                 Focus = () =>
@@ -1757,7 +1758,7 @@ namespace ConfigMaker
 
         void InitAliasController()
         {
-            this.entryUiBindings.Add(ConfigEntry.ExtraAliasSet, new EntryUiBinding()
+            this.entryUiBindings.Add(ConfigEntry.ExtraAliasSet, new EntryController()
             {
                 Generate = () =>
                 {
@@ -1939,7 +1940,7 @@ namespace ConfigMaker
             ConfigEntry cfgEntry = (ConfigEntry)checkbox.Tag;
 
             // Получим обработчика и 
-            EntryUiBinding entryBinding = this.entryUiBindings[cfgEntry];
+            EntryController entryBinding = this.entryUiBindings[cfgEntry];
             Entry entry = (Entry)entryBinding.Generate();
 
             if ((bool)checkbox.IsChecked)
@@ -2067,7 +2068,7 @@ namespace ConfigMaker
 
             foreach (FrameworkElement element in mergedElements)
             {
-                EntryUiBinding entryBinding = this.entryUiBindings[(ConfigEntry)element.Tag];
+                EntryController entryBinding = this.entryUiBindings[(ConfigEntry)element.Tag];
                 // Метод, отвечающий непосредственно за сброс состояния интерфейса
                 entryBinding.Restore();
             }
@@ -2254,7 +2255,7 @@ namespace ConfigMaker
         void UpdateCfgManager()
         {
             // Сбросим все настройки от прошлого конфига
-            foreach (EntryUiBinding binding in this.entryUiBindings.Values)
+            foreach (EntryController binding in this.entryUiBindings.Values)
                 binding.Restore();
 
             // Зададим привязку к дефолтному состоянию

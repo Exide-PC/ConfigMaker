@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace ConfigMaker.Csgo.Config
+namespace ConfigMaker.Csgo.Config.Enums
 {
     public enum EntryType
     {
