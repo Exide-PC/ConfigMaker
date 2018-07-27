@@ -16,7 +16,7 @@
          Background="{DynamicResource MaterialDesignPaper}"
          FontFamily="{DynamicResource MaterialDesignFont}"
         mc:Ignorable="d"
-        Title="{x:Static res:Resources.MainWindow_Title}" Height="514.4" Width="950" MinHeight="500" MinWidth="950" Loaded="Window_Loaded" Name="mainWindow">
+        Title="" Height="500" Width="1000" MinHeight="500" MinWidth="1000" Loaded="Window_Loaded" Name="mainWindow" WindowState="Maximized">
     <Window.Resources>
         <converters:NameToEnableConverter x:Key="nameToEnableConverter"/>
         <converters:IsNullConverter x:Key="isNullConverter"/>
@@ -117,30 +117,27 @@
         </Style>
     </Window.Resources>
     <Grid>
-        <DockPanel LastChildFill="True" Margin="7">
-            <Grid DockPanel.Dock="Top" Height="50">
-                <Grid.ColumnDefinitions>
-                    <ColumnDefinition Width="160"/>
-                    <ColumnDefinition Width="160"/>
-                    <ColumnDefinition Width="160"/>
-                    <ColumnDefinition Width="1*"/>
-                </Grid.ColumnDefinitions>
-                <Button Grid.Column="0" Content="{x:Static res:Resources.SelectConfig_Button}" Click="OpenCfgButton_Click"/>
-                <Button Grid.Column="1" Content="{x:Static res:Resources.SaveConfig_Button}" Click="SaveCfgButton_Click"/>
-                <Button Grid.Column="2" Content="{x:Static res:Resources.GenerateConfig_Button}" Click="GenerateConfig"/>
-                <StackPanel Grid.Column="3" Orientation="Vertical">
-                    <StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
-                        <TextBox Width="115" Style="{StaticResource MaterialDesignFloatingHintTextBox}" materialDesign:HintAssist.Hint="{x:Static res:Resources.ConfigName_Hint}" Name="cfgNameBox" Text="ConfigMakerCfg"/>
-                        <TextBox Margin="20,0,0,0" Style="{StaticResource MaterialDesignFloatingHintTextBox}" materialDesign:HintAssist.Hint="{x:Static res:Resources.CsgoCfgPath_Hint}" Name="cfgFolderPath" Text="" Width="300" TextChanged="CfgFolderPath_TextChanged"/>
-                    </StackPanel>
-                </StackPanel>
-            </Grid>
-            <Grid>
+        <DockPanel LastChildFill="True">
+            <!--upper panel-->
+            <materialDesign:ColorZone DockPanel.Dock="Top" Mode="PrimaryMid" Padding="16 8 16 8">
+                <DockPanel LastChildFill="True">
+                    <materialDesign:PopupBox DockPanel.Dock="Right" PlacementMode="BottomAndAlignRightEdges">
+                        <StackPanel>
+                            <Button Grid.Column="0" Content="{x:Static res:Resources.SelectConfig_Button}" Click="OpenCfgButton_Click"/>
+                            <Button Grid.Column="1" Content="{x:Static res:Resources.SaveConfig_Button}" Click="SaveCfgButton_Click"/>
+                            <Button Grid.Column="2" Content="{x:Static res:Resources.GenerateConfig_Button}" Click="GenerateConfig"/>
+                        </StackPanel>
+                    </materialDesign:PopupBox>
+                    <TextBlock Text="ConfigMaker by Exide"  Style="{StaticResource MaterialDesignHeadlineTextBlock}"/>
+                </DockPanel>
+            </materialDesign:ColorZone>
+            <Grid Margin="5 0 5 3">
                 <Grid.RowDefinitions>
                     <RowDefinition Height="50*"/>
                     <RowDefinition Height="10*"/>
                     <RowDefinition Height="28"/>
                     <RowDefinition Height="35*"/>
+                    <RowDefinition Height="Auto"/>
                 </Grid.RowDefinitions>
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition/>
@@ -150,13 +147,18 @@
                 </Grid.ColumnDefinitions>
                 <DockPanel LastChildFill="True" Grid.ColumnSpan="4">
                     <StackPanel DockPanel.Dock="Top" Orientation="Vertical">
-                        <Border BorderBrush="{StaticResource MaterialDesignDivider}" BorderThickness="0,1,0,0"/>
-                        <StackPanel Orientation="Horizontal">
-                            <RadioButton Name="actionTabButton" IsChecked="True" GroupName="TabGroup" Content="{x:Static res:Resources.ActionCategory_Button}" Style="{StaticResource MaterialDesignTabItem}"/>
-                            <RadioButton Name="buyTabButton" GroupName="TabGroup" Content="{x:Static res:Resources.BuyScenarioCategory_Button}" Style="{StaticResource MaterialDesignTabItem}"/>
-                            <RadioButton Name="gameSettingsTabButton" GroupName="TabGroup" Content="{x:Static res:Resources.GameSettingsCategory_Button}" Style="{StaticResource MaterialDesignTabItem}"/>
-                            <RadioButton Name="extraTabButton" GroupName="TabGroup" Content="{x:Static res:Resources.ExtraCategory_Button}" Style="{StaticResource MaterialDesignTabItem}"/>
-                        </StackPanel>
+                        <DockPanel LastChildFill="True">
+                            <StackPanel Orientation="Horizontal" DockPanel.Dock="Right" Margin="0 1 0 1">
+                                <TextBox Margin="15,0,0,0" Width="115" Style="{StaticResource MaterialDesignFloatingHintTextBox}" materialDesign:HintAssist.Hint="{x:Static res:Resources.ConfigName_Hint}" Name="cfgNameBox" Text="ConfigMakerCfg"/>
+                                <TextBox Margin="15,0,0,0" Style="{StaticResource MaterialDesignFloatingHintTextBox}" materialDesign:HintAssist.Hint="{x:Static res:Resources.CsgoCfgPath_Hint}" Name="cfgFolderPath" Text="" Width="300" TextChanged="CfgFolderPath_TextChanged"/>
+                            </StackPanel>
+                            <StackPanel Orientation="Horizontal">
+                                <RadioButton Name="actionTabButton" IsChecked="True" GroupName="TabGroup" Content="{x:Static res:Resources.ActionCategory_Button}" Style="{StaticResource MaterialDesignTabItem}"/>
+                                <RadioButton Name="buyTabButton" GroupName="TabGroup" Content="{x:Static res:Resources.BuyScenarioCategory_Button}" Style="{StaticResource MaterialDesignTabItem}"/>
+                                <RadioButton Name="gameSettingsTabButton" GroupName="TabGroup" Content="{x:Static res:Resources.GameSettingsCategory_Button}" Style="{StaticResource MaterialDesignTabItem}"/>
+                                <RadioButton Name="extraTabButton" GroupName="TabGroup" Content="{x:Static res:Resources.ExtraCategory_Button}" Style="{StaticResource MaterialDesignTabItem}"/>
+                            </StackPanel>
+                        </DockPanel>
                         <Border BorderBrush="{StaticResource MaterialDesignDivider}" BorderThickness="0,1,0,0"/>
                     </StackPanel>
                     <Grid Margin="5">
@@ -208,7 +210,13 @@
                             </Grid.Style>
                             <Grid>
                                 <DockPanel>
-                                    <TextBox DockPanel.Dock="Top" Width="180" HorizontalAlignment="Left" materialDesign:HintAssist.Hint="{x:Static res:Resources.Search_Hint}" TextChanged="SearchCmdTextbox"/>
+                                    <materialDesign:ColorZone HorizontalAlignment="Left" Mode="Standard" DockPanel.Dock="Top">
+                                        <StackPanel Orientation="Horizontal">
+                                            <TextBox Width="180" materialDesign:HintAssist.Hint="{x:Static res:Resources.Search_Hint}"  TextChanged="SearchCmdTextbox"/>
+                                            <materialDesign:PackIcon VerticalAlignment="Center" Opacity="0.70" Kind="Magnify"/>
+                                        </StackPanel>
+                                    </materialDesign:ColorZone>
+                                            <!--<TextBox DockPanel.Dock="Top" Width="180" HorizontalAlignment="Left" materialDesign:HintAssist.Hint="{x:Static res:Resources.Search_Hint}" TextChanged="SearchCmdTextbox"/>-->
                                     <ScrollViewer Margin="0,2,0,0">
                                         <StackPanel Name="settingsTabPanel"/>
                                         <!--<Grid Name="settingsTabGrid">
