@@ -338,42 +338,56 @@ namespace ConfigMaker.Csgo.Config
                 writer.WriteLine();
 
                 // Выпишем зависимости
-                writer.WriteLine("// --- Dependencies ---");
-                writer.WriteLine();
-
-                while (dependencies.Count > 0)
+                if (dependencies.Where(d => d.Commands.Count > 0).Count() > 0)
                 {
-                    Dependency dependency = dependencies.Dequeue();
+                    writer.WriteLine("// --- Dependencies ---");
+                    writer.WriteLine();
 
-                    if (dependency.Commands.Count == 0) continue;
+                    while (dependencies.Count > 0)
+                    {
+                        Dependency dependency = dependencies.Dequeue();
 
-                    writer.WriteLine($"// {dependency.Name}");
-                    foreach (Executable cmd in dependency.Commands)
-                        writer.WriteLine(cmd.ToString());
+                        if (dependency.Commands.Count == 0) continue;
+
+                        writer.WriteLine($"// {dependency.Name}");
+                        foreach (Executable cmd in dependency.Commands)
+                            writer.WriteLine(cmd.ToString());
+                        writer.WriteLine();
+                    }
                     writer.WriteLine();
                 }
-                writer.WriteLine();
 
                 // Выпишем бинды
-                writer.WriteLine("// --- Binds ---");
-                writer.WriteLine();
+                IEnumerable<KeyValuePair<string, DynamicCmd>> dynamicBindPairs = 
+                    dynamicBinds.Where(p => p.Value.ToString().StartsWith("bind"));
 
-                // Записываем только те команды, которые начинаются со слова bind
-                foreach (KeyValuePair<string, DynamicCmd> dynamicBindPair in dynamicBinds.Where(p => p.Value.ToString().StartsWith("bind")))
+                if (dynamicBindPairs.Count() > 0)
                 {
-                    writer.WriteLine(dynamicBindPair.Value.ToString());
+                    writer.WriteLine("// --- Binds ---");
+                    writer.WriteLine();
+
+                    // Записываем только те команды, которые начинаются со слова bind
+                    foreach (KeyValuePair<string, DynamicCmd> dynamicBindPair in dynamicBindPairs)
+                    {
+                        writer.WriteLine(dynamicBindPair.Value.ToString());
+                    }
+
+                    writer.WriteLine();
                 }
 
-                writer.WriteLine();
+                // Выпишем комментарий
+                IEnumerable<IEntry> defaultEntries = this.defaultEntries.Where(e => e.Cmd != null);
+                if (defaultEntries.Count() > 0) 
+                {
+                    writer.WriteLine("// --- Default settings ---");
+                    writer.WriteLine();
 
-                // Выпишем дефолтные параметры
-                writer.WriteLine("// --- Default settings ---");
-                writer.WriteLine();
-
-                foreach (IEntry entry in this.defaultEntries.Where(e => e.Cmd != null))
-                    writer.WriteLine(entry.Cmd.ToString());
-
-                writer.WriteLine();
+                    // Выпишем дефолтные параметры
+                    foreach (IEntry entry in defaultEntries)
+                        writer.WriteLine(entry.Cmd.ToString());
+                    
+                    writer.WriteLine();
+                }
 
                 writer.WriteLine("echo \"\"");
                 writer.WriteLine("echo \"Config is loaded! Enjoy:D\"");
