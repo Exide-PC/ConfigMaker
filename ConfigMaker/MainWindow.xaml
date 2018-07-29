@@ -327,8 +327,8 @@
                                                     <StackPanel Orientation="Vertical">
                                                         <StackPanel Orientation="Horizontal">
                                                             <TextBox Name="cmdTextbox" Width="100" TextChanged="CommandNameTextbox_TextChanged"/>
-                                                            <Button Name="addCmdButton" IsEnabled="False" Content="{x:Static res:Resources.Add_Button}" Click="AddCmdButton_Click"/>
-                                                            <Button Content="{x:Static res:Resources.Remove_Button}" Click="DeleteCmdButton_Click">
+                                                            <Button Name="addCmdButton" IsEnabled="False" Content="{x:Static res:Resources.Add_Button}"/>
+                                                            <Button Name="deleteCmdButton" Content="{x:Static res:Resources.Remove_Button}">
                                                                 <Button.Style>
                                                                     <Style TargetType="Button" BasedOn="{StaticResource {x:Type Button}}">
                                                                         <Style.Triggers>

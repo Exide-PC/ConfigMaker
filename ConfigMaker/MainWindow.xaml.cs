@@ -64,6 +64,7 @@ namespace ConfigMaker
 
         ConfigManager cfgManager = new ConfigManager();
         KeySequence currentKeySequence = null;
+        const string extraAliasSetEntryKey = "ExtraAliasSet";
 
         Dictionary<string, EntryController> entryUiBindings = new Dictionary<string, EntryController>();
 
@@ -244,7 +245,7 @@ namespace ConfigMaker
             else
             {
                 // Если удалили последнюю кнопку, то удалим 
-                this.RemoveEntry(ServiceConfigEntry.ExtraAliasSet.ToString());
+                this.RemoveEntry(extraAliasSetEntryKey);
                 aliasPanel.Tag = null;
                 this.StateBinding = EntryStateBinding.InvalidState;
             }
@@ -268,45 +269,45 @@ namespace ConfigMaker
             addCmdButton.IsEnabled = true;
         }
 
-        private void AddCmdButton_Click(object sender, RoutedEventArgs e)
-        {
-            ButtonBase cmdElement = new Chip
-            {
-                Style = (Style)this.Resources["BubbleButton"],
-                Content = cmdTextbox.Text.Trim()
-            };
-            customCmdPanel.Children.Add(cmdElement);
-            customCmdPanel.Tag = cmdElement;
+        //private void AddCmdButton_Click(object sender, RoutedEventArgs e)
+        //{
+        //    ButtonBase cmdElement = new Chip
+        //    {
+        //        Style = (Style)this.Resources["BubbleButton"],
+        //        Content = cmdTextbox.Text.Trim()
+        //    };
+        //    customCmdPanel.Children.Add(cmdElement);
+        //    customCmdPanel.Tag = cmdElement;
 
-            cmdElement.Click += (_, __) => customCmdPanel.Tag = cmdElement;
+        //    cmdElement.Click += (_, __) => customCmdPanel.Tag = cmdElement;
 
-            Binding tagBinding = new Binding("Tag")
-            {
-                Source = customCmdPanel,
-                Converter = new TagToFontWeightConverter(),
-                ConverterParameter = cmdElement
-            };
-            cmdElement.SetBinding(ButtonBase.FontWeightProperty, tagBinding);
+        //    Binding tagBinding = new Binding("Tag")
+        //    {
+        //        Source = customCmdPanel,
+        //        Converter = new TagToFontWeightConverter(),
+        //        ConverterParameter = cmdElement
+        //    };
+        //    cmdElement.SetBinding(ButtonBase.FontWeightProperty, tagBinding);
 
-            AddEntry(ServiceConfigEntry.ExecCustomCmds.ToString());
-        }
+        //    AddEntry(ServiceConfigEntry.ExecCustomCmds.ToString());
+        //}
 
-        private void DeleteCmdButton_Click(object sender, RoutedEventArgs e)
-        {
-            ButtonBase targetButton = customCmdPanel.Tag as ButtonBase;
-            BindingOperations.ClearAllBindings(targetButton);
-            customCmdPanel.Children.Remove(targetButton);
+        //private void DeleteCmdButton_Click(object sender, RoutedEventArgs e)
+        //{
+        //    ButtonBase targetButton = customCmdPanel.Tag as ButtonBase;
+        //    BindingOperations.ClearAllBindings(targetButton);
+        //    customCmdPanel.Children.Remove(targetButton);
 
-            if (customCmdPanel.Children.Count > 0)
-            {
-                customCmdPanel.Tag = customCmdPanel.Children[0];
-                this.AddEntry(ServiceConfigEntry.ExecCustomCmds.ToString());
-            }
-            else
-            {
-                customCmdPanel.Tag = null;
-            }
-        }
+        //    if (customCmdPanel.Children.Count > 0)
+        //    {
+        //        customCmdPanel.Tag = customCmdPanel.Children[0];
+        //        this.AddEntry(ServiceConfigEntry.ExecCustomCmds.ToString());
+        //    }
+        //    else
+        //    {
+        //        customCmdPanel.Tag = null;
+        //    }
+        //}
 
         private void GenerateRandomCrosshairsButton_Click(object sender, RoutedEventArgs e)
         {
@@ -624,7 +625,7 @@ namespace ConfigMaker
 
 
             // jumpthrow script
-            string jumpthrowEntryKey = "Jumpthrow";
+            const string jumpthrowEntryKey = "Jumpthrow";
             CheckBox jumpthrowCheckbox = PrepareAction(jumpthrowEntryKey, true);
 
             EntryController jumpthrowBinding = new EntryController()
@@ -658,7 +659,7 @@ namespace ConfigMaker
             this.entryUiBindings.Add(jumpthrowEntryKey, jumpthrowBinding);
 
             // DisplayDamageOn
-            string displayDamageOnEntryKey = "DisplayDamage_On";
+            const string displayDamageOnEntryKey = "DisplayDamage_On";
             CheckBox displayDamageOnCheckbox = PrepareAction(displayDamageOnEntryKey, false);
 
             this.entryUiBindings.Add(displayDamageOnEntryKey, new EntryController()
@@ -697,7 +698,7 @@ namespace ConfigMaker
                 });
 
             // DisplayDamageOff
-            string displayDamageOffEntryKey = "DisplayDamage_Off";
+            const string displayDamageOffEntryKey = "DisplayDamage_Off";
             CheckBox displayDamageOffCheckbox = PrepareAction(displayDamageOffEntryKey, false);
 
             this.entryUiBindings.Add(displayDamageOffEntryKey, new EntryController()
@@ -736,7 +737,7 @@ namespace ConfigMaker
 
         void InitBuyTab()
         {
-            string buyScenarioEntryKey = "BuyScenario";
+            const string buyScenarioEntryKey = "BuyScenario";
 
             // Добавляем главный чекбокс
             CheckBox mainCheckbox = new CheckBox
@@ -1262,7 +1263,7 @@ namespace ConfigMaker
                 combobox.SelectedIndex = defaultIndex;                
             };
 
-            void addTextboxNumberCmdController(string cmd, double defaultValue, bool asInteger)
+            void AddTextboxNumberCmdController(string cmd, double defaultValue, bool asInteger)
             {
                 var tuple = PrepareNewRow(cmd, true);
                 TextBlock resultCmdBlock = tuple.Item1;
@@ -1389,7 +1390,7 @@ namespace ConfigMaker
                 textbox.Text = fixedDefaultStrValue;
             };
 
-            void addTextboxStringCmdController(string cmd, string defaultValue)
+            void AddTextboxStringCmdController(string cmd, string defaultValue)
             {
                 var tuple = PrepareNewRow(cmd, false);
                 TextBlock resultCmdBlock = tuple.Item1;
@@ -1430,7 +1431,7 @@ namespace ConfigMaker
                     },
                     Generate = () =>
                     {
-                        SingleCmd generatedCmd = new SingleCmd(resultCmdBlock.Text);
+                        SingleCmd generatedCmd = new SingleCmd(resultCmdBlock.Text, false);
 
                         return new ParametrizedEntry<string>()
                         {
@@ -1455,7 +1456,7 @@ namespace ConfigMaker
                 textbox.Text = defaultValue;
             };
 
-            void addGroupHeader(string text)
+            void AddGroupHeader(string text)
             {
                 TextBlock block = new TextBlock();
                 block.Inlines.Add(new Bold(new Run(text)));
@@ -1466,20 +1467,20 @@ namespace ConfigMaker
 
             string[] toggleStrings = new string[] { Res.Off, Res.On };
             
-            addGroupHeader(Res.CategoryMouseSettings);
-            addTextboxNumberCmdController("sensitivity", 2.5, false);
-            addTextboxNumberCmdController("zoom_sensitivity_ratio_mouse", 1, false);
+            AddGroupHeader(Res.CategoryMouseSettings);
+            AddTextboxNumberCmdController("sensitivity", 2.5, false);
+            AddTextboxNumberCmdController("zoom_sensitivity_ratio_mouse", 1, false);
             AddComboboxCmdController("m_rawinput", toggleStrings, 1, true);
             AddComboboxCmdController("m_customaccel", toggleStrings, 0, true);
             AddIntervalCmdController("m_customaccel_exponent", 0.05, 10, 0.05, 1.05);
 
-            addGroupHeader(Res.CategoryClientCommands);
+            AddGroupHeader(Res.CategoryClientCommands);
             AddComboboxCmdController("cl_autowepswitch", toggleStrings, 1, true);
             AddIntervalCmdController("cl_bob_lower_amt", 5, 30, 1, 21);
             AddIntervalCmdController("cl_bobamt_lat", 0.1, 2, 0.1, 0.4);
             AddIntervalCmdController("cl_bobamt_vert", 0.1, 2, 0.1, 0.25);
             AddIntervalCmdController("cl_bobcycle", 0.1, 2, 0.01, 0.98);
-            addTextboxNumberCmdController("cl_clanid", 0, true);
+            AddTextboxNumberCmdController("cl_clanid", 0, true);
             AddComboboxCmdController("cl_color", new string[] { Res.Yellow, Res.Purple, Res.Green, Res.Blue, Res.Orange }, 0, true);
             AddComboboxCmdController("cl_dm_buyrandomweapons", toggleStrings, 1, true);
             AddComboboxCmdController("cl_draw_only_deathnotices", toggleStrings, 1, true);
@@ -1492,7 +1493,7 @@ namespace ConfigMaker
             AddComboboxCmdController("cl_hud_playercount_showcount", new string[] { Res.ShowAvatars, Res.ShowCount}, 0, true);
             AddComboboxCmdController("cl_loadout_colorweaponnames", toggleStrings, 0, true);
             AddComboboxCmdController("cl_mute_enemy_team", toggleStrings, 0, true);
-            addTextboxNumberCmdController("cl_pdump", -1, true);
+            AddTextboxNumberCmdController("cl_pdump", -1, true);
             AddComboboxCmdController("cl_radar_always_centered", toggleStrings, 0, true);
             AddIntervalCmdController("cl_radar_icon_scale_min", 0.4, 1, 0.01, 0.7);
             AddIntervalCmdController("cl_radar_scale", 0.25, 1, 0.01, 0.7);
@@ -1508,44 +1509,88 @@ namespace ConfigMaker
             AddIntervalCmdController("cl_viewmodel_shift_left_amt", 0.5, 2, 0.05, 1.5);
             AddIntervalCmdController("cl_viewmodel_shift_right_amt", 0.25, 2, 0.05, 0.75);
 
-            addGroupHeader(Res.CategoryCrosshair);
+            AddGroupHeader(Res.CategoryCrosshair);
             AddComboboxCmdController("cl_crosshair_drawoutline", toggleStrings, 0, true);
             AddIntervalCmdController("cl_crosshair_dynamic_maxdist_splitratio", 0, 1, 0.1, 0.35);
             AddIntervalCmdController("cl_crosshair_dynamic_splitalpha_innermod", 0, 1, 0.01, 1);
             AddIntervalCmdController("cl_crosshair_dynamic_splitalpha_outermod", 0.3, 1, 0.01, 0.5);
-            addTextboxNumberCmdController("cl_crosshair_dynamic_splitdist", 7, true);
+            AddTextboxNumberCmdController("cl_crosshair_dynamic_splitdist", 7, true);
             AddIntervalCmdController("cl_crosshair_outlinethickness", 0.1, 3, 0.1, 1);
-            addTextboxNumberCmdController("cl_crosshair_sniper_width", 1, false);
+            AddTextboxNumberCmdController("cl_crosshair_sniper_width", 1, false);
             AddIntervalCmdController("cl_crosshairalpha", 0, 255, 1, 200);
             AddComboboxCmdController("cl_crosshairdot", toggleStrings, 1, true);
             AddComboboxCmdController("cl_crosshairgap", toggleStrings, 1, true);
             AddComboboxCmdController("cl_crosshair_t", toggleStrings, 1, true);
             AddComboboxCmdController("cl_crosshairgap_useweaponvalue", toggleStrings, 1, true);
-            addTextboxNumberCmdController("cl_crosshairsize", 5, false);
+            AddTextboxNumberCmdController("cl_crosshairsize", 5, false);
             AddIntervalCmdController("cl_crosshairstyle", 0, 5, 1, 2);
-            addTextboxNumberCmdController("cl_crosshairthickness", 0.5, false);
+            AddTextboxNumberCmdController("cl_crosshairthickness", 0.5, false);
             AddComboboxCmdController("cl_crosshairusealpha", toggleStrings, 1, true);
-            addTextboxNumberCmdController("cl_fixedcrosshairgap", 3, false);
+            AddTextboxNumberCmdController("cl_fixedcrosshairgap", 3, false);
 
             // текстовые аргументы
-            addGroupHeader(Res.CategoryOther);
-            addTextboxStringCmdController("say", "vk.com/exideprod");
-            addTextboxStringCmdController("say_team", "Hello world!");
-            addTextboxStringCmdController("connect", "12.34.56.78:27015");
+            AddGroupHeader(Res.CategoryOther);
+            AddTextboxStringCmdController("say", "vk.com/exideprod");
+            AddTextboxStringCmdController("say_team", "Hello world!");
+            AddTextboxStringCmdController("connect", "12.34.56.78:27015");
 
-            addGroupHeader(Res.CategoryNetGraphSettings);
+            AddGroupHeader(Res.CategoryNetGraphSettings);
             AddComboboxCmdController("net_graph", toggleStrings, 0, true);
-            addTextboxNumberCmdController("net_graphheight", 64, true);
-            addTextboxNumberCmdController("net_graphpos", 1, true);
+            AddTextboxNumberCmdController("net_graphheight", 64, true);
+            AddTextboxNumberCmdController("net_graphpos", 1, true);
             AddComboboxCmdController("net_graphproportionalfont", toggleStrings, 0, true);
         }
 
         void InitExtra()
         {
-            // custom command execution
+            // --- custom command execution ---
+            const string execCustomCmdsEntryKey = "ExecCustomCmds";
             this.customCmdHeaderCheckbox.Click += HandleEntryClick;
-            this.customCmdHeaderCheckbox.Tag = ServiceConfigEntry.ExecCustomCmds.ToString();
-            this.entryUiBindings.Add(ServiceConfigEntry.ExecCustomCmds.ToString(), new EntryController()
+            this.customCmdHeaderCheckbox.Tag = execCustomCmdsEntryKey;
+
+            // Зададим действия по клику на кнопки в этом методе, чтобы ключ нигде кроме как здесь не упоминался
+            // Повесим действие по добавлению новой команды на кнопку
+            addCmdButton.Click += (sender, args) =>
+            {
+                ButtonBase cmdElement = new Chip
+                {
+                    Style = (Style)this.Resources["BubbleButton"],
+                    Content = cmdTextbox.Text.Trim()
+                };
+                customCmdPanel.Children.Add(cmdElement);
+                customCmdPanel.Tag = cmdElement;
+
+                cmdElement.Click += (_, __) => customCmdPanel.Tag = cmdElement;
+
+                Binding tagBinding = new Binding("Tag")
+                {
+                    Source = customCmdPanel,
+                    Converter = new TagToFontWeightConverter(),
+                    ConverterParameter = cmdElement
+                };
+                cmdElement.SetBinding(ButtonBase.FontWeightProperty, tagBinding);
+
+                AddEntry(execCustomCmdsEntryKey);
+            };
+            // А так же повесим действие на кнопку удаления команды
+            deleteCmdButton.Click += (sender, args) =>
+            {
+                ButtonBase targetButton = customCmdPanel.Tag as ButtonBase;
+                BindingOperations.ClearAllBindings(targetButton);
+                customCmdPanel.Children.Remove(targetButton);
+
+                if (customCmdPanel.Children.Count > 0)
+                {
+                    customCmdPanel.Tag = customCmdPanel.Children[0];
+                    this.AddEntry(execCustomCmdsEntryKey);
+                }
+                else
+                {
+                    customCmdPanel.Tag = null;
+                }
+            };
+
+            this.entryUiBindings.Add(execCustomCmdsEntryKey, new EntryController()
             {
                 AttachedCheckbox = customCmdHeaderCheckbox,
                 Focus = () => extraTabButton.IsChecked = true,
@@ -1567,7 +1612,7 @@ namespace ConfigMaker
 
                     return new ParametrizedEntry<string[]>()
                     {
-                        PrimaryKey = ServiceConfigEntry.ExecCustomCmds.ToString(),
+                        PrimaryKey = execCustomCmdsEntryKey,
                         Cmd = new SingleCmd(aliasName),
                         IsMetaScript = false,
                         Type = EntryType.Dynamic,
@@ -1593,7 +1638,7 @@ namespace ConfigMaker
             });
 
             // cycle crosshairs
-            string cycleCrosshairEntryKey = "CycleCrosshair";
+            const string cycleCrosshairEntryKey = "CycleCrosshair";
 
             this.cycleChHeaderCheckbox.Click += HandleEntryClick;
             this.cycleChHeaderCheckbox.Tag = cycleCrosshairEntryKey;
@@ -1672,7 +1717,7 @@ namespace ConfigMaker
 
 
             // volume regulator
-            string volumeRegulatorEntryKey = "VolumeRegulator";
+            const string volumeRegulatorEntryKey = "VolumeRegulator";
             this.volumeRegulatorCheckbox.Click += HandleEntryClick;
             this.volumeRegulatorCheckbox.Tag = volumeRegulatorEntryKey;
 
@@ -1825,7 +1870,9 @@ namespace ConfigMaker
 
         void InitAliasController()
         {
-            this.entryUiBindings.Add(ServiceConfigEntry.ExtraAliasSet.ToString(), new EntryController()
+            const string extraAliasEntryKey = "ExtraAlias";
+
+            this.entryUiBindings.Add(extraAliasSetEntryKey, new EntryController()
             {
                 Generate = () =>
                 {
@@ -1846,7 +1893,7 @@ namespace ConfigMaker
 
                         ParametrizedEntry<Entry[]> aliasEntry = new ParametrizedEntry<Entry[]>()
                         {
-                            PrimaryKey = ServiceConfigEntry.ExtraAlias.ToString(),
+                            PrimaryKey = extraAliasEntryKey,
                             Cmd = new SingleCmd(aliasName),
                             IsMetaScript = false,
                             Type = EntryType.Dynamic,
@@ -1864,7 +1911,7 @@ namespace ConfigMaker
                     // сформируем итоговый элемент конфига
                     return new ParametrizedEntry<Entry[]>()
                     {
-                        PrimaryKey = ServiceConfigEntry.ExtraAliasSet.ToString(),
+                        PrimaryKey = extraAliasSetEntryKey,
                         Cmd = null,
                         IsMetaScript = false,
                         Type = EntryType.Dynamic,
@@ -2083,7 +2130,7 @@ namespace ConfigMaker
                     .Concat(new Entry[] { entry }).ToList();
 
                 // И вызываем обработчика пользовательских алиасов
-                Entry aliasSetEntry = (Entry)this.entryUiBindings[ServiceConfigEntry.ExtraAliasSet.ToString()].Generate();
+                Entry aliasSetEntry = (Entry)this.entryUiBindings[extraAliasSetEntryKey].Generate();
                 this.cfgManager.AddEntry(aliasSetEntry);
             }
             else
@@ -2103,7 +2150,7 @@ namespace ConfigMaker
             }
             else if (this.StateBinding == EntryStateBinding.Alias)
             {                
-                if (entry.PrimaryKey != ServiceConfigEntry.ExtraAliasSet.ToString())
+                if (entry.PrimaryKey != extraAliasSetEntryKey)
                 {
                     // Добавляем текущий элемент к коллекции, привязанной к выбранной кнопке
                     FrameworkElement targetElement = aliasPanel.Tag as FrameworkElement;
@@ -2113,7 +2160,7 @@ namespace ConfigMaker
                         .ToList();
 
                     // Напрямую обновим узел в менеджере
-                    Entry aliasSetEntry = (Entry) this.entryUiBindings[ServiceConfigEntry.ExtraAliasSet.ToString()].Generate();
+                    Entry aliasSetEntry = (Entry) this.entryUiBindings[extraAliasSetEntryKey].Generate();
                     this.cfgManager.AddEntry(aliasSetEntry);
                 }
                 else

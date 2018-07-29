@@ -77,7 +77,6 @@
     <Compile Include="Csgo\Config\Entries\interfaces\IEntry.cs" />
     <Compile Include="Csgo\Config\Entries\interfaces\IParametrizedEntry.cs" />
     <Compile Include="Csgo\Config\Entries\ParametrizedBindEntry.cs" />
-    <Compile Include="Csgo\Config\Enums\ServiceConfigEntry.cs" />
     <Compile Include="Csgo\Commands\CommandCollection.cs" />
     <Compile Include="Csgo\Commands\MetaCmd.cs" />
     <Compile Include="Csgo\Commands\SingleCmd.cs" />
