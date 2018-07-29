@@ -45,7 +45,7 @@ namespace ConfigMaker.Csgo.Commands
             this.Commands = new CommandCollection(commands);
         }
 
-        public BindCmd(string key, Executable command): this(key, new Executable[] { command }) { }
+        public BindCmd(string pKet, Executable command): this(pKet, new Executable[] { command }) { }
 
         public override string ToString()
         {

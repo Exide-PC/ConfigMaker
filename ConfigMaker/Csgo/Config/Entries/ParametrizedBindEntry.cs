@@ -38,7 +38,7 @@ namespace ConfigMaker.Csgo.Config.Entries
         }
 
         public ParametrizedBindEntry(
-            ConfigEntry primaryKey,
+            string primaryKey,
             Executable onKeyDown,
             Executable onKeyRelease,
             CommandCollection dependencies,

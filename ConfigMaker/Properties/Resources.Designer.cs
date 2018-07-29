@@ -106,11 +106,29 @@ namespace ConfigMaker.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Fire.
+        /// </summary>
+        public static string Attack {
+            get {
+                return ResourceManager.GetString("Attack", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Secondary fire.
+        /// </summary>
+        public static string Attack2 {
+            get {
+                return ResourceManager.GetString("Attack2", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Auto buy.
         /// </summary>
-        public static string AutoBuy {
+        public static string Autobuy {
             get {
-                return ResourceManager.GetString("AutoBuy", resourceCulture);
+                return ResourceManager.GetString("Autobuy", resourceCulture);
             }
         }
         
@@ -133,15 +151,6 @@ namespace ConfigMaker.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Bomb.
-        /// </summary>
-        public static string Bomb {
-            get {
-                return ResourceManager.GetString("Bomb", resourceCulture);
-            }
-        }
-        
-        /// <summary>
         ///   Looks up a localized string similar to Bottom.
         /// </summary>
         public static string Bottom {
@@ -153,9 +162,9 @@ namespace ConfigMaker.Properties {
         /// <summary>
         ///   Looks up a localized string similar to Buy menu.
         /// </summary>
-        public static string BuyMenu {
+        public static string Buymenu {
             get {
-                return ResourceManager.GetString("BuyMenu", resourceCulture);
+                return ResourceManager.GetString("Buymenu", resourceCulture);
             }
         }
         
@@ -180,9 +189,9 @@ namespace ConfigMaker.Properties {
         /// <summary>
         ///   Looks up a localized string similar to Call vote.
         /// </summary>
-        public static string CallVote {
+        public static string Callvote {
             get {
-                return ResourceManager.GetString("CallVote", resourceCulture);
+                return ResourceManager.GetString("Callvote", resourceCulture);
             }
         }
         
@@ -277,20 +286,11 @@ namespace ConfigMaker.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Global chat.
+        ///   Looks up a localized string similar to Show team equipment.
         /// </summary>
-        public static string ChatMessage {
+        public static string Cl_show_team_equipment {
             get {
-                return ResourceManager.GetString("ChatMessage", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Choose team.
-        /// </summary>
-        public static string ChooseTeam {
-            get {
-                return ResourceManager.GetString("ChooseTeam", resourceCulture);
+                return ResourceManager.GetString("Cl_show_team_equipment", resourceCulture);
             }
         }
         
@@ -304,29 +304,11 @@ namespace ConfigMaker.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Clear decals.
-        /// </summary>
-        public static string Cleardecals {
-            get {
-                return ResourceManager.GetString("Cleardecals", resourceCulture);
-            }
-        }
-        
-        /// <summary>
         ///   Looks up a localized string similar to Command name:.
         /// </summary>
         public static string CommandName {
             get {
                 return ResourceManager.GetString("CommandName", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Command radio.
-        /// </summary>
-        public static string CommandRadio {
-            get {
-                return ResourceManager.GetString("CommandRadio", resourceCulture);
             }
         }
         
@@ -376,24 +358,6 @@ namespace ConfigMaker.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Grenades.
-        /// </summary>
-        public static string CycleGrenades {
-            get {
-                return ResourceManager.GetString("CycleGrenades", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Decoy.
-        /// </summary>
-        public static string DecoyGrenade {
-            get {
-                return ResourceManager.GetString("DecoyGrenade", resourceCulture);
-            }
-        }
-        
-        /// <summary>
         ///   Looks up a localized string similar to Default.
         /// </summary>
         public static string Default {
@@ -414,27 +378,27 @@ namespace ConfigMaker.Properties {
         /// <summary>
         ///   Looks up a localized string similar to Display damage OFF.
         /// </summary>
-        public static string DisplayDamageOff {
+        public static string DisplayDamage_Off {
             get {
-                return ResourceManager.GetString("DisplayDamageOff", resourceCulture);
+                return ResourceManager.GetString("DisplayDamage_Off", resourceCulture);
             }
         }
         
         /// <summary>
         ///   Looks up a localized string similar to Display damage ON.
         /// </summary>
-        public static string DisplayDamageOn {
+        public static string DisplayDamage_On {
             get {
-                return ResourceManager.GetString("DisplayDamageOn", resourceCulture);
+                return ResourceManager.GetString("DisplayDamage_On", resourceCulture);
             }
         }
         
         /// <summary>
         ///   Looks up a localized string similar to Drop.
         /// </summary>
-        public static string DropWeapon {
+        public static string Drop {
             get {
-                return ResourceManager.GetString("DropWeapon", resourceCulture);
+                return ResourceManager.GetString("Drop", resourceCulture);
             }
         }
         
@@ -480,24 +444,6 @@ namespace ConfigMaker.Properties {
         public static string ExtraCategory_Button {
             get {
                 return ResourceManager.GetString("ExtraCategory_Button", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Fire.
-        /// </summary>
-        public static string Fire {
-            get {
-                return ResourceManager.GetString("Fire", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Flashbang.
-        /// </summary>
-        public static string Flashbang {
-            get {
-                return ResourceManager.GetString("Flashbang", resourceCulture);
             }
         }
         
@@ -588,15 +534,6 @@ namespace ConfigMaker.Properties {
         public static string God {
             get {
                 return ResourceManager.GetString("God", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Graffiti menu.
-        /// </summary>
-        public static string GraffitiMenu {
-            get {
-                return ResourceManager.GetString("GraffitiMenu", resourceCulture);
             }
         }
         
@@ -736,29 +673,29 @@ namespace ConfigMaker.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to HE grenade.
-        /// </summary>
-        public static string HEGrenade {
-            get {
-                return ResourceManager.GetString("HEGrenade", resourceCulture);
-            }
-        }
-        
-        /// <summary>
         ///   Looks up a localized string similar to Money.
         /// </summary>
-        public static string Impulse101 {
+        public static string Impulse_101 {
             get {
-                return ResourceManager.GetString("Impulse101", resourceCulture);
+                return ResourceManager.GetString("Impulse 101", resourceCulture);
             }
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Inspect weapon.
+        ///   Looks up a localized string similar to Next weapon.
         /// </summary>
-        public static string InspectWeapon {
+        public static string Invnext {
             get {
-                return ResourceManager.GetString("InspectWeapon", resourceCulture);
+                return ResourceManager.GetString("Invnext", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Previous weapon.
+        /// </summary>
+        public static string Invprev {
+            get {
+                return ResourceManager.GetString("Invprev", resourceCulture);
             }
         }
         
@@ -844,20 +781,11 @@ namespace ConfigMaker.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Knife.
-        /// </summary>
-        public static string Knife {
-            get {
-                return ResourceManager.GetString("Knife", resourceCulture);
-            }
-        }
-        
-        /// <summary>
         ///   Looks up a localized string similar to Last weapon.
         /// </summary>
-        public static string LastWeaponUsed {
+        public static string Lastinv {
             get {
-                return ResourceManager.GetString("LastWeaponUsed", resourceCulture);
+                return ResourceManager.GetString("Lastinv", resourceCulture);
             }
         }
         
@@ -867,6 +795,15 @@ namespace ConfigMaker.Properties {
         public static string LightBlue {
             get {
                 return ResourceManager.GetString("LightBlue", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Inspect weapon.
+        /// </summary>
+        public static string Lookatweapon {
+            get {
+                return ResourceManager.GetString("Lookatweapon", resourceCulture);
             }
         }
         
@@ -907,20 +844,20 @@ namespace ConfigMaker.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Microphone.
+        ///   Looks up a localized string similar to Global chat.
         /// </summary>
-        public static string Microphone {
+        public static string Messagemode {
             get {
-                return ResourceManager.GetString("Microphone", resourceCulture);
+                return ResourceManager.GetString("Messagemode", resourceCulture);
             }
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Molotov.
+        ///   Looks up a localized string similar to Team chat.
         /// </summary>
-        public static string Molotov {
+        public static string Messagemode2 {
             get {
-                return ResourceManager.GetString("Molotov", resourceCulture);
+                return ResourceManager.GetString("Messagemode2", resourceCulture);
             }
         }
         
@@ -1051,20 +988,47 @@ namespace ConfigMaker.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Primary weapon.
-        /// </summary>
-        public static string PrimaryWeapon {
-            get {
-                return ResourceManager.GetString("PrimaryWeapon", resourceCulture);
-            }
-        }
-        
-        /// <summary>
         ///   Looks up a localized string similar to Purple.
         /// </summary>
         public static string Purple {
             get {
                 return ResourceManager.GetString("Purple", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Clear decals.
+        /// </summary>
+        public static string R_cleardecals {
+            get {
+                return ResourceManager.GetString("R_cleardecals", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Command radio.
+        /// </summary>
+        public static string Radio1 {
+            get {
+                return ResourceManager.GetString("Radio1", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Standart radio.
+        /// </summary>
+        public static string Radio2 {
+            get {
+                return ResourceManager.GetString("Radio2", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Report radio.
+        /// </summary>
+        public static string Radio3 {
+            get {
+                return ResourceManager.GetString("Radio3", resourceCulture);
             }
         }
         
@@ -1101,15 +1065,6 @@ namespace ConfigMaker.Properties {
         public static string Remove_Button {
             get {
                 return ResourceManager.GetString("Remove_Button", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Report radio.
-        /// </summary>
-        public static string ReportRadio {
-            get {
-                return ResourceManager.GetString("ReportRadio", resourceCulture);
             }
         }
         
@@ -1186,38 +1141,11 @@ namespace ConfigMaker.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Scoreboard.
-        /// </summary>
-        public static string Scoreboard {
-            get {
-                return ResourceManager.GetString("Scoreboard", resourceCulture);
-            }
-        }
-        
-        /// <summary>
         ///   Looks up a localized string similar to Search.
         /// </summary>
         public static string Search_Hint {
             get {
                 return ResourceManager.GetString("Search_Hint", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Secondary fire.
-        /// </summary>
-        public static string SecondaryFire {
-            get {
-                return ResourceManager.GetString("SecondaryFire", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Secondary weapon.
-        /// </summary>
-        public static string SecondaryWeapon {
-            get {
-                return ResourceManager.GetString("SecondaryWeapon", resourceCulture);
             }
         }
         
@@ -1231,29 +1159,20 @@ namespace ConfigMaker.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Next weapon.
-        /// </summary>
-        public static string SelectNextWeapon {
-            get {
-                return ResourceManager.GetString("SelectNextWeapon", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Previous weapon.
-        /// </summary>
-        public static string SelectPreviousWeapon {
-            get {
-                return ResourceManager.GetString("SelectPreviousWeapon", resourceCulture);
-            }
-        }
-        
-        /// <summary>
         ///   Looks up a localized string similar to Sensitivity.
         /// </summary>
         public static string sensitivity {
             get {
                 return ResourceManager.GetString("sensitivity", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Toggle inventory display.
+        /// </summary>
+        public static string Show_loadout_toggle {
+            get {
+                return ResourceManager.GetString("Show_loadout_toggle", resourceCulture);
             }
         }
         
@@ -1276,11 +1195,110 @@ namespace ConfigMaker.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Show team equipment.
+        ///   Looks up a localized string similar to Scoreboard.
         /// </summary>
-        public static string ShowTeamEquipment {
+        public static string showscores {
             get {
-                return ResourceManager.GetString("ShowTeamEquipment", resourceCulture);
+                return ResourceManager.GetString("showscores", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Primary weapon.
+        /// </summary>
+        public static string Slot1 {
+            get {
+                return ResourceManager.GetString("Slot1", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Molotov.
+        /// </summary>
+        public static string Slot10 {
+            get {
+                return ResourceManager.GetString("Slot10", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Zeus.
+        /// </summary>
+        public static string Slot11 {
+            get {
+                return ResourceManager.GetString("Slot11", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Secondary weapon.
+        /// </summary>
+        public static string Slot2 {
+            get {
+                return ResourceManager.GetString("Slot2", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Knife.
+        /// </summary>
+        public static string Slot3 {
+            get {
+                return ResourceManager.GetString("Slot3", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Grenades.
+        /// </summary>
+        public static string Slot4 {
+            get {
+                return ResourceManager.GetString("Slot4", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Bomb.
+        /// </summary>
+        public static string Slot5 {
+            get {
+                return ResourceManager.GetString("Slot5", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to HE grenade.
+        /// </summary>
+        public static string Slot6 {
+            get {
+                return ResourceManager.GetString("Slot6", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Flashbang.
+        /// </summary>
+        public static string Slot7 {
+            get {
+                return ResourceManager.GetString("Slot7", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Smoke grenade.
+        /// </summary>
+        public static string Slot8 {
+            get {
+                return ResourceManager.GetString("Slot8", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Decoy.
+        /// </summary>
+        public static string Slot9 {
+            get {
+                return ResourceManager.GetString("Slot9", resourceCulture);
             }
         }
         
@@ -1339,15 +1357,6 @@ namespace ConfigMaker.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Smoke grenade.
-        /// </summary>
-        public static string Smokegrenade {
-            get {
-                return ResourceManager.GetString("Smokegrenade", resourceCulture);
-            }
-        }
-        
-        /// <summary>
         ///   Looks up a localized string similar to Speed.
         /// </summary>
         public static string Speed {
@@ -1357,11 +1366,11 @@ namespace ConfigMaker.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Standart radio.
+        ///   Looks up a localized string similar to Graffiti menu.
         /// </summary>
-        public static string StandartRadio {
+        public static string Spray_menu {
             get {
-                return ResourceManager.GetString("StandartRadio", resourceCulture);
+                return ResourceManager.GetString("Spray_menu", resourceCulture);
             }
         }
         
@@ -1375,11 +1384,11 @@ namespace ConfigMaker.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Team chat.
+        ///   Looks up a localized string similar to Choose team.
         /// </summary>
-        public static string TeamMessage {
+        public static string Teammenu {
             get {
-                return ResourceManager.GetString("TeamMessage", resourceCulture);
+                return ResourceManager.GetString("Teammenu", resourceCulture);
             }
         }
         
@@ -1395,18 +1404,9 @@ namespace ConfigMaker.Properties {
         /// <summary>
         ///   Looks up a localized string similar to Console.
         /// </summary>
-        public static string ToggleConsole {
+        public static string Toggleconsole {
             get {
-                return ResourceManager.GetString("ToggleConsole", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Toggle inventory display.
-        /// </summary>
-        public static string ToggleInventoryDisplay {
-            get {
-                return ResourceManager.GetString("ToggleInventoryDisplay", resourceCulture);
+                return ResourceManager.GetString("Toggleconsole", resourceCulture);
             }
         }
         
@@ -1443,6 +1443,15 @@ namespace ConfigMaker.Properties {
         public static string Use {
             get {
                 return ResourceManager.GetString("Use", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Microphone.
+        /// </summary>
+        public static string Voicerecord {
+            get {
+                return ResourceManager.GetString("Voicerecord", resourceCulture);
             }
         }
         
@@ -1488,15 +1497,6 @@ namespace ConfigMaker.Properties {
         public static string Yellow {
             get {
                 return ResourceManager.GetString("Yellow", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Zeus.
-        /// </summary>
-        public static string Zeus {
-            get {
-                return ResourceManager.GetString("Zeus", resourceCulture);
             }
         }
         

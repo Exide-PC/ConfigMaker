@@ -65,6 +65,11 @@
     <Compile Include="AboutWindow.xaml.cs">
       <DependentUpon>AboutWindow.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Properties\Resources.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>Resources.resx</DependentUpon>
+    </Compile>
     <Compile Include="Utils\Converters\TagToFontWeightConverter.cs" />
     <Compile Include="Csgo\Config\Entries\Entry.cs" />
     <Compile Include="Csgo\Config\Entries\ParametrizedEntry.cs" />
@@ -72,7 +77,7 @@
     <Compile Include="Csgo\Config\Entries\interfaces\IEntry.cs" />
     <Compile Include="Csgo\Config\Entries\interfaces\IParametrizedEntry.cs" />
     <Compile Include="Csgo\Config\Entries\ParametrizedBindEntry.cs" />
-    <Compile Include="Csgo\Config\Enums\ConfigEntry.cs" />
+    <Compile Include="Csgo\Config\Enums\ServiceConfigEntry.cs" />
     <Compile Include="Csgo\Commands\CommandCollection.cs" />
     <Compile Include="Csgo\Commands\MetaCmd.cs" />
     <Compile Include="Csgo\Commands\SingleCmd.cs" />
@@ -121,11 +126,6 @@
   <ItemGroup>
     <Compile Include="Properties\AssemblyInfo.cs">
       <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="Properties\Resources.Designer.cs">
-      <AutoGen>True</AutoGen>
-      <DesignTime>True</DesignTime>
-      <DependentUpon>Resources.resx</DependentUpon>
     </Compile>
     <Compile Include="Properties\Settings.Designer.cs">
       <AutoGen>True</AutoGen>

@@ -283,7 +283,7 @@
                                                     <StackPanel>
                                                         <StackPanel Orientation="Horizontal" Height="28">
                                                             <TextBlock Width="30" Text="{x:Static res:Resources.From_Label}" />
-                                                            <Slider Width="150" Name="minVolumeSlider" Minimum="0" Maximum="0.99" IsSnapToTickEnabled="True" TickFrequency="0.01" Value="0" ValueChanged="VolumeSliderValueChanged"/>
+                                                            <Slider Width="150" Name="minVolumeSlider" Minimum="0" Maximum="0.99" IsSnapToTickEnabled="True" TickFrequency="0.01" Value="0"/>
                                                             <Border Width="30">
                                                                 <TextBlock HorizontalAlignment="Center" Text="{Binding Path=Value, ElementName=minVolumeSlider}"/>
                                                             </Border>
@@ -294,14 +294,14 @@
                                                         </StackPanel>
                                                         <StackPanel Orientation="Horizontal" Height="28">
                                                             <TextBlock Width="30" Text="{x:Static res:Resources.To_Label}"/>
-                                                            <Slider Width="150" Name="maxVolumeSlider" Minimum="0.01" Maximum="1" IsSnapToTickEnabled="True" TickFrequency="0.01" Value="1" ValueChanged="VolumeSliderValueChanged"/>
+                                                            <Slider Width="150" Name="maxVolumeSlider" Minimum="0.01" Maximum="1" IsSnapToTickEnabled="True" TickFrequency="0.01" Value="1"/>
                                                             <Border Width="30">
                                                                 <TextBlock HorizontalAlignment="Center" Text="{Binding Path=Value, ElementName=maxVolumeSlider}"/>
                                                             </Border>
                                                         </StackPanel>
                                                         <StackPanel Orientation="Horizontal" Height="28">
                                                             <TextBlock Width="30" Text="{x:Static res:Resources.Step_Label}"/>
-                                                            <Slider Width="150" Name="volumeStepSlider" Minimum="0.01" Maximum="0.5" IsSnapToTickEnabled="True" TickFrequency="0.01" Value="0.01" ValueChanged="VolumeSliderValueChanged"/>
+                                                            <Slider Width="150" Name="volumeStepSlider" Minimum="0.01" Maximum="0.5" IsSnapToTickEnabled="True" TickFrequency="0.01" Value="0.01"/>
                                                             <Border Width="30">
                                                                 <TextBlock HorizontalAlignment="Center" Text="{Binding Path=Value, ElementName=volumeStepSlider}"/>
                                                             </Border>

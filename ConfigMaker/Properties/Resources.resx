@@ -144,109 +144,109 @@
   <data name="Use" xml:space="preserve">
     <value>Use</value>
   </data>
-  <data name="ToggleInventoryDisplay" xml:space="preserve">
+  <data name="Show_loadout_toggle" xml:space="preserve">
     <value>Toggle inventory display</value>
   </data>
-  <data name="Fire" xml:space="preserve">
+  <data name="Attack" xml:space="preserve">
     <value>Fire</value>
   </data>
-  <data name="SecondaryFire" xml:space="preserve">
+  <data name="Attack2" xml:space="preserve">
     <value>Secondary fire</value>
   </data>
-  <data name="SelectPreviousWeapon" xml:space="preserve">
+  <data name="Invprev" xml:space="preserve">
     <value>Previous weapon</value>
   </data>
   <data name="Reload" xml:space="preserve">
     <value>Reload</value>
   </data>
-  <data name="SelectNextWeapon" xml:space="preserve">
+  <data name="Invnext" xml:space="preserve">
     <value>Next weapon</value>
   </data>
-  <data name="LastWeaponUsed" xml:space="preserve">
+  <data name="Lastinv" xml:space="preserve">
     <value>Last weapon</value>
   </data>
-  <data name="DropWeapon" xml:space="preserve">
+  <data name="Drop" xml:space="preserve">
     <value>Drop</value>
   </data>
-  <data name="InspectWeapon" xml:space="preserve">
+  <data name="Lookatweapon" xml:space="preserve">
     <value>Inspect weapon</value>
   </data>
-  <data name="GraffitiMenu" xml:space="preserve">
+  <data name="Spray_menu" xml:space="preserve">
     <value>Graffiti menu</value>
   </data>
-  <data name="CommandRadio" xml:space="preserve">
+  <data name="Radio1" xml:space="preserve">
     <value>Command radio</value>
   </data>
-  <data name="StandartRadio" xml:space="preserve">
+  <data name="Radio2" xml:space="preserve">
     <value>Standart radio</value>
   </data>
-  <data name="ReportRadio" xml:space="preserve">
+  <data name="Radio3" xml:space="preserve">
     <value>Report radio</value>
   </data>
-  <data name="TeamMessage" xml:space="preserve">
+  <data name="Messagemode2" xml:space="preserve">
     <value>Team chat</value>
   </data>
-  <data name="ChatMessage" xml:space="preserve">
+  <data name="Messagemode" xml:space="preserve">
     <value>Global chat</value>
   </data>
-  <data name="Microphone" xml:space="preserve">
+  <data name="Voicerecord" xml:space="preserve">
     <value>Microphone</value>
   </data>
-  <data name="BuyMenu" xml:space="preserve">
+  <data name="Buymenu" xml:space="preserve">
     <value>Buy menu</value>
   </data>
-  <data name="AutoBuy" xml:space="preserve">
+  <data name="Autobuy" xml:space="preserve">
     <value>Auto buy</value>
   </data>
   <data name="Rebuy" xml:space="preserve">
     <value>Rebuy</value>
   </data>
-  <data name="Scoreboard" xml:space="preserve">
+  <data name="showscores" xml:space="preserve">
     <value>Scoreboard</value>
   </data>
-  <data name="PrimaryWeapon" xml:space="preserve">
+  <data name="Slot1" xml:space="preserve">
     <value>Primary weapon</value>
   </data>
-  <data name="SecondaryWeapon" xml:space="preserve">
+  <data name="Slot2" xml:space="preserve">
     <value>Secondary weapon</value>
   </data>
-  <data name="Knife" xml:space="preserve">
+  <data name="Slot3" xml:space="preserve">
     <value>Knife</value>
   </data>
-  <data name="CycleGrenades" xml:space="preserve">
+  <data name="Slot4" xml:space="preserve">
     <value>Grenades</value>
   </data>
-  <data name="Bomb" xml:space="preserve">
+  <data name="Slot5" xml:space="preserve">
     <value>Bomb</value>
   </data>
-  <data name="HEGrenade" xml:space="preserve">
+  <data name="Slot6" xml:space="preserve">
     <value>HE grenade</value>
   </data>
-  <data name="Flashbang" xml:space="preserve">
+  <data name="Slot7" xml:space="preserve">
     <value>Flashbang</value>
   </data>
-  <data name="Smokegrenade" xml:space="preserve">
+  <data name="Slot8" xml:space="preserve">
     <value>Smoke grenade</value>
   </data>
-  <data name="DecoyGrenade" xml:space="preserve">
+  <data name="Slot9" xml:space="preserve">
     <value>Decoy</value>
   </data>
-  <data name="Molotov" xml:space="preserve">
+  <data name="Slot10" xml:space="preserve">
     <value>Molotov</value>
   </data>
-  <data name="Zeus" xml:space="preserve">
+  <data name="Slot11" xml:space="preserve">
     <value>Zeus</value>
   </data>
-  <data name="CallVote" xml:space="preserve">
+  <data name="Callvote" xml:space="preserve">
     <value>Call vote</value>
   </data>
-  <data name="ChooseTeam" xml:space="preserve">
+  <data name="Teammenu" xml:space="preserve">
     <value>Choose team</value>
   </data>
-  <data name="ShowTeamEquipment" xml:space="preserve">
+  <data name="Cl_show_team_equipment" xml:space="preserve">
     <value>Show team equipment</value>
   </data>
-  <data name="ToggleConsole" xml:space="preserve">
+  <data name="Toggleconsole" xml:space="preserve">
     <value>Console</value>
   </data>
   <data name="God" xml:space="preserve">
@@ -255,10 +255,10 @@
   <data name="Noclip" xml:space="preserve">
     <value>Noclip</value>
   </data>
-  <data name="Impulse101" xml:space="preserve">
+  <data name="Impulse 101" xml:space="preserve">
     <value>Money</value>
   </data>
-  <data name="Cleardecals" xml:space="preserve">
+  <data name="R_cleardecals" xml:space="preserve">
     <value>Clear decals</value>
   </data>
   <data name="Clear" xml:space="preserve">
@@ -276,10 +276,10 @@
   <data name="ExecCustomCmds" xml:space="preserve">
     <value>Execute command</value>
   </data>
-  <data name="DisplayDamageOn" xml:space="preserve">
+  <data name="DisplayDamage_On" xml:space="preserve">
     <value>Display damage ON</value>
   </data>
-  <data name="DisplayDamageOff" xml:space="preserve">
+  <data name="DisplayDamage_Off" xml:space="preserve">
     <value>Display damage OFF</value>
   </data>
   <data name="sensitivity" xml:space="preserve">

@@ -181,11 +181,11 @@ namespace ConfigMaker.Csgo.Config
                     .Concat(this.defaultEntries);
 
                 // Группируем по первичному ключу статические и полустатические элементы, т.к. зависимости у них одинаковые
-                IEnumerable<IGrouping<ConfigEntry, IEntry>> groupedByPK =
+                IEnumerable<IGrouping<string, IEntry>> groupedByPK =
                     castedEntries.Where(e => e.Type != EntryType.Dynamic).GroupBy(entry => entry.PrimaryKey);
                 
                 // Пройдемся по каждой группе и выпишем их зависимости
-                foreach (IGrouping<ConfigEntry, IEntry> group in groupedByPK)
+                foreach (IGrouping<string, IEntry> group in groupedByPK)
                 {
                     IEntry firstElement = group.ElementAt(0);
                     dependencies.Enqueue(new Dependency() { Name = firstElement.PrimaryKey.ToString(), Commands = firstElement.Dependencies });

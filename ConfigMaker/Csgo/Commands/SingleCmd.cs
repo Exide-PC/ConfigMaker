@@ -32,28 +32,24 @@ namespace ConfigMaker.Csgo.Commands
 {
     public class SingleCmd : Executable
     {
-        public string Name { get; set; }
+        public string Cmd { get; set; }
         //public List<string> Args { get; set; } = new List<string>();
 
         public SingleCmd() { }
 
-        public SingleCmd(string name, IEnumerable<string> args): this(name)
+        public SingleCmd(string cmd): this(cmd, true)
         {
-            //this.Args = args.ToList();
+
         }
 
-        public SingleCmd(string name)
+        public SingleCmd(string cmd, bool toLower)
         {
-            this.Name = name;
+            this.Cmd = toLower ? cmd.ToLower() : cmd;
         }
 
         public override string ToString()
         {
-            StringBuilder builder = new StringBuilder($"{this.Name}");
-            // Добавляем аргументы только если они есть
-            //if (this.Args != null && this.Args.Count > 0)
-            //    builder.Append($"{string.Join("; ", this.Args.Select(arg => arg.ToString()))}");
-            return builder.ToString();
+            return this.Cmd;
         }
     }
 }

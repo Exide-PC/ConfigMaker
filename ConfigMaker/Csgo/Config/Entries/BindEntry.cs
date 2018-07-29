@@ -43,7 +43,7 @@ namespace ConfigMaker.Csgo.Config.Entries
     [XmlInclude(typeof(ParametrizedBindEntry<double>))]
     public class BindEntry: IEntry
     {
-        public ConfigEntry PrimaryKey { get; set; }
+        public string PrimaryKey { get; set; }
 
         public Executable OnKeyDown { get; set; } = null;
         public Executable OnKeyRelease { get; set; } = null;
@@ -93,7 +93,7 @@ namespace ConfigMaker.Csgo.Config.Entries
         /// </summary>
         /// <param name="onKeyDown">Команда, выполняемая при нажатии кнопки. Может быть имя алиаса, а так же его полное объявление. null означает отсутствие действий</param>
         /// <param name="onKeyRelease">Команда, выполняемая при отжатии кнопки. Может быть имя алиаса, а так же его полное объявление. null означает отсутствие действий</param>
-        public BindEntry(ConfigEntry primaryKey, Executable onKeyDown, Executable onKeyRelease)
+        public BindEntry(string primaryKey, Executable onKeyDown, Executable onKeyRelease)
         {
             if (onKeyDown == null && onKeyRelease == null)
                 throw new InvalidOperationException("onKeyDown == null && onKeyRelease == null");
@@ -111,7 +111,7 @@ namespace ConfigMaker.Csgo.Config.Entries
             }
         }
 
-        public BindEntry(ConfigEntry primaryKey, Executable onKeyDown, Executable onKeyRelease, CommandCollection dependencies):
+        public BindEntry(string primaryKey, Executable onKeyDown, Executable onKeyRelease, CommandCollection dependencies):
             this(primaryKey, onKeyDown, onKeyRelease)
         {
             foreach (Executable cmd in dependencies)

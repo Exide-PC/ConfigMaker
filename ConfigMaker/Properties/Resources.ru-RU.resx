@@ -144,109 +144,109 @@
   <data name="Use" xml:space="preserve">
     <value>Использовать</value>
   </data>
-  <data name="ToggleInventoryDisplay" xml:space="preserve">
+  <data name="Show_loadout_toggle" xml:space="preserve">
     <value>Показ инвентаря</value>
   </data>
-  <data name="Fire" xml:space="preserve">
+  <data name="Attack" xml:space="preserve">
     <value>Огонь</value>
   </data>
-  <data name="SecondaryFire" xml:space="preserve">
+  <data name="Attack2" xml:space="preserve">
     <value>Альтернативный огонь</value>
   </data>
-  <data name="SelectPreviousWeapon" xml:space="preserve">
+  <data name="Invprev" xml:space="preserve">
     <value>Предыдущее оружие</value>
   </data>
   <data name="Reload" xml:space="preserve">
     <value>Перезарядка</value>
   </data>
-  <data name="SelectNextWeapon" xml:space="preserve">
+  <data name="Invnext" xml:space="preserve">
     <value>Следующее оружие</value>
   </data>
-  <data name="LastWeaponUsed" xml:space="preserve">
+  <data name="Lastinv" xml:space="preserve">
     <value>Последнее оружие</value>
   </data>
-  <data name="DropWeapon" xml:space="preserve">
+  <data name="Drop" xml:space="preserve">
     <value>Бросить оружие</value>
   </data>
-  <data name="InspectWeapon" xml:space="preserve">
+  <data name="Lookatweapon" xml:space="preserve">
     <value>Осмотреть оружие</value>
   </data>
-  <data name="GraffitiMenu" xml:space="preserve">
+  <data name="Spray_menu" xml:space="preserve">
     <value>Граффити</value>
   </data>
-  <data name="CommandRadio" xml:space="preserve">
+  <data name="Radio1" xml:space="preserve">
     <value>Отдать приказ по радио</value>
   </data>
-  <data name="StandartRadio" xml:space="preserve">
+  <data name="Radio2" xml:space="preserve">
     <value>Стандартные радиосообщения</value>
   </data>
-  <data name="ReportRadio" xml:space="preserve">
+  <data name="Radio3" xml:space="preserve">
     <value>Информационные радиосообщения</value>
   </data>
-  <data name="TeamMessage" xml:space="preserve">
+  <data name="Messagemode2" xml:space="preserve">
     <value>Сообщение команде</value>
   </data>
-  <data name="ChatMessage" xml:space="preserve">
+  <data name="Messagemode" xml:space="preserve">
     <value>Сообщение всем</value>
   </data>
-  <data name="Microphone" xml:space="preserve">
+  <data name="Voicerecord" xml:space="preserve">
     <value>Голосовая связь</value>
   </data>
-  <data name="BuyMenu" xml:space="preserve">
+  <data name="Buymenu" xml:space="preserve">
     <value>Меню закупки</value>
   </data>
-  <data name="AutoBuy" xml:space="preserve">
+  <data name="Autobuy" xml:space="preserve">
     <value>Автозакупка</value>
   </data>
   <data name="Rebuy" xml:space="preserve">
     <value>Купить снова</value>
   </data>
-  <data name="Scoreboard" xml:space="preserve">
+  <data name="showscores" xml:space="preserve">
     <value>Таблица очков</value>
   </data>
-  <data name="PrimaryWeapon" xml:space="preserve">
+  <data name="Slot1" xml:space="preserve">
     <value>Основное оружие</value>
   </data>
-  <data name="SecondaryWeapon" xml:space="preserve">
+  <data name="Slot2" xml:space="preserve">
     <value>Дополнительное оружие</value>
   </data>
-  <data name="Knife" xml:space="preserve">
+  <data name="Slot3" xml:space="preserve">
     <value>Нож</value>
   </data>
-  <data name="CycleGrenades" xml:space="preserve">
+  <data name="Slot4" xml:space="preserve">
     <value>Смена гранат</value>
   </data>
-  <data name="Bomb" xml:space="preserve">
+  <data name="Slot5" xml:space="preserve">
     <value>Бомба</value>
   </data>
-  <data name="HEGrenade" xml:space="preserve">
+  <data name="Slot6" xml:space="preserve">
     <value>Осколочная граната</value>
   </data>
-  <data name="Flashbang" xml:space="preserve">
+  <data name="Slot7" xml:space="preserve">
     <value>Световая граната</value>
   </data>
-  <data name="Smokegrenade" xml:space="preserve">
+  <data name="Slot8" xml:space="preserve">
     <value>Дымовая граната</value>
   </data>
-  <data name="DecoyGrenade" xml:space="preserve">
+  <data name="Slot9" xml:space="preserve">
     <value>Ложная граната</value>
   </data>
-  <data name="Molotov" xml:space="preserve">
+  <data name="Slot10" xml:space="preserve">
     <value>Молотов</value>
   </data>
-  <data name="Zeus" xml:space="preserve">
+  <data name="Slot11" xml:space="preserve">
     <value>Зевс</value>
   </data>
-  <data name="CallVote" xml:space="preserve">
+  <data name="Callvote" xml:space="preserve">
     <value>Голосование</value>
   </data>
-  <data name="ChooseTeam" xml:space="preserve">
+  <data name="Teammenu" xml:space="preserve">
     <value>Выбрать команду</value>
   </data>
-  <data name="ShowTeamEquipment" xml:space="preserve">
+  <data name="Cl_show_team_equipment" xml:space="preserve">
     <value>Снаряжение команды</value>
   </data>
-  <data name="ToggleConsole" xml:space="preserve">
+  <data name="Toggleconsole" xml:space="preserve">
     <value>Консоль</value>
   </data>
   <data name="God" xml:space="preserve">
@@ -255,10 +255,10 @@
   <data name="Noclip" xml:space="preserve">
     <value>Noclip</value>
   </data>
-  <data name="Impulse101" xml:space="preserve">
+  <data name="Impulse 101" xml:space="preserve">
     <value>Получить деньги</value>
   </data>
-  <data name="Cleardecals" xml:space="preserve">
+  <data name="R_cleardecals" xml:space="preserve">
     <value>Убрать следы</value>
   </data>
   <data name="Clear" xml:space="preserve">
@@ -276,10 +276,10 @@
   <data name="ExecCustomCmds" xml:space="preserve">
     <value>Выполнить команду</value>
   </data>
-  <data name="DisplayDamageOn" xml:space="preserve">
+  <data name="DisplayDamage_On" xml:space="preserve">
     <value>Вкл. показ урона</value>
   </data>
-  <data name="DisplayDamageOff" xml:space="preserve">
+  <data name="DisplayDamage_Off" xml:space="preserve">
     <value>Выкл. показ урона</value>
   </data>
   <data name="sensitivity" xml:space="preserve">

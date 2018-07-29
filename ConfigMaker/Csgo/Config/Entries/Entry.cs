@@ -39,7 +39,7 @@ namespace ConfigMaker.Csgo.Config.Entries
     [XmlInclude(typeof(ParametrizedEntry<Entry>))]
     public class Entry : IEntry
     {
-        public ConfigEntry PrimaryKey { get; set; }
+        public string PrimaryKey { get; set; }
         public Executable Cmd { get; set; }
         public EntryType Type { get; set; }
         public bool IsMetaScript { get; set; }

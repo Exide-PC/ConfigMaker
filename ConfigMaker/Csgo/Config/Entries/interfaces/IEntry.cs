@@ -34,7 +34,7 @@ namespace ConfigMaker.Csgo.Config.Entries.interfaces
 {
     public interface IEntry
     {
-        ConfigEntry PrimaryKey { get; set; }
+        string PrimaryKey { get; set; }
         Executable Cmd { get; set; }
         EntryType Type { get; set; }
         bool IsMetaScript { get; set; }

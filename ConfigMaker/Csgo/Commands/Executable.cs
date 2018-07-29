@@ -94,13 +94,13 @@ namespace ConfigMaker.Csgo.Commands
             return true;
         }
 
-        public static string GenerateToggleCmd(string cmd, double[] values, bool asInteger)
+        public static SingleCmd GenerateToggleCmd(string cmd, double[] values, bool asInteger)
         {
             string[] formattedValues = values.Select(value => FormatNumber(value, asInteger)).ToArray();
-            return $"toggle {cmd} {string.Join(" ", formattedValues)}";
+            return new SingleCmd($"toggle {cmd} {string.Join(" ", formattedValues)}");
         }
 
-        public static string GenerateToggleCmd(string cmd, int[] values)
+        public static SingleCmd GenerateToggleCmd(string cmd, int[] values)
         {
             double[] castedToDouble = values.Select(i => (double)i).ToArray();
             return GenerateToggleCmd(cmd, castedToDouble, true);
