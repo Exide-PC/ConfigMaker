@@ -221,6 +221,8 @@ namespace ConfigMaker
         {
             string aliasName = this.newAliasNameTextbox.Text;
             AddAliasButton(aliasName, new List<Entry>());
+            // Пусть в конфиге всё равно будет объявлен алиас, хоть он и пустой
+            this.AddEntry(extraAliasSetEntryKey);
         }
 
         private void DeleteAliasButton_Click(object sender, RoutedEventArgs e)
@@ -249,6 +251,9 @@ namespace ConfigMaker
 
                     this.entryControllers[firstEntry].Focus();
                 }
+
+                // Если в панели еще остались алиасы, то обновим конфиг
+                this.AddEntry(extraAliasSetEntryKey);
             }
             else
             {
@@ -2192,16 +2197,25 @@ namespace ConfigMaker
             }
             else if (this.StateBinding == EntryStateBinding.Alias)
             {
-                // Добавляем текущий элемент к коллекции, привязанной к выбранной кнопке
-                FrameworkElement targetElement = aliasPanel.Tag as FrameworkElement;
-                List<Entry> attachedToAlias = targetElement.Tag as List<Entry>;
-                targetElement.Tag = attachedToAlias
-                    .Where(attachedEntry => attachedEntry.PrimaryKey != entry.PrimaryKey)
-                    .Concat(new Entry[] { entry }).ToList();
+                // Проверяем, что добавляется не основной узел со всеми алиасами
+                if (entry.PrimaryKey != extraAliasSetEntryKey)
+                {
+                    // Добавляем текущий элемент к коллекции, привязанной к выбранной кнопке
+                    FrameworkElement targetElement = aliasPanel.Tag as FrameworkElement;
+                    List<Entry> attachedToAlias = targetElement.Tag as List<Entry>;
+                    targetElement.Tag = attachedToAlias
+                        .Where(attachedEntry => attachedEntry.PrimaryKey != entry.PrimaryKey)
+                        .Concat(new Entry[] { entry }).ToList();
 
-                // И вызываем обработчика пользовательских алиасов
-                Entry aliasSetEntry = (Entry)this.entryControllers[extraAliasSetEntryKey].Generate();
-                this.cfgManager.AddEntry(aliasSetEntry);
+                    // И вызываем обработчика пользовательских алиасов
+                    Entry aliasSetEntry = (Entry)this.entryControllers[extraAliasSetEntryKey].Generate();
+                    this.cfgManager.AddEntry(aliasSetEntry);
+                }
+                else
+                {
+                    // Если это основной узел, то добавим его напрямую в конфиг
+                    this.cfgManager.AddEntry(entry);
+                }
             }
             else
                 throw new Exception($"Состояние {this.StateBinding} при добавлении элемента");
