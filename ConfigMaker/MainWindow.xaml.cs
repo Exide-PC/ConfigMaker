@@ -1679,19 +1679,36 @@ namespace ConfigMaker
                 },
                 Generate = () =>
                 {
-                    string aliasName = $"{GeneratePrefix()}_exec";
+                    // Получим все указанные пользователем команды
                     string[] cmds = customCmdPanel.Children.OfType<ButtonBase>()
                         .Select(b => b.Content.ToString()).ToArray();
 
-                    AliasCmd execCmdsAlias = new AliasCmd(aliasName, cmds.Select(cmd => new SingleCmd(cmd)));
+                    SingleCmd cmd = null;
+                    CommandCollection dependencies = null;
+
+                    // Если указана только одна команда - просто выписываем её в конфиг напрямую
+                    if (cmds.Length == 1)
+                    {
+                        cmd = new SingleCmd(cmds[0].Trim());
+                        dependencies = new CommandCollection();
+                    }
+                    else
+                    {
+                        // Иначе генерируем специальный алиас и привязываемся к нему
+                        string aliasName = $"{GeneratePrefix()}_exec";
+                        AliasCmd execCmdsAlias = new AliasCmd(aliasName, cmds.Select(strCmd => new SingleCmd(strCmd)));
+
+                        cmd = new SingleCmd(aliasName);
+                        dependencies = new CommandCollection(execCmdsAlias);
+                    }
 
                     return new ParametrizedEntry<string[]>()
                     {
                         PrimaryKey = execCustomCmdsEntryKey,
-                        Cmd = new SingleCmd(aliasName),
+                        Cmd = cmd,
                         IsMetaScript = false,
                         Type = EntryType.Dynamic,
-                        Dependencies = new CommandCollection(execCmdsAlias),
+                        Dependencies = dependencies,
                         Arg = cmds
                     };
                 },
