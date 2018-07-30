@@ -243,6 +243,48 @@
                                                     <Setter Property="Background" Value="{StaticResource MaterialDesignPaper}"/>
                                                 </Style>
                                             </StackPanel.Resources>
+                                            <!--Exec custom cmd-->
+                                            <GroupBox>
+                                                <GroupBox.Header>
+                                                    <CheckBox Content="{x:Static res:Resources.ExecCustomCmds}" Name="customCmdHeaderCheckbox"/>
+                                                </GroupBox.Header>
+                                                <Grid Margin="3">
+                                                    <Grid.Style>
+                                                        <Style TargetType="Grid">
+                                                            <Setter Property="IsEnabled" Value="False"/>
+                                                            <Style.Triggers>
+                                                                <DataTrigger Binding="{Binding ElementName=customCmdHeaderCheckbox, Path=IsChecked}" Value="True">
+                                                                    <Setter Property="IsEnabled" Value="True"/>
+                                                                </DataTrigger>
+                                                            </Style.Triggers>
+                                                        </Style>
+                                                    </Grid.Style>
+                                                    <StackPanel Orientation="Vertical">
+                                                        <StackPanel Orientation="Horizontal">
+                                                            <TextBox Name="cmdTextbox" Width="250" TextChanged="CommandNameTextbox_TextChanged"/>
+                                                            <Button Name="addCmdButton" IsEnabled="False" Content="{x:Static res:Resources.Add_Button}"/>
+                                                            <Button Name="deleteCmdButton" Content="{x:Static res:Resources.Remove_Button}">
+                                                                <Button.Style>
+                                                                    <Style TargetType="Button" BasedOn="{StaticResource {x:Type Button}}">
+                                                                        <Style.Triggers>
+                                                                            <DataTrigger Binding="{Binding ElementName=customCmdPanel, Path=Tag, Converter={StaticResource isNullConverter}}" Value="True">
+                                                                                <Setter Property="IsEnabled" Value="False"/>
+                                                                            </DataTrigger>
+                                                                            <DataTrigger Binding="{Binding ElementName=customCmdPanel, Path=Tag, Converter={StaticResource isNullConverter}}" Value="False">
+                                                                                <Setter Property="IsEnabled" Value="True"/>
+                                                                            </DataTrigger>
+                                                                        </Style.Triggers>
+                                                                    </Style>
+                                                                </Button.Style>
+                                                            </Button>
+                                                        </StackPanel>
+                                                        <Border Style="{StaticResource CustomBorder}" Margin="0,2,0,0">
+                                                            <WrapPanel Name="customCmdPanel" Height="70"/>
+                                                        </Border>
+                                                    </StackPanel>
+                                                </Grid>
+                                            </GroupBox>
+                                            <!--Cycle crosshair groupbox-->
                                             <GroupBox>
                                                 <GroupBox.Header>
                                                     <CheckBox Content="{x:Static res:Resources.CycleCrosshair}" Name="cycleChHeaderCheckbox"/>
@@ -265,6 +307,7 @@
                                                     </StackPanel>
                                                 </Grid>
                                             </GroupBox>
+                                            <!--Volume regulator groupbox-->
                                             <GroupBox>
                                                 <GroupBox.Header>
                                                     <CheckBox Content="{x:Static res:Resources.VolumeRegulator}" Name="volumeRegulatorCheckbox"/>
@@ -306,46 +349,6 @@
                                                                 <TextBlock HorizontalAlignment="Center" Text="{Binding Path=Value, ElementName=volumeStepSlider}"/>
                                                             </Border>
                                                         </StackPanel>
-                                                    </StackPanel>
-                                                </Grid>
-                                            </GroupBox>
-                                            <GroupBox>
-                                                <GroupBox.Header>
-                                                    <CheckBox Content="{x:Static res:Resources.ExecCustomCmds}" Name="customCmdHeaderCheckbox"/>
-                                                </GroupBox.Header>
-                                                <Grid Margin="3">
-                                                    <Grid.Style>
-                                                        <Style TargetType="Grid">
-                                                            <Setter Property="IsEnabled" Value="False"/>
-                                                            <Style.Triggers>
-                                                                <DataTrigger Binding="{Binding ElementName=customCmdHeaderCheckbox, Path=IsChecked}" Value="True">
-                                                                    <Setter Property="IsEnabled" Value="True"/>
-                                                                </DataTrigger>
-                                                            </Style.Triggers>
-                                                        </Style>
-                                                    </Grid.Style>
-                                                    <StackPanel Orientation="Vertical">
-                                                        <StackPanel Orientation="Horizontal">
-                                                            <TextBox Name="cmdTextbox" Width="100" TextChanged="CommandNameTextbox_TextChanged"/>
-                                                            <Button Name="addCmdButton" IsEnabled="False" Content="{x:Static res:Resources.Add_Button}"/>
-                                                            <Button Name="deleteCmdButton" Content="{x:Static res:Resources.Remove_Button}">
-                                                                <Button.Style>
-                                                                    <Style TargetType="Button" BasedOn="{StaticResource {x:Type Button}}">
-                                                                        <Style.Triggers>
-                                                                            <DataTrigger Binding="{Binding ElementName=customCmdPanel, Path=Tag, Converter={StaticResource isNullConverter}}" Value="True">
-                                                                                <Setter Property="IsEnabled" Value="False"/>
-                                                                            </DataTrigger>
-                                                                            <DataTrigger Binding="{Binding ElementName=customCmdPanel, Path=Tag, Converter={StaticResource isNullConverter}}" Value="False">
-                                                                                <Setter Property="IsEnabled" Value="True"/>
-                                                                            </DataTrigger>
-                                                                        </Style.Triggers>
-                                                                    </Style>
-                                                                </Button.Style>
-                                                            </Button>
-                                                        </StackPanel>
-                                                        <Border Style="{StaticResource CustomBorder}" Margin="0,2,0,0">
-                                                            <WrapPanel Name="customCmdPanel" Height="70"/>
-                                                        </Border>
                                                     </StackPanel>
                                                 </Grid>
                                             </GroupBox>
