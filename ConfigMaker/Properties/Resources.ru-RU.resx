@@ -600,4 +600,37 @@
   <data name="About_Button" xml:space="preserve">
     <value>О программе</value>
   </data>
+  <data name="Mp_warmup_start" xml:space="preserve">
+    <value>Начать разминку</value>
+  </data>
+  <data name="Mp_warmup_end" xml:space="preserve">
+    <value>Закончить разминку</value>
+  </data>
+  <data name="Mp_swapteams" xml:space="preserve">
+    <value>Свап команд</value>
+  </data>
+  <data name="Bot_add_ct" xml:space="preserve">
+    <value>Добавить бота [КТ]</value>
+  </data>
+  <data name="Bot_add_t" xml:space="preserve">
+    <value>Добавить бота [Т]</value>
+  </data>
+  <data name="Bot_place" xml:space="preserve">
+    <value>Поставить бота перед собой</value>
+  </data>
+  <data name="Screenshot" xml:space="preserve">
+    <value>Скриншот</value>
+  </data>
+  <data name="Pause" xml:space="preserve">
+    <value>Пауза</value>
+  </data>
+  <data name="Quit" xml:space="preserve">
+    <value>Выход из игры</value>
+  </data>
+  <data name="Demo_resume" xml:space="preserve">
+    <value>Продолжить демку</value>
+  </data>
+  <data name="Demo_togglepause" xml:space="preserve">
+    <value>Остановить демку</value>
+  </data>
 </root>

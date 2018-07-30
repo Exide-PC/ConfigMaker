@@ -600,4 +600,37 @@
   <data name="About_Button" xml:space="preserve">
     <value>About</value>
   </data>
+  <data name="Mp_warmup_start" xml:space="preserve">
+    <value>Start warmup</value>
+  </data>
+  <data name="Mp_warmup_end" xml:space="preserve">
+    <value>End warmup</value>
+  </data>
+  <data name="Mp_swapteams" xml:space="preserve">
+    <value>Swap teams</value>
+  </data>
+  <data name="Bot_add_ct" xml:space="preserve">
+    <value>Add bot [CT]</value>
+  </data>
+  <data name="Bot_add_t" xml:space="preserve">
+    <value>Add bot [T]</value>
+  </data>
+  <data name="Bot_place" xml:space="preserve">
+    <value>Place bot</value>
+  </data>
+  <data name="Screenshot" xml:space="preserve">
+    <value>Screnshot</value>
+  </data>
+  <data name="Pause" xml:space="preserve">
+    <value>Pause</value>
+  </data>
+  <data name="Quit" xml:space="preserve">
+    <value>Quit game</value>
+  </data>
+  <data name="Demo_resume" xml:space="preserve">
+    <value>Resume demo</value>
+  </data>
+  <data name="Demo_togglepause" xml:space="preserve">
+    <value>Toggle demo pause</value>
+  </data>
 </root>
