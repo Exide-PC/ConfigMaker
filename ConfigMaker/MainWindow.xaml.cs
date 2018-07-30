@@ -2186,75 +2186,88 @@ namespace ConfigMaker
 
         void AddEntry(Entry entry)
         {
-            if (this.StateBinding == EntryStateBinding.KeyDown || this.StateBinding == EntryStateBinding.KeyUp)
+            switch (this.StateBinding)
             {
-                BindEntry bindEntry = this.ConvertToBindEntry(entry);
-                this.cfgManager.AddEntry(this.currentKeySequence, bindEntry);
-            }
-            else if (this.StateBinding == EntryStateBinding.Default)
-            {
-                this.cfgManager.AddEntry(entry);
-            }
-            else if (this.StateBinding == EntryStateBinding.Alias)
-            {
-                // Проверяем, что добавляется не основной узел со всеми алиасами
-                if (entry.PrimaryKey != extraAliasSetEntryKey)
-                {
-                    // Добавляем текущий элемент к коллекции, привязанной к выбранной кнопке
-                    FrameworkElement targetElement = aliasPanel.Tag as FrameworkElement;
-                    List<Entry> attachedToAlias = targetElement.Tag as List<Entry>;
-                    targetElement.Tag = attachedToAlias
-                        .Where(attachedEntry => attachedEntry.PrimaryKey != entry.PrimaryKey)
-                        .Concat(new Entry[] { entry }).ToList();
+                case EntryStateBinding.KeyDown:
+                case EntryStateBinding.KeyUp:
+                    {
+                        BindEntry bindEntry = this.ConvertToBindEntry(entry);
+                        this.cfgManager.AddEntry(this.currentKeySequence, bindEntry);
+                        break;
+                    }
+                case EntryStateBinding.Default:
+                    {
+                        this.cfgManager.AddEntry(entry);
+                        break;
+                    }
+                case EntryStateBinding.Alias:
+                    {
+                        // Проверяем, что добавляется не основной узел со всеми алиасами
+                        if (entry.PrimaryKey != extraAliasSetEntryKey)
+                        {
+                            // Добавляем текущий элемент к коллекции, привязанной к выбранной кнопке
+                            FrameworkElement targetElement = aliasPanel.Tag as FrameworkElement;
+                            List<Entry> attachedToAlias = targetElement.Tag as List<Entry>;
+                            targetElement.Tag = attachedToAlias
+                                .Where(attachedEntry => attachedEntry.PrimaryKey != entry.PrimaryKey)
+                                .Concat(new Entry[] { entry }).ToList();
 
-                    // И вызываем обработчика пользовательских алиасов
-                    Entry aliasSetEntry = (Entry)this.entryControllers[extraAliasSetEntryKey].Generate();
-                    this.cfgManager.AddEntry(aliasSetEntry);
-                }
-                else
-                {
-                    // Если это основной узел, то добавим его напрямую в конфиг
-                    this.cfgManager.AddEntry(entry);
-                }
+                            // И вызываем обработчика пользовательских алиасов
+                            Entry aliasSetEntry = (Entry)this.entryControllers[extraAliasSetEntryKey].Generate();
+                            this.cfgManager.AddEntry(aliasSetEntry);
+                        }
+                        else
+                        {
+                            // Если это основной узел, то добавим его напрямую в конфиг
+                            this.cfgManager.AddEntry(entry);
+                        }
+                        break;
+                    }
+                default: throw new Exception($"Состояние {this.StateBinding} при добавлении элемента");
             }
-            else
-                throw new Exception($"Состояние {this.StateBinding} при добавлении элемента");
         }
 
         void RemoveEntry(Entry entry)
         {
-            if (this.StateBinding == EntryStateBinding.KeyDown || this.StateBinding == EntryStateBinding.KeyUp)
+            switch (this.StateBinding)
             {
-                BindEntry bindEntry = this.ConvertToBindEntry(entry);
-                this.cfgManager.RemoveEntry(this.currentKeySequence, bindEntry);
-            }
-            else if (this.StateBinding == EntryStateBinding.Default)
-            {
-                this.cfgManager.RemoveEntry(entry);
-            }
-            else if (this.StateBinding == EntryStateBinding.Alias)
-            {                
-                if (entry.PrimaryKey != extraAliasSetEntryKey)
-                {
-                    // Добавляем текущий элемент к коллекции, привязанной к выбранной кнопке
-                    FrameworkElement targetElement = aliasPanel.Tag as FrameworkElement;
-                    List<Entry> attachedToAlias = targetElement.Tag as List<Entry>;
-                    targetElement.Tag = attachedToAlias
-                        .Where(attachedEntry => attachedEntry.PrimaryKey != entry.PrimaryKey)
-                        .ToList();
+                case EntryStateBinding.KeyDown:
+                case EntryStateBinding.KeyUp:
+                    {
+                        BindEntry bindEntry = this.ConvertToBindEntry(entry);
+                        this.cfgManager.RemoveEntry(this.currentKeySequence, bindEntry);
+                        break;
+                    }
+                case EntryStateBinding.Default:
+                    {
+                        this.cfgManager.RemoveEntry(entry);
+                        break;
+                    }
+                case EntryStateBinding.Alias:
+                    {
+                        if (entry.PrimaryKey != extraAliasSetEntryKey)
+                        {
+                            // Добавляем текущий элемент к коллекции, привязанной к выбранной кнопке
+                            FrameworkElement targetElement = aliasPanel.Tag as FrameworkElement;
+                            List<Entry> attachedToAlias = targetElement.Tag as List<Entry>;
+                            targetElement.Tag = attachedToAlias
+                                .Where(attachedEntry => attachedEntry.PrimaryKey != entry.PrimaryKey)
+                                .ToList();
 
-                    // Напрямую обновим узел в менеджере
-                    Entry aliasSetEntry = (Entry) this.entryControllers[extraAliasSetEntryKey].Generate();
-                    this.cfgManager.AddEntry(aliasSetEntry);
-                }
-                else
-                {
-                    // Если удаляем основной узел со всеми алиасами, то напрямую стираем его из менеджера
-                    this.cfgManager.RemoveEntry(entry);
-                }
+                            // Напрямую обновим узел в менеджере
+                            Entry aliasSetEntry = (Entry)this.entryControllers[extraAliasSetEntryKey].Generate();
+                            this.cfgManager.AddEntry(aliasSetEntry);
+                        }
+                        else
+                        {
+                            // Если удаляем основной узел со всеми алиасами, то напрямую стираем его из менеджера
+                            this.cfgManager.RemoveEntry(entry);
+                        }
+                        break;
+                    }
+                default: throw new Exception($"Состояние {this.StateBinding} при попытке удалить элемент");
+
             }
-            else
-                throw new Exception($"Состояние {this.StateBinding} при попытке удалить элемент");
         }
 
         void ResetAttachmentPanels()
