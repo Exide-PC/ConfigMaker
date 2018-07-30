@@ -135,8 +135,8 @@
             </materialDesign:ColorZone>
             <Grid Margin="5 0 5 3">
                 <Grid.RowDefinitions>
-                    <RowDefinition Height="55*"/>
-                    <RowDefinition Height="15*"/>
+                    <RowDefinition Height="58*"/>
+                    <RowDefinition Height="12*"/>
                     <RowDefinition Height="28"/>
                     <RowDefinition Height="30*"/>
                 </Grid.RowDefinitions>

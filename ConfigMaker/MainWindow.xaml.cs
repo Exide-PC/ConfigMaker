@@ -66,7 +66,7 @@ namespace ConfigMaker
         KeySequence currentKeySequence = null;
         const string extraAliasSetEntryKey = "ExtraAliasSet";
 
-        Dictionary<string, EntryController> entryUiBindings = new Dictionary<string, EntryController>();
+        Dictionary<string, EntryController> entryControllers = new Dictionary<string, EntryController>();
 
         public EntryStateBinding StateBinding
         {
@@ -75,7 +75,7 @@ namespace ConfigMaker
             {
                 SetValue(StateBindingProperty, value);
                 // Т.к. привязка задается только в коде, то тут же обновим интерфейс. TODO: Remove
-                this.entryUiBindings.Values.ToList()
+                this.entryControllers.Values.ToList()
                     .ForEach(entry => entry.HandleState(this.StateBinding));
             }   
         }
@@ -111,6 +111,14 @@ namespace ConfigMaker
             InitGameSettingsTab();
             InitAliasController();
             InitExtra();
+
+            // Проверим, что в словаре нет одинаковых ключей в разном регистре
+            // Для этого сгруппируем все ключи, переведя их в нижний регистр,
+            // и найдем группу, где больше 1 элемента
+            var duplicatedKeyGroup = this.entryControllers.GroupBy(pair => pair.Key.ToLower())
+                .FirstOrDefault(g => g.Count() > 1);
+
+            if (duplicatedKeyGroup != null) throw new Exception($"Duplicate key: {duplicatedKeyGroup.Key}");
 
             // Зададим привязку по умолчанию
             this.StateBinding = EntryStateBinding.Default;
@@ -239,7 +247,7 @@ namespace ConfigMaker
                     string firstEntry =
                     (string)(this.solidAttachmentsPanel.Children[0] as FrameworkElement).Tag;
 
-                    this.entryUiBindings[firstEntry].Focus();
+                    this.entryControllers[firstEntry].Focus();
                 }
             }
             else
@@ -544,7 +552,7 @@ namespace ConfigMaker
                             && (!isMeta || state == EntryStateBinding.KeyDown);
                     }                    
                 };
-                entryUiBindings.Add(cmd, entryUiBinding);
+                entryControllers.Add(cmd, entryUiBinding);
             };
 
             // Метод для добавления новой категории.
@@ -613,6 +621,12 @@ namespace ConfigMaker
             AddAction("god", false);
             AddAction("noclip", false);
             AddAction("impulse 101", false);
+            AddAction("mp_warmup_start", false);
+            AddAction("mp_warmup_end", false);
+            AddAction("mp_swapteams", false);
+            AddAction("bot_add_t", false);
+            AddAction("bot_add_ct", false);
+            AddAction("bot_place", false);
 
             AddActionGroupSeparator(Res.CategoryOther);
             AddAction("spray_menu", true);
@@ -622,8 +636,17 @@ namespace ConfigMaker
             AddAction("teammenu", false);
             AddAction("toggleconsole", false);
             AddAction("clear", false);
+            AddAction("screenshot", false);
+            AddAction("pause", false);
+            AddAction("quit", false);
 
+            AddActionGroupSeparator("Demo");
+            AddAction("demo_resume", false);
+            AddAction("demo_togglepause", false);
 
+            AddActionGroupSeparator("Bonus scripts");
+
+            
             // jumpthrow script
             const string jumpthrowEntryKey = "Jumpthrow";
             CheckBox jumpthrowCheckbox = PrepareAction(jumpthrowEntryKey, true);
@@ -656,13 +679,13 @@ namespace ConfigMaker
                 Restore = () => jumpthrowCheckbox.IsChecked = false,
                 HandleState = (state) => jumpthrowCheckbox.IsEnabled = state == EntryStateBinding.KeyDown
             };
-            this.entryUiBindings.Add(jumpthrowEntryKey, jumpthrowBinding);
+            this.entryControllers.Add(jumpthrowEntryKey, jumpthrowBinding);
 
             // DisplayDamageOn
             const string displayDamageOnEntryKey = "DisplayDamage_On";
             CheckBox displayDamageOnCheckbox = PrepareAction(displayDamageOnEntryKey, false);
 
-            this.entryUiBindings.Add(displayDamageOnEntryKey, new EntryController()
+            this.entryControllers.Add(displayDamageOnEntryKey, new EntryController()
                 {
                     AttachedCheckbox = displayDamageOnCheckbox,
                     Focus = () =>
@@ -701,7 +724,7 @@ namespace ConfigMaker
             const string displayDamageOffEntryKey = "DisplayDamage_Off";
             CheckBox displayDamageOffCheckbox = PrepareAction(displayDamageOffEntryKey, false);
 
-            this.entryUiBindings.Add(displayDamageOffEntryKey, new EntryController()
+            this.entryControllers.Add(displayDamageOffEntryKey, new EntryController()
                 {
                     AttachedCheckbox = displayDamageOffCheckbox,
                     Focus = () =>
@@ -809,7 +832,7 @@ namespace ConfigMaker
                 HandleState = (state) => mainCheckbox.IsEnabled = state != EntryStateBinding.InvalidState
             };
             // Добавляем обработчика
-            this.entryUiBindings.Add(buyScenarioEntryKey, buyEntryBinding);
+            this.entryControllers.Add(buyScenarioEntryKey, buyEntryBinding);
 
             StackPanel currentPanel = null;
 
@@ -1125,7 +1148,7 @@ namespace ConfigMaker
                     },
                     HandleState = (state) => checkbox.IsEnabled = state != EntryStateBinding.InvalidState
                 };
-                this.entryUiBindings.Add(cmd, entryBinding);
+                this.entryControllers.Add(cmd, entryBinding);
 
                 // Задаем начальное значение и тут же подключаем обработчика интерфейса
                 slider.Value = defaultValue;
@@ -1241,7 +1264,7 @@ namespace ConfigMaker
                     HandleState = (state) => checkbox.IsEnabled = state != EntryStateBinding.InvalidState
                 };
                 // Добавим его в словарь
-                this.entryUiBindings.Add(cmd, entryBinding);
+                this.entryControllers.Add(cmd, entryBinding);
 
                 combobox.SelectionChanged += (obj, args) =>
                 {
@@ -1384,7 +1407,7 @@ namespace ConfigMaker
                     },
                     HandleState = (state) => checkbox.IsEnabled = state != EntryStateBinding.InvalidState
                 };
-                this.entryUiBindings.Add(cmd, entryBinding);
+                this.entryControllers.Add(cmd, entryBinding);
 
                 // Начальное значение
                 textbox.Text = fixedDefaultStrValue;
@@ -1450,7 +1473,7 @@ namespace ConfigMaker
                     },
                     HandleState = (state) => checkbox.IsEnabled = state != EntryStateBinding.InvalidState
                 };
-                this.entryUiBindings.Add(cmd, entryBinding);
+                this.entryControllers.Add(cmd, entryBinding);
 
                 // Начальное значение
                 textbox.Text = defaultValue;
@@ -1462,10 +1485,16 @@ namespace ConfigMaker
                 block.Inlines.Add(new Bold(new Run(text)));
                 block.HorizontalAlignment = HorizontalAlignment.Center;
                 block.VerticalAlignment = VerticalAlignment.Center;
+
+                if (settingsTabPanel.Children.Count != 0)
+                    block.Margin = new Thickness(0, 5, 0, 0);
+
                 settingsTabPanel.Children.Add(block);
             };
 
             string[] toggleStrings = new string[] { Res.Off, Res.On };
+            string[] primaryWeapons = new string[] { "weapon_m4a4", "weapon_ak47", "weapon_awp" };
+            string[] secondaryWeapons = new string[] { "weapon_hkp2000", "weapon_glock", "weapon_deagle" };
             
             AddGroupHeader(Res.CategoryMouseSettings);
             AddTextboxNumberCmdController("sensitivity", 2.5, false);
@@ -1508,6 +1537,8 @@ namespace ConfigMaker
             AddComboboxCmdController("cl_use_opens_buy_menu", toggleStrings, 1, true);
             AddIntervalCmdController("cl_viewmodel_shift_left_amt", 0.5, 2, 0.05, 1.5);
             AddIntervalCmdController("cl_viewmodel_shift_right_amt", 0.25, 2, 0.05, 0.75);
+            AddComboboxCmdController("cl_cmdrate", new string[] { "64", "128" }, 1, false);
+            AddComboboxCmdController("cl_updaterate", new string[] { "64", "128" }, 1, false);
 
             AddGroupHeader(Res.CategoryCrosshair);
             AddComboboxCmdController("cl_crosshair_drawoutline", toggleStrings, 0, true);
@@ -1528,11 +1559,50 @@ namespace ConfigMaker
             AddComboboxCmdController("cl_crosshairusealpha", toggleStrings, 1, true);
             AddTextboxNumberCmdController("cl_fixedcrosshairgap", 3, false);
 
+            AddGroupHeader("Server");
+            AddTextboxNumberCmdController("sv_airaccelerate", 12, true);
+            AddTextboxNumberCmdController("sv_accelerate", 5.5, false);
+            AddComboboxCmdController("sv_showimpacts", new string[] { "Off", "Server/client", "Client only" }, 0, true);
+            AddComboboxCmdController("mp_solid_teammates", toggleStrings, 0, true);
+            AddComboboxCmdController("mp_ct_default_primary", primaryWeapons, 0, false);
+            AddComboboxCmdController("mp_t_default_primary", primaryWeapons, 1, false);
+            AddComboboxCmdController("mp_ct_default_secondary", secondaryWeapons, 0, false);
+            AddComboboxCmdController("mp_t_default_secondary", secondaryWeapons, 1, false);
+            
+            AddGroupHeader("Render");
+            AddComboboxCmdController("r_drawothermodels", new string[] { "Off", "Normal", "Wireframe" }, 1, true);
+            
+            AddGroupHeader("Bots");
+            AddComboboxCmdController("bot_stop", toggleStrings, 0, true);
+            AddComboboxCmdController("bot_mimic", toggleStrings, 0, true);
+            AddComboboxCmdController("bot_crouch", toggleStrings, 0, true);
+            AddIntervalCmdController("bot_mimic_yaw_offset", 0, 180, 5, 0);
+
             // текстовые аргументы
             AddGroupHeader(Res.CategoryOther);
             AddTextboxStringCmdController("say", "vk.com/exideprod");
             AddTextboxStringCmdController("say_team", "Hello world!");
+            AddTextboxNumberCmdController("rate", 786432, true);
             AddTextboxStringCmdController("connect", "12.34.56.78:27015");
+            AddTextboxStringCmdController("map", "de_mirage");
+            AddTextboxStringCmdController("echo", "blog.exideprod.com");
+            AddTextboxStringCmdController("record", "demo_name");
+            AddComboboxCmdController("developer", toggleStrings, 0, true);
+            AddTextboxStringCmdController("host_writeconfig", "config_name");
+            AddIntervalCmdController("mat_monitorgamma", 1.6, 2.6, 0.1, 2.2);
+            AddTextboxNumberCmdController("mm_dedicated_search_maxping", 150, true);
+            AddTextboxNumberCmdController("host_timescale", 1, false);
+            AddTextboxNumberCmdController("demo_timescale", 1, false);
+
+            AddGroupHeader("Voice and sound");
+            AddIntervalCmdController("volume", 0, 1, 0.05, 1);
+            AddComboboxCmdController("voice_enable", toggleStrings, 1, true);
+            AddComboboxCmdController("voice_loopback", toggleStrings, 1, true);
+            AddIntervalCmdController("voice_scale", 0, 1, 0.05, 1);
+            AddIntervalCmdController("snd_roundstart_volume", 0, 1, 0.05, 1);
+            AddIntervalCmdController("snd_roundend_volume", 0, 1, 0.05, 1);
+            AddIntervalCmdController("snd_tensecondwarning_volume", 0, 1, 0.05, 1);
+            AddIntervalCmdController("snd_deathcamera_volume", 0, 1, 0.05, 1);
 
             AddGroupHeader(Res.CategoryNetGraphSettings);
             AddComboboxCmdController("net_graph", toggleStrings, 0, true);
@@ -1590,7 +1660,7 @@ namespace ConfigMaker
                 }
             };
 
-            this.entryUiBindings.Add(execCustomCmdsEntryKey, new EntryController()
+            this.entryControllers.Add(execCustomCmdsEntryKey, new EntryController()
             {
                 AttachedCheckbox = customCmdHeaderCheckbox,
                 Focus = () => extraTabButton.IsChecked = true,
@@ -1642,7 +1712,7 @@ namespace ConfigMaker
 
             this.cycleChHeaderCheckbox.Click += HandleEntryClick;
             this.cycleChHeaderCheckbox.Tag = cycleCrosshairEntryKey;
-            this.entryUiBindings.Add(cycleCrosshairEntryKey, new EntryController()
+            this.entryControllers.Add(cycleCrosshairEntryKey, new EntryController()
             {
                 AttachedCheckbox = cycleChHeaderCheckbox,
                 Focus = () =>
@@ -1755,7 +1825,7 @@ namespace ConfigMaker
             maxVolumeSlider.ValueChanged += volumeSliderValueChanged;
             volumeStepSlider.ValueChanged += volumeSliderValueChanged;
 
-            this.entryUiBindings.Add(volumeRegulatorEntryKey, new EntryController()
+            this.entryControllers.Add(volumeRegulatorEntryKey, new EntryController()
             {
                 AttachedCheckbox = volumeRegulatorCheckbox,
                 Focus = () =>
@@ -1872,7 +1942,7 @@ namespace ConfigMaker
         {
             const string extraAliasEntryKey = "ExtraAlias";
 
-            this.entryUiBindings.Add(extraAliasSetEntryKey, new EntryController()
+            this.entryControllers.Add(extraAliasSetEntryKey, new EntryController()
             {
                 Generate = () =>
                 {
@@ -2060,7 +2130,7 @@ namespace ConfigMaker
             string entryKey = (string)checkbox.Tag;
 
             // Получим обработчика и 
-            EntryController entryBinding = this.entryUiBindings[entryKey];
+            EntryController entryBinding = this.entryControllers[entryKey];
             Entry entry = (Entry)entryBinding.Generate();
 
             if ((bool)checkbox.IsChecked)
@@ -2099,13 +2169,13 @@ namespace ConfigMaker
 
         void AddEntry(string cfgEntryKey)
         {
-            Entry generatedEntry = (Entry)this.entryUiBindings[cfgEntryKey].Generate();
+            Entry generatedEntry = (Entry)this.entryControllers[cfgEntryKey].Generate();
             this.AddEntry(generatedEntry);
         }
 
         void RemoveEntry(string cfgEntryKey)
         {
-            Entry generatedEntry = (Entry)this.entryUiBindings[cfgEntryKey].Generate();
+            Entry generatedEntry = (Entry)this.entryControllers[cfgEntryKey].Generate();
             this.RemoveEntry(generatedEntry);
         }
 
@@ -2130,7 +2200,7 @@ namespace ConfigMaker
                     .Concat(new Entry[] { entry }).ToList();
 
                 // И вызываем обработчика пользовательских алиасов
-                Entry aliasSetEntry = (Entry)this.entryUiBindings[extraAliasSetEntryKey].Generate();
+                Entry aliasSetEntry = (Entry)this.entryControllers[extraAliasSetEntryKey].Generate();
                 this.cfgManager.AddEntry(aliasSetEntry);
             }
             else
@@ -2160,7 +2230,7 @@ namespace ConfigMaker
                         .ToList();
 
                     // Напрямую обновим узел в менеджере
-                    Entry aliasSetEntry = (Entry) this.entryUiBindings[extraAliasSetEntryKey].Generate();
+                    Entry aliasSetEntry = (Entry) this.entryControllers[extraAliasSetEntryKey].Generate();
                     this.cfgManager.AddEntry(aliasSetEntry);
                 }
                 else
@@ -2188,7 +2258,7 @@ namespace ConfigMaker
 
             foreach (FrameworkElement element in mergedElements)
             {
-                EntryController entryBinding = this.entryUiBindings[(string)element.Tag];
+                EntryController entryBinding = this.entryControllers[(string)element.Tag];
                 // Метод, отвечающий непосредственно за сброс состояния интерфейса
                 entryBinding.Restore();
             }
@@ -2244,21 +2314,21 @@ namespace ConfigMaker
 
                     // Обновим интерфейс согласно элементам, привязанным к текущему состоянию
                     attachedEntries.Where(e => this.IsEntryAttachedToCurrentState(e))
-                        .ToList().ForEach(e => this.entryUiBindings[e.PrimaryKey].UpdateUI(e));
+                        .ToList().ForEach(e => this.entryControllers[e.PrimaryKey].UpdateUI(e));
                 });
             }
             else if (this.StateBinding == EntryStateBinding.Default)
             {
                 // Получаем все элементы по умолчанию, которые должны быть отображены в панели
                 List<Entry> attachedEntries = this.cfgManager.DefaultEntries
-                    .Where(e => this.entryUiBindings[e.PrimaryKey].AttachedCheckbox != null).ToList();
+                    .Where(e => this.entryControllers[e.PrimaryKey].AttachedCheckbox != null).ToList();
 
                 // Теперь заполним панели новыми элементами
                 attachedEntries.ForEach(entry =>
                 {
                     AddAttachment(entry.PrimaryKey, solidAttachmentsPanel);
                     // Обновим интерфейс согласно элементам, привязанным к текущему состоянию
-                    this.entryUiBindings[entry.PrimaryKey].UpdateUI(entry);
+                    this.entryControllers[entry.PrimaryKey].UpdateUI(entry);
                 });
             }
             else if (this.StateBinding == EntryStateBinding.Alias)
@@ -2272,7 +2342,7 @@ namespace ConfigMaker
                 {
                     AddAttachment(entry.PrimaryKey, solidAttachmentsPanel);
                     // Обновим интерфейс согласно элементам, привязанным к текущему состоянию
-                    this.entryUiBindings[entry.PrimaryKey].UpdateUI(entry);
+                    this.entryControllers[entry.PrimaryKey].UpdateUI(entry);
                 });
             }
             else { } // InvalidState
@@ -2291,7 +2361,7 @@ namespace ConfigMaker
             string entryKey = (string) element.Tag;
 
             // Получим обработчика и переведем фокус на нужный элемент
-            this.entryUiBindings[entryKey].Focus();
+            this.entryControllers[entryKey].Focus();
         }
 
         private void GenerateConfig(object sender, RoutedEventArgs e)
@@ -2375,14 +2445,14 @@ namespace ConfigMaker
         void UpdateCfgManager()
         {
             // Сбросим все настройки от прошлого конфига
-            foreach (EntryController binding in this.entryUiBindings.Values)
+            foreach (EntryController binding in this.entryControllers.Values)
                 binding.Restore();
 
             // Зададим привязку к дефолтному состоянию
             this.StateBinding = EntryStateBinding.Default;
 
             foreach (Entry entry in this.cfgManager.DefaultEntries)
-                this.entryUiBindings[entry.PrimaryKey].UpdateUI(entry);
+                this.entryControllers[entry.PrimaryKey].UpdateUI(entry);
 
             this.UpdateAttachmentPanels();
             this.ColorizeKeyboard();
