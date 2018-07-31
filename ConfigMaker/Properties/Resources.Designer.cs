@@ -250,6 +250,15 @@ namespace ConfigMaker.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Buy commands.
+        /// </summary>
+        public static string CategoryBuy {
+            get {
+                return ResourceManager.GetString("CategoryBuy", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Client commands.
         /// </summary>
         public static string CategoryClientCommands {
@@ -606,6 +615,15 @@ namespace ConfigMaker.Properties {
         public static string Gear3 {
             get {
                 return ResourceManager.GetString("Gear3", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Defuse kits.
+        /// </summary>
+        public static string Gear4 {
+            get {
+                return ResourceManager.GetString("Gear4", resourceCulture);
             }
         }
         

@@ -657,4 +657,10 @@
   <data name="UnknownCommandExecution_Format" xml:space="preserve">
     <value>Добавить команду {0}</value>
   </data>
+  <data name="Gear4" xml:space="preserve">
+    <value>Киты</value>
+  </data>
+  <data name="CategoryBuy" xml:space="preserve">
+    <value>Закупка</value>
+  </data>
 </root>

@@ -592,8 +592,9 @@ namespace ConfigMaker
             AddAction("attack", true);
             AddAction("attack2", true);
             AddAction("reload", true);
-            AddAction("use", true);
             AddAction("drop", false);
+            AddAction("use", true);
+            AddAction("showscores", true);
 
             AddActionGroupSeparator(Res.CategoryMovement);
             AddAction("forward", true);
@@ -619,13 +620,13 @@ namespace ConfigMaker
             AddAction("invprev", false);
             AddAction("invnext", false);
             AddAction("lastinv", false);
-            AddAction("lookatweapon", true);
+            AddAction("cl_show_team_equipment", true);
+
+            AddActionGroupSeparator(Res.CategoryBuy);
             AddAction("buymenu", false);
             AddAction("autobuy", false);
             AddAction("rebuy", false);
-            AddAction("cl_show_team_equipment", true);
-            AddAction("show_loadout_toggle", true);
-
+            
             AddActionGroupSeparator(Res.CategoryCommunication);
             AddAction("voicerecord", true);
             AddAction("radio1", false);
@@ -646,9 +647,9 @@ namespace ConfigMaker
             AddAction("bot_place", false);
 
             AddActionGroupSeparator(Res.CategoryOther);
+            AddAction("lookatweapon", true);
             AddAction("spray_menu", true);
             AddAction("r_cleardecals", false);
-            AddAction("showscores", true);
             AddAction("callvote", false);
             AddAction("teammenu", false);
             AddAction("toggleconsole", false);
@@ -921,6 +922,7 @@ namespace ConfigMaker
             AddWeapon("vest", Res.Gear1);
             AddWeapon("vesthelm", Res.Gear2);
             AddWeapon("taser", Res.Gear3);
+            AddWeapon("defuser", Res.Gear4);
 
             AddGroupSeparator(Res.Grenades);
             AddWeapon("molotov", Res.Grenade1);
@@ -2436,10 +2438,10 @@ namespace ConfigMaker
             if (this.CfgName.Length == 0)
                 this.CfgName = (string)CfgNameProperty.DefaultMetadata.DefaultValue;
 
-            string name = $"{this.CfgName}.cfg";
+            string resultCfgPath = Path.Combine(GetTargetFolder(), $"{this.CfgName}.cfg");
 
-            this.cfgManager.GenerateCfg(name);
-            System.Diagnostics.Process.Start("explorer.exe", $"/select,\"{name}\"");
+            this.cfgManager.GenerateCfg(resultCfgPath);
+            System.Diagnostics.Process.Start("explorer.exe", $"/select,\"{resultCfgPath}\"");
         }
 
         bool IsEntryAttachedToCurrentState(BindEntry entry)

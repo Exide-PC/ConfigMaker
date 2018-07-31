@@ -657,4 +657,10 @@
   <data name="UnknownCommandExecution_Format" xml:space="preserve">
     <value>Add {0} command execution</value>
   </data>
+  <data name="Gear4" xml:space="preserve">
+    <value>Defuse kits</value>
+  </data>
+  <data name="CategoryBuy" xml:space="preserve">
+    <value>Buy commands</value>
+  </data>
 </root>
