@@ -17,7 +17,7 @@
          Background="{DynamicResource MaterialDesignPaper}"
          FontFamily="{DynamicResource MaterialDesignFont}"
         mc:Ignorable="d"
-        Title="" Height="500" Width="1000" MinHeight="500" MinWidth="1000" Loaded="Window_Loaded" Name="mainWindow" WindowState="Maximized">
+        Title="" Height="500" Width="1120" MinHeight="500" MinWidth="1120" Loaded="Window_Loaded" Closing="Window_Closing" Name="mainWindow" WindowState="Maximized">
     <Window.Resources>
         <converters:AliasNameVerifier x:Key="nameToEnableConverter"/>
         <converters:IsNullConverter x:Key="isNullConverter"/>
@@ -149,9 +149,25 @@
                 <DockPanel LastChildFill="True" Grid.ColumnSpan="4">
                     <StackPanel DockPanel.Dock="Top" Orientation="Vertical">
                         <DockPanel LastChildFill="True">
-                            <StackPanel Orientation="Horizontal" DockPanel.Dock="Right" Margin="0 1 0 1">
-                                <TextBox Margin="15,0,0,0" Width="115" Style="{StaticResource MaterialDesignFloatingHintTextBox}" materialDesign:HintAssist.Hint="{x:Static res:Resources.ConfigName_Hint}" Name="cfgNameBox" Text="ConfigMakerCfg"/>
-                                <TextBox Margin="15,0,0,0" Style="{StaticResource MaterialDesignFloatingHintTextBox}" materialDesign:HintAssist.Hint="{x:Static res:Resources.CsgoCfgPath_Hint}" Name="cfgFolderPath" Text="" Width="300" TextChanged="CfgFolderPath_TextChanged"/>
+                            <StackPanel Orientation="Horizontal" DockPanel.Dock="Right">
+                                <TextBox Width="115" Style="{StaticResource MaterialDesignFloatingHintTextBox}" materialDesign:HintAssist.Hint="{x:Static res:Resources.ConfigName_Hint}">
+                                    <TextBox.Text>
+                                        <Binding ElementName="mainWindow" Path="CfgName">
+                                            <Binding.ValidationRules>
+                                                <converters:NameValidationRule ValidatesOnTargetUpdated="True"/>
+                                            </Binding.ValidationRules>
+                                        </Binding>
+                                    </TextBox.Text>
+                                </TextBox>
+                                <TextBox Width="465" Margin="10 0 0 0" Style="{StaticResource MaterialDesignFloatingHintTextBox}" materialDesign:HintAssist.Hint="{x:Static res:Resources.CsgoCfgPath_Hint}">
+                                    <TextBox.Text>
+                                        <Binding ElementName="mainWindow" Path="CsgoCfgPath">
+                                            <Binding.ValidationRules>
+                                                <converters:CfgDirValidationRule/>
+                                            </Binding.ValidationRules>
+                                        </Binding>
+                                    </TextBox.Text>
+                                </TextBox>
                             </StackPanel>
                             <StackPanel Orientation="Horizontal">
                                 <RadioButton Name="actionTabButton" IsChecked="True" GroupName="TabGroup" Content="{x:Static res:Resources.ActionCategory_Button}" Style="{StaticResource MaterialDesignTabItem}"/>

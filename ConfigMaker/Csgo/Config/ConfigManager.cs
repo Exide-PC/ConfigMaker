@@ -38,7 +38,7 @@ namespace ConfigMaker.Csgo.Config
 {
     public class ConfigManager: IXmlSerializable
     {
-        public string TargetPath { get; set; }
+        //public string TargetPath { get; set; }
 
         Dictionary<KeySequence, List<BindEntry>> entries =
             new Dictionary<KeySequence, List<BindEntry>>();        
@@ -443,8 +443,8 @@ namespace ConfigMaker.Csgo.Config
 
         public void ReadXml(XmlReader reader)
         {
-            reader.MoveToAttribute("TargetPath");
-            this.TargetPath = reader.Value;
+            //reader.MoveToAttribute("TargetPath");
+            //this.TargetPath = reader.Value;
 
             reader.Read();
 
@@ -464,7 +464,7 @@ namespace ConfigMaker.Csgo.Config
 
         public void WriteXml(XmlWriter writer)
         {
-            writer.WriteAttributeString("TargetPath", this.TargetPath);
+            //writer.WriteAttributeString("TargetPath", this.TargetPath);
             
             XmlSerializer keysSerializer = new XmlSerializer(typeof(KeySequence[]));
             keysSerializer.Serialize(writer, this.entries.Keys.ToArray());

@@ -648,4 +648,10 @@
   <data name="CategoryVoiceAndSound" xml:space="preserve">
     <value>Voice and sound</value>
   </data>
+  <data name="NotCsgoCfgDir_Error" xml:space="preserve">
+    <value>Not csgo/cfg directory</value>
+  </data>
+  <data name="CanNotBeEmpty_Error" xml:space="preserve">
+    <value>Can not be empty</value>
+  </data>
 </root>

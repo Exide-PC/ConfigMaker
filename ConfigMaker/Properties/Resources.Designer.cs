@@ -223,6 +223,15 @@ namespace ConfigMaker.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Can not be empty.
+        /// </summary>
+        public static string CanNotBeEmpty_Error {
+            get {
+                return ResourceManager.GetString("CanNotBeEmpty_Error", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Bonus scripts.
         /// </summary>
         public static string CategoryBonusScripts {
@@ -1002,6 +1011,15 @@ namespace ConfigMaker.Properties {
         public static string Noclip {
             get {
                 return ResourceManager.GetString("Noclip", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Not csgo/cfg directory.
+        /// </summary>
+        public static string NotCsgoCfgDir_Error {
+            get {
+                return ResourceManager.GetString("NotCsgoCfgDir_Error", resourceCulture);
             }
         }
         

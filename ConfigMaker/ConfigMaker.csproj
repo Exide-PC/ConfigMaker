@@ -65,11 +65,14 @@
     <Compile Include="AboutWindow.xaml.cs">
       <DependentUpon>AboutWindow.xaml</DependentUpon>
     </Compile>
+    <Compile Include="AppConfig.cs" />
     <Compile Include="Properties\Resources.Designer.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
       <DependentUpon>Resources.resx</DependentUpon>
     </Compile>
+    <Compile Include="Utils\Converters\CfgDirValidationRule.cs" />
+    <Compile Include="Utils\Converters\NameValidationRule.cs" />
     <Compile Include="Utils\Converters\TagToFontWeightConverter.cs" />
     <Compile Include="Csgo\Config\Entries\Entry.cs" />
     <Compile Include="Csgo\Config\Entries\ParametrizedEntry.cs" />

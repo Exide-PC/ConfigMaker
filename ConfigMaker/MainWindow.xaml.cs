@@ -64,6 +64,8 @@ namespace ConfigMaker
 
         ConfigManager cfgManager = new ConfigManager();
         KeySequence currentKeySequence = null;
+        AppConfig cfg = null;
+        string cfgPath = $"{nameof(AppConfig)}.xml";
         const string extraAliasSetEntryKey = "ExtraAliasSet";
 
         Dictionary<string, EntryController> entryControllers = new Dictionary<string, EntryController>();
@@ -80,7 +82,21 @@ namespace ConfigMaker
             }   
         }
 
+        public string CsgoCfgPath
+        {
+            get => (string)GetValue(CsgoCfgPathProperty);
+            set => SetValue(CsgoCfgPathProperty, value);
+        }
+
+        public string CfgName
+        {
+            get => (string)GetValue(CfgNameProperty);
+            set => SetValue(CfgNameProperty, value);
+        }
+
         public static readonly DependencyProperty StateBindingProperty;
+        public static readonly DependencyProperty CfgNameProperty;
+        public static readonly DependencyProperty CsgoCfgPathProperty;
 
         static MainWindow()
         {
@@ -89,6 +105,24 @@ namespace ConfigMaker
                 typeof(EntryStateBinding),
                 typeof(MainWindow),
                 new PropertyMetadata(EntryStateBinding.Default));
+
+            CsgoCfgPathProperty = DependencyProperty.Register(
+                "CsgoCfgPath",
+                typeof(string),
+                typeof(MainWindow),
+                new PropertyMetadata(" "));
+
+            // Локальный метод по валидации имени конфига, который передаётся в метаданные свойства
+            object CoerceCfgName(DependencyObject _, object value)
+            {
+                return ((string)value).Trim();
+            };
+
+            CfgNameProperty = DependencyProperty.Register(
+                "CfgName",
+                typeof(string),
+                typeof(MainWindow),
+                new PropertyMetadata("Config", null, new CoerceValueCallback(CoerceCfgName)));
         }
         #endregion
 
@@ -102,6 +136,31 @@ namespace ConfigMaker
         {
             // Делаем поиск по ресурсам регистронезависимым
             Res.ResourceManager.IgnoreCase = true;
+
+            // Возьмем данные из конфига, если такой есть. Иначе создадим
+            XmlSerializer ser = new XmlSerializer(typeof(AppConfig));
+
+            if (!File.Exists(this.cfgPath))
+            {
+                using (FileStream fs = File.OpenWrite(this.cfgPath))
+                {
+                    AppConfig defaultCfg = new AppConfig()
+                    {
+                        CfgName = this.CfgName,
+                        CsgoCfgPath = this.CsgoCfgPath
+                    };
+                    ser.Serialize(fs, defaultCfg);
+                }
+            }
+            // К этому моменту у нас гарантированно создан конфигурационный файл
+            using (FileStream fs = File.OpenRead(this.cfgPath))
+            {
+                
+                this.cfg = (AppConfig)ser.Deserialize(fs);
+
+                this.CfgName = this.cfg.CfgName;
+                this.CsgoCfgPath = this.cfg.CsgoCfgPath;
+            }
 
             // Добавляем слушателя на нажатие виртуальной клавиатуры
             this.kb.OnKeyboardKeyDown += KeyboardKeyDownHandler;
@@ -122,6 +181,20 @@ namespace ConfigMaker
 
             // Зададим привязку по умолчанию
             this.StateBinding = EntryStateBinding.Default;
+        }
+
+        private void Window_Closing(object sender, System.ComponentModel.CancelEventArgs e)
+        {
+            // Удалим прошлый файл
+            File.Delete(this.cfgPath);
+            // И создадим новый
+            using (FileStream fs = File.OpenWrite(this.cfgPath))
+            {
+                XmlSerializer ser = new XmlSerializer(typeof(AppConfig));
+                this.cfg.CfgName = this.CfgName;
+                this.cfg.CsgoCfgPath = this.CsgoCfgPath;
+                ser.Serialize(fs, this.cfg);
+            }
         }
 
         private void KeyboardKeyDownHandler(object sender, VirtualKeyboard.KeyboardClickRoutedEvtArgs args)
@@ -281,47 +354,7 @@ namespace ConfigMaker
 
             addCmdButton.IsEnabled = true;
         }
-
-        //private void AddCmdButton_Click(object sender, RoutedEventArgs e)
-        //{
-        //    ButtonBase cmdElement = new Chip
-        //    {
-        //        Style = (Style)this.Resources["BubbleButton"],
-        //        Content = cmdTextbox.Text.Trim()
-        //    };
-        //    customCmdPanel.Children.Add(cmdElement);
-        //    customCmdPanel.Tag = cmdElement;
-
-        //    cmdElement.Click += (_, __) => customCmdPanel.Tag = cmdElement;
-
-        //    Binding tagBinding = new Binding("Tag")
-        //    {
-        //        Source = customCmdPanel,
-        //        Converter = new TagToFontWeightConverter(),
-        //        ConverterParameter = cmdElement
-        //    };
-        //    cmdElement.SetBinding(ButtonBase.FontWeightProperty, tagBinding);
-
-        //    AddEntry(ServiceConfigEntry.ExecCustomCmds.ToString());
-        //}
-
-        //private void DeleteCmdButton_Click(object sender, RoutedEventArgs e)
-        //{
-        //    ButtonBase targetButton = customCmdPanel.Tag as ButtonBase;
-        //    BindingOperations.ClearAllBindings(targetButton);
-        //    customCmdPanel.Children.Remove(targetButton);
-
-        //    if (customCmdPanel.Children.Count > 0)
-        //    {
-        //        customCmdPanel.Tag = customCmdPanel.Children[0];
-        //        this.AddEntry(ServiceConfigEntry.ExecCustomCmds.ToString());
-        //    }
-        //    else
-        //    {
-        //        customCmdPanel.Tag = null;
-        //    }
-        //}
-
+        
         private void GenerateRandomCrosshairsButton_Click(object sender, RoutedEventArgs e)
         {
             int count = (int)cycleChSlider.Value;
@@ -382,7 +415,7 @@ namespace ConfigMaker
 
                 FileInfo fi = new FileInfo(openFileDialog.FileName);
                 string cfgName = fi.Name.Replace(".cmc", "");
-                cfgNameBox.Text = cfgName;
+                this.CfgName = cfgName;
 
                 try
                 {
@@ -401,11 +434,10 @@ namespace ConfigMaker
 
         private void SaveCfgButton_Click(object sender, RoutedEventArgs e)
         {
-            if (cfgNameBox.Text.Trim().Length == 0)
-                cfgNameBox.Text = "ConfigMakerCfg";
-
-            string cfgName = cfgNameBox.Text;
-            string cfgManagerPath = Path.Combine(GetTargetFolder(), $"{cfgName}.cmc");
+            if (this.CfgName.Length == 0)
+                this.CfgName = (string) CfgNameProperty.DefaultMetadata.DefaultValue;
+            
+            string cfgManagerPath = Path.Combine(GetTargetFolder(), $"{this.CfgName}.cmc");
 
             if (File.Exists(cfgManagerPath)) File.Delete(cfgManagerPath);
             using (FileStream fs = File.OpenWrite(cfgManagerPath))
@@ -414,46 +446,16 @@ namespace ConfigMaker
                 ser.Serialize(fs, this.cfgManager);
             }
             System.Diagnostics.Process.Start("explorer.exe", $"/select,\"{cfgManagerPath}\"");
+            //this.csgoCfgPathBox.Vali
         }
-
-        //private void VolumeSliderValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
+        
+        //private void CsgoCfgPathBox_TextChanged(object sender, TextChangedEventArgs e)
         //{
-        //    if (volumeStepSlider == null || maxVolumeSlider == null || minVolumeSlider == null)
-        //        return;
+        //    string path = ((TextBox)sender).Text.Trim();
 
-        //    Slider slider = (Slider)sender;
-
-        //    // Нижняя граница изменилась
-        //    if (slider.Name == minVolumeSlider.Name)
-        //    {
-        //        maxVolumeSlider.Minimum = slider.Value + 0.01;
-        //    }
-        //    else if (slider.Name == maxVolumeSlider.Name)
-        //    {
-        //        // Иначе верхняя граница изменилась
-        //        minVolumeSlider.Maximum = slider.Value - 0.01;
-        //    }
-        //    else
-        //    {
-        //        // Иначе изменился шаг
-        //    }
-
-        //    // Определим дельту
-        //    double delta = maxVolumeSlider.Value - minVolumeSlider.Value;
-        //    volumeStepSlider.Maximum = delta;
-
-        //    // Обновим регулировщик в конфиге, если изменение было сделано пользователем
-        //    if ((bool)volumeRegulatorCheckbox.IsChecked)
-        //        this.AddEntry(ServiceConfigEntry.VolumeRegulator.ToString());
+        //    if (Directory.Exists(path))
+        //        this.cfgManager.TargetPath = path;
         //}
-
-        private void CfgFolderPath_TextChanged(object sender, TextChangedEventArgs e)
-        {
-            string path = ((TextBox)sender).Text.Trim();
-
-            if (Directory.Exists(path))
-                this.cfgManager.TargetPath = path;
-        }
 
         private void ResetSequenceButton_Click(object sender, RoutedEventArgs e)
         {
@@ -2397,13 +2399,13 @@ namespace ConfigMaker
             // Получим обработчика и переведем фокус на нужный элемент
             this.entryControllers[entryKey].Focus();
         }
-
+        
         private void GenerateConfig(object sender, RoutedEventArgs e)
         {
-            if (cfgNameBox.Text.Trim().Length == 0)
-                cfgNameBox.Text = "ConfigMakerCfg";
+            if (this.CfgName.Length == 0)
+                this.CfgName = (string)CfgNameProperty.DefaultMetadata.DefaultValue;
 
-            string name = $"{cfgNameBox.Text}.cfg";
+            string name = $"{this.CfgName}.cfg";
 
             this.cfgManager.GenerateCfg(name);
             System.Diagnostics.Process.Start("explorer.exe", $"/select,\"{name}\"");
@@ -2494,7 +2496,7 @@ namespace ConfigMaker
 
         string GetTargetFolder()
         {
-            string cfgPath = cfgFolderPath.Text.Trim();
+            string cfgPath = this.CsgoCfgPath;
 
             if (cfgPath.Length > 0 && Directory.Exists(cfgPath))
             {
@@ -2523,5 +2525,6 @@ namespace ConfigMaker
             MessageBox.Show(builder.ToString());
         }
         #endregion
+
     }
 }
