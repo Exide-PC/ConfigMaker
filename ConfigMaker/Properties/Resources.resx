@@ -633,4 +633,19 @@
   <data name="Demo_togglepause" xml:space="preserve">
     <value>Toggle demo pause</value>
   </data>
+  <data name="CategoryDemo" xml:space="preserve">
+    <value>Demo</value>
+  </data>
+  <data name="CategoryBonusScripts" xml:space="preserve">
+    <value>Bonus scripts</value>
+  </data>
+  <data name="CategoryServer" xml:space="preserve">
+    <value>Server</value>
+  </data>
+  <data name="CategoryBots" xml:space="preserve">
+    <value>Bots</value>
+  </data>
+  <data name="CategoryVoiceAndSound" xml:space="preserve">
+    <value>Voice and sound</value>
+  </data>
 </root>

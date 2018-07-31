@@ -645,13 +645,12 @@ namespace ConfigMaker
             AddAction("pause", false);
             AddAction("quit", false);
 
-            AddActionGroupSeparator("Demo");
+            AddActionGroupSeparator(Res.CategoryDemo);
             AddAction("demo_resume", false);
             AddAction("demo_togglepause", false);
 
-            AddActionGroupSeparator("Bonus scripts");
+            AddActionGroupSeparator(Res.CategoryBonusScripts);
 
-            
             // jumpthrow script
             const string jumpthrowEntryKey = "Jumpthrow";
             CheckBox jumpthrowCheckbox = PrepareAction(jumpthrowEntryKey, true);
@@ -1564,7 +1563,7 @@ namespace ConfigMaker
             AddComboboxCmdController("cl_crosshairusealpha", toggleStrings, 1, true);
             AddTextboxNumberCmdController("cl_fixedcrosshairgap", 3, false);
 
-            AddGroupHeader("Server");
+            AddGroupHeader(Res.CategoryServer);
             AddTextboxNumberCmdController("sv_airaccelerate", 12, true);
             AddTextboxNumberCmdController("sv_accelerate", 5.5, false);
             AddComboboxCmdController("sv_showimpacts", new string[] { "Off", "Server/client", "Client only" }, 0, true);
@@ -1574,10 +1573,7 @@ namespace ConfigMaker
             AddComboboxCmdController("mp_ct_default_secondary", secondaryWeapons, 0, false);
             AddComboboxCmdController("mp_t_default_secondary", secondaryWeapons, 1, false);
             
-            AddGroupHeader("Render");
-            AddComboboxCmdController("r_drawothermodels", new string[] { "Off", "Normal", "Wireframe" }, 1, true);
-            
-            AddGroupHeader("Bots");
+            AddGroupHeader(Res.CategoryBots);
             AddComboboxCmdController("bot_stop", toggleStrings, 0, true);
             AddComboboxCmdController("bot_mimic", toggleStrings, 0, true);
             AddComboboxCmdController("bot_crouch", toggleStrings, 0, true);
@@ -1593,13 +1589,14 @@ namespace ConfigMaker
             AddTextboxStringCmdController("echo", "blog.exideprod.com");
             AddTextboxStringCmdController("record", "demo_name");
             AddComboboxCmdController("developer", toggleStrings, 0, true);
+            AddComboboxCmdController("r_drawothermodels", new string[] { "Off", "Normal", "Wireframe" }, 1, true);
             AddTextboxStringCmdController("host_writeconfig", "config_name");
             AddIntervalCmdController("mat_monitorgamma", 1.6, 2.6, 0.1, 2.2);
             AddTextboxNumberCmdController("mm_dedicated_search_maxping", 150, true);
             AddTextboxNumberCmdController("host_timescale", 1, false);
             AddTextboxNumberCmdController("demo_timescale", 1, false);
 
-            AddGroupHeader("Voice and sound");
+            AddGroupHeader(Res.CategoryVoiceAndSound);
             AddIntervalCmdController("volume", 0, 1, 0.05, 1);
             AddComboboxCmdController("voice_enable", toggleStrings, 1, true);
             AddComboboxCmdController("voice_loopback", toggleStrings, 1, true);
@@ -2091,13 +2088,6 @@ namespace ConfigMaker
                 }
             }
         }
-
-        //string Localize(ServiceConfigEntry cfgEntry)
-        //{
-        //    string result = Res.ResourceManager.GetString(cfgEntry.ToString());
-        //    return result ?? cfgEntry.ToString();
-        //    //return result ?? throw new Exception($"Resource key {cfgEntry.ToString()} not found");
-        //}
 
         string Localize(string primaryKey)
         {

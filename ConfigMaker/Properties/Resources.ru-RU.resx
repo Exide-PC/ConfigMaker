@@ -633,4 +633,19 @@
   <data name="Demo_togglepause" xml:space="preserve">
     <value>Остановить демку</value>
   </data>
+  <data name="CategoryDemo" xml:space="preserve">
+    <value>Демо</value>
+  </data>
+  <data name="CategoryBonusScripts" xml:space="preserve">
+    <value>Скрипты</value>
+  </data>
+  <data name="CategoryServer" xml:space="preserve">
+    <value>Сервер</value>
+  </data>
+  <data name="CategoryBots" xml:space="preserve">
+    <value>Боты</value>
+  </data>
+  <data name="CategoryVoiceAndSound" xml:space="preserve">
+    <value>Голос и звук</value>
+  </data>
 </root>

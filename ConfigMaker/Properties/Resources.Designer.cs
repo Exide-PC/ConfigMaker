@@ -151,6 +151,33 @@ namespace ConfigMaker.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Add bot [CT].
+        /// </summary>
+        public static string Bot_add_ct {
+            get {
+                return ResourceManager.GetString("Bot_add_ct", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Add bot [T].
+        /// </summary>
+        public static string Bot_add_t {
+            get {
+                return ResourceManager.GetString("Bot_add_t", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Place bot.
+        /// </summary>
+        public static string Bot_place {
+            get {
+                return ResourceManager.GetString("Bot_place", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Bottom.
         /// </summary>
         public static string Bottom {
@@ -196,6 +223,24 @@ namespace ConfigMaker.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Bonus scripts.
+        /// </summary>
+        public static string CategoryBonusScripts {
+            get {
+                return ResourceManager.GetString("CategoryBonusScripts", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Bots.
+        /// </summary>
+        public static string CategoryBots {
+            get {
+                return ResourceManager.GetString("CategoryBots", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Client commands.
         /// </summary>
         public static string CategoryClientCommands {
@@ -228,6 +273,15 @@ namespace ConfigMaker.Properties {
         public static string CategoryCrosshair {
             get {
                 return ResourceManager.GetString("CategoryCrosshair", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Demo.
+        /// </summary>
+        public static string CategoryDemo {
+            get {
+                return ResourceManager.GetString("CategoryDemo", resourceCulture);
             }
         }
         
@@ -273,6 +327,24 @@ namespace ConfigMaker.Properties {
         public static string CategoryOther {
             get {
                 return ResourceManager.GetString("CategoryOther", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Server.
+        /// </summary>
+        public static string CategoryServer {
+            get {
+                return ResourceManager.GetString("CategoryServer", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Voice and sound.
+        /// </summary>
+        public static string CategoryVoiceAndSound {
+            get {
+                return ResourceManager.GetString("CategoryVoiceAndSound", resourceCulture);
             }
         }
         
@@ -372,6 +444,24 @@ namespace ConfigMaker.Properties {
         public static string Default_Binding {
             get {
                 return ResourceManager.GetString("Default_Binding", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Resume demo.
+        /// </summary>
+        public static string Demo_resume {
+            get {
+                return ResourceManager.GetString("Demo_resume", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Toggle demo pause.
+        /// </summary>
+        public static string Demo_togglepause {
+            get {
+                return ResourceManager.GetString("Demo_togglepause", resourceCulture);
             }
         }
         
@@ -880,6 +970,33 @@ namespace ConfigMaker.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Swap teams.
+        /// </summary>
+        public static string Mp_swapteams {
+            get {
+                return ResourceManager.GetString("Mp_swapteams", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to End warmup.
+        /// </summary>
+        public static string Mp_warmup_end {
+            get {
+                return ResourceManager.GetString("Mp_warmup_end", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Start warmup.
+        /// </summary>
+        public static string Mp_warmup_start {
+            get {
+                return ResourceManager.GetString("Mp_warmup_start", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Noclip.
         /// </summary>
         public static string Noclip {
@@ -912,6 +1029,15 @@ namespace ConfigMaker.Properties {
         public static string Orange {
             get {
                 return ResourceManager.GetString("Orange", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Pause.
+        /// </summary>
+        public static string Pause {
+            get {
+                return ResourceManager.GetString("Pause", resourceCulture);
             }
         }
         
@@ -993,6 +1119,15 @@ namespace ConfigMaker.Properties {
         public static string Purple {
             get {
                 return ResourceManager.GetString("Purple", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Quit game.
+        /// </summary>
+        public static string Quit {
+            get {
+                return ResourceManager.GetString("Quit", resourceCulture);
             }
         }
         
@@ -1137,6 +1272,15 @@ namespace ConfigMaker.Properties {
         public static string SaveConfig_Button {
             get {
                 return ResourceManager.GetString("SaveConfig_Button", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Screnshot.
+        /// </summary>
+        public static string Screenshot {
+            get {
+                return ResourceManager.GetString("Screenshot", resourceCulture);
             }
         }
         
