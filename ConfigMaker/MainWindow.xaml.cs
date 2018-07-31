@@ -446,17 +446,8 @@ namespace ConfigMaker
                 ser.Serialize(fs, this.cfgManager);
             }
             System.Diagnostics.Process.Start("explorer.exe", $"/select,\"{cfgManagerPath}\"");
-            //this.csgoCfgPathBox.Vali
         }
         
-        //private void CsgoCfgPathBox_TextChanged(object sender, TextChangedEventArgs e)
-        //{
-        //    string path = ((TextBox)sender).Text.Trim();
-
-        //    if (Directory.Exists(path))
-        //        this.cfgManager.TargetPath = path;
-        //}
-
         private void ResetSequenceButton_Click(object sender, RoutedEventArgs e)
         {
             this.currentKeySequence = null;
@@ -478,20 +469,39 @@ namespace ConfigMaker
             {
                 foreach (FrameworkElement element in elements)
                     element.Visibility = Visibility.Visible;
+                addUnknownCmdButton.Visibility = Visibility.Hidden;
             }
             else
             {
+                int foundCount = 0;
+
                 foreach (FrameworkElement element in elements)
                 {
                     if (element.Tag != null)
                     {
                         string entryKey = (string)element.Tag;
-                        element.Visibility = entryKey.ToLower().Contains(input) ?
-                            Visibility.Visible : Visibility.Collapsed;
+                        if (entryKey.ToLower().Contains(input))
+                        {
+                            element.Visibility = Visibility.Visible;
+                            foundCount++;
+                        }
+                        else
+                        {
+                            element.Visibility = Visibility.Collapsed;
+                        }
                     }
                     else
                         element.Visibility = Visibility.Collapsed;
                 }
+
+                // Если ничего не выведено - предалагем добавить
+                if (foundCount == 0)
+                {
+                    addUnknownCmdButton.Content = string.Format(Res.UnknownCommandExecution_Format, input);
+                    addUnknownCmdButton.Visibility = Visibility.Visible;
+                }
+                else
+                    addUnknownCmdButton.Visibility = Visibility.Hidden;
             }
         }
 
@@ -1646,6 +1656,27 @@ namespace ConfigMaker
 
                 AddEntry(execCustomCmdsEntryKey);
             };
+            // Обработчик нажатия на кнопку добавления неизвестной программе команды
+            addUnknownCmdButton.Click += (sender, args) =>
+            {
+                // Перейдем в клатке с соответствующим контроллером
+                this.entryControllers[execCustomCmdsEntryKey].Focus();
+                //this.entryControllers[execCustomCmdsEntryKey].
+
+                // Добавим указанную пользователем команду в контроллер ExecCustomCmds
+                string cmd = searchCmdBox.Text.Trim();
+
+                // Сделаем контроллер активным, искусственно нажав кнопку, если он не активен.
+                // Т.к. искусственный вызов ClickEvent не чекбоксе не меняет его состояния,
+                // переключим его вручную и вызовем нужный метод для добавления в конфиг элемента
+                customCmdHeaderCheckbox.IsChecked = true;
+                HandleEntryClick(customCmdHeaderCheckbox, new RoutedEventArgs(CheckBox.ClickEvent));
+                
+                cmdTextbox.Text = cmd;
+                addCmdButton.RaiseEvent(new RoutedEventArgs(ButtonBase.ClickEvent));
+                cmdTextbox.Text = string.Empty;
+            };
+
             // А так же повесим действие на кнопку удаления команды
             deleteCmdButton.Click += (sender, args) =>
             {
@@ -2526,5 +2557,9 @@ namespace ConfigMaker
         }
         #endregion
 
+        private void Button_Click(object sender, RoutedEventArgs e)
+        {
+            customCmdHeaderCheckbox.RaiseEvent(new RoutedEventArgs(CheckBox.ClickEvent));
+        }
     }
 }

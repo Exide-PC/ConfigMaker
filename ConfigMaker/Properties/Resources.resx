@@ -654,4 +654,7 @@
   <data name="CanNotBeEmpty_Error" xml:space="preserve">
     <value>Can not be empty</value>
   </data>
+  <data name="UnknownCommandExecution_Format" xml:space="preserve">
+    <value>Add {0} command execution</value>
+  </data>
 </root>

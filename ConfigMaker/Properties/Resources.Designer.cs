@@ -1600,6 +1600,15 @@ namespace ConfigMaker.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Add {0} command execution.
+        /// </summary>
+        public static string UnknownCommandExecution_Format {
+            get {
+                return ResourceManager.GetString("UnknownCommandExecution_Format", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Use.
         /// </summary>
         public static string Use {
