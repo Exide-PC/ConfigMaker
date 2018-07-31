@@ -353,13 +353,7 @@ namespace ConfigMaker.Csgo.Config
 
 
                 // --- Сгенерируем сам конфиг ---
-
-                // Выведем в консоль фирменный комментарий
-                writer.WriteLine("echo \"\"");
-                writer.WriteLine("echo \"Config is created by Exide's Config Maker [blog.exideprod.com | vk.com/exideprod]\"");
-                writer.WriteLine("echo \"\"");
-                writer.WriteLine();
-
+                
                 // Выпишем зависимости
                 if (dependencies.Where(d => d.Commands.Count > 0).Count() > 0)
                 {
@@ -412,10 +406,12 @@ namespace ConfigMaker.Csgo.Config
                     writer.WriteLine();
                 }
 
+                // Выведем в консоль фирменный комментарий
                 writer.WriteLine("echo \"\"");
-                writer.WriteLine("echo \"Config is loaded! Enjoy:D\"");
+                writer.WriteLine("echo \"Config is created by Exide's Config Maker\"");
+                writer.WriteLine("echo \"----------- blog.exideprod.com -----------\"");
+                writer.WriteLine("echo \"------------ vk.com/exideprod ------------\"");
                 writer.WriteLine("echo \"\"");
-
             } // Закрываем файловый поток      
         }
 
@@ -443,12 +439,8 @@ namespace ConfigMaker.Csgo.Config
 
         public void ReadXml(XmlReader reader)
         {
-            //reader.MoveToAttribute("TargetPath");
-            //this.TargetPath = reader.Value;
-
             reader.Read();
 
-            
             XmlSerializer keysSerializer = new XmlSerializer(typeof(KeySequence[]));
             KeySequence[] keySeqs = (KeySequence[])keysSerializer.Deserialize(reader);
 
