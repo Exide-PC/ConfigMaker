@@ -51,7 +51,7 @@ namespace ConfigMaker.Csgo.Config
 
         public KeySequence(params string[] keys): this((IEnumerable<string>) keys)
         {
-            //this.Keys = keys.Select(key => key.Trim().ToLower()).ToArray();
+
         }
 
         public override int GetHashCode()
@@ -90,7 +90,8 @@ namespace ConfigMaker.Csgo.Config
 
             for (int i = 0; i < keyCount; i++)
             {
-                string key = reader.Value;
+                // Если пользователь особо одаренный, то он мог изменить в конфиге регистр кнопок
+                string key = reader.Value.Trim().ToLower();
                 keys.Add(key);
             }
 

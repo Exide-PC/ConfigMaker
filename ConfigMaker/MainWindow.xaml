@@ -128,7 +128,6 @@
                             <Button Content="{x:Static res:Resources.GenerateConfig_Button}" Click="GenerateConfig"/>
                             <Border BorderBrush="{StaticResource MaterialDesignDivider}" BorderThickness="0,1,0,0"/>
                             <Button Content="{x:Static res:Resources.About_Button}" Click="AboutButton_Click"/>
-                            <Button Click="Button_Click"/>
                         </StackPanel>
                     </materialDesign:PopupBox>
                     <TextBlock Text="ConfigMaker by Exide"  Style="{StaticResource MaterialDesignHeadlineTextBlock}"/>

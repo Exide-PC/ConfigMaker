@@ -2556,10 +2556,5 @@ namespace ConfigMaker
             MessageBox.Show(builder.ToString());
         }
         #endregion
-
-        private void Button_Click(object sender, RoutedEventArgs e)
-        {
-            customCmdHeaderCheckbox.RaiseEvent(new RoutedEventArgs(CheckBox.ClickEvent));
-        }
     }
 }
