@@ -378,8 +378,8 @@ namespace ConfigMaker
 
             for (int i = 0; i < count; i++)
             {
-                string crosshairName = $"{prefix}_ch{i + 1}.cfg";
-                if (firstCrosshair == null) firstCrosshair = crosshairName;
+                string crosshairPath = $@"{GetTargetFolder()}\{prefix}_ch{i + 1}.cfg";
+                if (firstCrosshair == null) firstCrosshair = crosshairPath;
 
                 string[] lines = new string[]
                 {
@@ -395,8 +395,8 @@ namespace ConfigMaker
                     GenerateRandomCmd("cl_crosshairthickness", 1, 3, true)
                 };
 
-                if (File.Exists(crosshairName)) File.Delete(crosshairName);
-                File.WriteAllLines(crosshairName, lines);
+                if (File.Exists(crosshairPath)) File.Delete(crosshairPath);
+                File.WriteAllLines(crosshairPath, lines);
             }
             System.Diagnostics.Process.Start("explorer.exe", $"/select,\"{firstCrosshair}\"");
         }
@@ -1875,6 +1875,12 @@ namespace ConfigMaker
             minVolumeSlider.ValueChanged += volumeSliderValueChanged;
             maxVolumeSlider.ValueChanged += volumeSliderValueChanged;
             volumeStepSlider.ValueChanged += volumeSliderValueChanged;
+            volumeDirectionCombobox.SelectionChanged += (_, __) =>
+            {
+                // Обновим регулировщик в конфиге, если изменение было сделано пользователем
+                if ((bool)volumeRegulatorCheckbox.IsChecked)
+                    this.AddEntry(volumeRegulatorEntryKey);
+            };
 
             this.entryControllers.Add(volumeRegulatorEntryKey, new EntryController()
             {
@@ -1968,7 +1974,7 @@ namespace ConfigMaker
                         Type = EntryType.Semistatic,
                         IsMetaScript = false,
                         Dependencies = dependencies,
-                        Arg = new double[] { minVolume, maxVolume, volumeStep }
+                        Arg = new double[] { minVolume, maxVolume, volumeStep, volumeUp? 1 : 0 }
                     };
                 },
                 UpdateUI = (entry) =>
@@ -1979,6 +1985,7 @@ namespace ConfigMaker
                     minVolumeSlider.Value = args[0];
                     maxVolumeSlider.Value = args[1];
                     volumeStepSlider.Value = args[2];
+                    volumeDirectionCombobox.SelectedIndex = (int)args[3];
                 },
                 Restore = () =>
                 {
