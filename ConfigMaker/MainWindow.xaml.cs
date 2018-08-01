@@ -937,15 +937,15 @@ namespace ConfigMaker
 
             Tuple<TextBlock, Grid, Button, CheckBox> PrepareNewRow(string cmd, bool needToggle)
             {
-                Grid cmdControllerGrid = new Grid
+                Grid rowGrid = new Grid
                 {
                     Height = rowHeight
                 };
 
-                cmdControllerGrid.ColumnDefinitions.Add(new ColumnDefinition() { Width = new GridLength(30, GridUnitType.Star) });
-                cmdControllerGrid.ColumnDefinitions.Add(new ColumnDefinition() { Width = new GridLength(60, GridUnitType.Star) });
-                cmdControllerGrid.ColumnDefinitions.Add(new ColumnDefinition() { Width = new GridLength(10, GridUnitType.Star) });
-                cmdControllerGrid.Tag = cmd;
+                rowGrid.ColumnDefinitions.Add(new ColumnDefinition() { Width = new GridLength(30, GridUnitType.Star) });
+                rowGrid.ColumnDefinitions.Add(new ColumnDefinition() { Width = new GridLength(60, GridUnitType.Star) });
+                rowGrid.ColumnDefinitions.Add(new ColumnDefinition() { Width = new GridLength(10, GridUnitType.Star) });
+                rowGrid.Tag = cmd;
 
                 // Текст с результирующей командой
                 TextBlock resultCmd = new TextBlock
@@ -953,25 +953,25 @@ namespace ConfigMaker
                     HorizontalAlignment = HorizontalAlignment.Center,
                     VerticalAlignment = VerticalAlignment.Center
                 };
-                cmdControllerGrid.Children.Add(resultCmd);
+                rowGrid.Children.Add(resultCmd);
                 Grid.SetColumn(resultCmd, 0);
 
                 // Сетка с управляющими элементами
-                Grid mainControlGrid = new Grid();
-                cmdControllerGrid.Children.Add(mainControlGrid);
-                Grid.SetColumn(mainControlGrid, 1);
+                Grid controlsAndToggleButtonGrid = new Grid();
+                rowGrid.Children.Add(controlsAndToggleButtonGrid);
+                Grid.SetColumn(controlsAndToggleButtonGrid, 1);
 
-                Grid customControlsGrid = new Grid();
-                mainControlGrid.Children.Add(customControlsGrid);
+                Grid controlsGrid = new Grid();
+                controlsAndToggleButtonGrid.Children.Add(controlsGrid);
 
                 // Определяем нужна ли кнопка для циклических аргументов
                 Button toggleButton = null;
 
                 if (needToggle)
                 {
-                    mainControlGrid.ColumnDefinitions.Add(
+                    controlsAndToggleButtonGrid.ColumnDefinitions.Add(
                         new ColumnDefinition() { Width = new GridLength(1, GridUnitType.Star) });
-                    mainControlGrid.ColumnDefinitions.Add(
+                    controlsAndToggleButtonGrid.ColumnDefinitions.Add(
                         new ColumnDefinition() { Width = new GridLength(-1, GridUnitType.Auto) });
 
                     toggleButton = new Button
@@ -980,7 +980,7 @@ namespace ConfigMaker
                         Content = "⇄"
                     };
 
-                    mainControlGrid.Children.Add(toggleButton);
+                    controlsAndToggleButtonGrid.Children.Add(toggleButton);
                     Grid.SetColumn(toggleButton, 1);
                 }
 
@@ -991,7 +991,7 @@ namespace ConfigMaker
                     HorizontalAlignment = HorizontalAlignment.Center,
                     VerticalAlignment = VerticalAlignment.Center
                 };
-                cmdControllerGrid.Children.Add(checkbox);
+                rowGrid.Children.Add(checkbox);
                 Grid.SetColumn(checkbox, 2);
                 checkbox.Click += HandleEntryClick;
 
@@ -1000,12 +1000,12 @@ namespace ConfigMaker
                 {
                     Source = checkbox
                 };
-                customControlsGrid.SetBinding(Grid.IsEnabledProperty, checkedBinding);
+                controlsAndToggleButtonGrid.SetBinding(Grid.IsEnabledProperty, checkedBinding);
                 // А так же привяжем отдельно наш ToggleTool, т.к. он находится в общем гриде
 
-                settingsTabPanel.Children.Add(cmdControllerGrid);
+                settingsTabPanel.Children.Add(rowGrid);
 
-                return new Tuple<TextBlock, Grid, Button, CheckBox>(resultCmd, customControlsGrid, toggleButton, checkbox);
+                return new Tuple<TextBlock, Grid, Button, CheckBox>(resultCmd, controlsGrid, toggleButton, checkbox);
             };
 
             
