@@ -295,7 +295,7 @@ namespace ConfigMaker
             string aliasName = this.newAliasNameTextbox.Text;
             AddAliasButton(aliasName, new List<Entry>());
             // Пусть в конфиге всё равно будет объявлен алиас, хоть он и пустой
-            this.AddEntry(extraAliasSetEntryKey);
+            this.AddEntry(extraAliasSetEntryKey, false);
         }
 
         private void DeleteAliasButton_Click(object sender, RoutedEventArgs e)
@@ -326,7 +326,7 @@ namespace ConfigMaker
                 }
 
                 // Если в панели еще остались алиасы, то обновим конфиг
-                this.AddEntry(extraAliasSetEntryKey);
+                this.AddEntry(extraAliasSetEntryKey, false);
             }
             else
             {
@@ -826,16 +826,30 @@ namespace ConfigMaker
                     string[] weaponsToBuy = GetWeaponCheckboxes()
                     .Where(c => (bool)c.IsChecked).Select(c => (string)c.Tag).ToArray();
 
+                    Executable cmd = null;
+                    CommandCollection dependencies = null;
+
                     List<SingleCmd> buyCmds = weaponsToBuy.Select(weapon => new SingleCmd($"buy {weapon}")).ToList();
 
-                    AliasCmd buyAlias = new AliasCmd($"{GeneratePrefix()}_{buyScenarioEntryKey}", buyCmds);
+                    if (weaponsToBuy.Length == 1)
+                    {
+                        cmd = buyCmds[0];
+                        dependencies = new CommandCollection();
+                    }
+                    else
+                    {
+                        AliasCmd buyAlias = new AliasCmd($"{GeneratePrefix()}_{buyScenarioEntryKey}", buyCmds);
+
+                        cmd = buyAlias.Name;
+                        dependencies = new CommandCollection(buyAlias);
+                    }
 
                     return new ParametrizedEntry<string[]>()
                     {
                         PrimaryKey = buyScenarioEntryKey,
                         Type = EntryType.Dynamic,
-                        Dependencies = new CommandCollection(buyAlias),
-                        Cmd = buyAlias.Name,
+                        Dependencies = dependencies,
+                        Cmd = cmd,
                         Arg = weaponsToBuy,
                         IsMetaScript = false
                     };
@@ -863,7 +877,7 @@ namespace ConfigMaker
                 // При нажатии на чекбокс оружия искусственно вызовем событие обработки нажатия на главный чекбокс
                 weaponCheckbox.Click += (_, __) =>
                 {
-                    this.AddEntry(buyScenarioEntryKey);
+                    this.AddEntry(buyScenarioEntryKey, false);
                 };
 
                 currentPanel.Children.Add(weaponCheckbox);
@@ -1079,8 +1093,8 @@ namespace ConfigMaker
                         // Сохраним аргумент в теге
                         resultCmdBlock.Tag = values;
 
-                        if ((bool)checkbox.IsChecked) // Добавляем в конфиг только если это сделал сам пользователь
-                            this.AddEntry(cmd);
+                        //if ((bool)checkbox.IsChecked) // Добавляем в конфиг только если это сделал сам пользователь
+                        this.AddEntry(cmd, true);
                     }
                     else
                     {
@@ -1101,8 +1115,8 @@ namespace ConfigMaker
                     resultCmdBlock.Text = new SingleCmd($"{cmd} {formatted}").ToString();
                     resultCmdBlock.Tag = fixedValue;
 
-                    if ((bool)checkbox.IsChecked) // Добавляем в конфиг только если это сделал сам пользователь
-                        this.AddEntry(cmd);
+                    //if ((bool)checkbox.IsChecked) // Добавляем в конфиг только если это сделал сам пользователь
+                    this.AddEntry(cmd, true);
                 };
 
                 // обработчик интерфейса
@@ -1203,8 +1217,8 @@ namespace ConfigMaker
                             // Сохраним аргумент в теге
                             resultCmdBlock.Tag = values;
 
-                            if ((bool)checkbox.IsChecked) // Добавляем в конфиг только если это сделал сам пользователь
-                                this.AddEntry(cmd);
+                            //if ((bool)checkbox.IsChecked) // Добавляем в конфиг только если это сделал сам пользователь
+                            this.AddEntry(cmd, true);
                         }
                         else
                         {
@@ -1295,8 +1309,8 @@ namespace ConfigMaker
 
                     resultCmdBlock.Text = new SingleCmd(resultCmdStr).ToString();
                     resultCmdBlock.Tag = combobox.SelectedIndex;
-                    if ((bool)checkbox.IsChecked) // Добавляем в конфиг только если это сделал сам пользователь
-                        this.AddEntry(cmd);
+                    //if ((bool)checkbox.IsChecked) // Добавляем в конфиг только если это сделал сам пользователь
+                    this.AddEntry(cmd, true);
                 };
                 
                 // Команда по умолчанию обновится, т.к. уже есть обработчик
@@ -1336,8 +1350,8 @@ namespace ConfigMaker
                         // Сохраним аргумент в теге
                         resultCmdBlock.Tag = values;
 
-                        if ((bool)checkbox.IsChecked) // Добавляем в конфиг только если это сделал сам пользователь
-                            this.AddEntry(cmd);
+                        //if ((bool)checkbox.IsChecked) // Добавляем в конфиг только если это сделал сам пользователь
+                        this.AddEntry(cmd, true);
                     }
                     else
                     {
@@ -1358,8 +1372,8 @@ namespace ConfigMaker
                     string formatted = Executable.FormatNumber(fixedValue, asInteger);
                     resultCmdBlock.Text = new SingleCmd($"{cmd} {formatted}").ToString();
 
-                    if ((bool)checkbox.IsChecked) // Добавляем в конфиг только если это сделал сам пользователь
-                        AddEntry(cmd);
+                    //if ((bool)checkbox.IsChecked) // Добавляем в конфиг только если это сделал сам пользователь
+                    AddEntry(cmd, true);
                 };
 
                 EntryController entryBinding = new EntryController()
@@ -1452,8 +1466,8 @@ namespace ConfigMaker
                     // Обернем в команду только название команды, т.к. аргументы в нижнем регистре не нужны
                     resultCmdBlock.Text = $"{new SingleCmd(cmd)} {(wrap?"\"":"")}{text}{(wrap ? "\"" : "")}";
 
-                    if ((bool)checkbox.IsChecked) // Добавляем в конфиг только если это сделал сам пользователь
-                        AddEntry(cmd);
+                    //if ((bool)checkbox.IsChecked) // Добавляем в конфиг только если это сделал сам пользователь
+                    AddEntry(cmd, true);
                 };
 
                 EntryController entryBinding = new EntryController()
@@ -1655,7 +1669,7 @@ namespace ConfigMaker
                 };
                 cmdElement.SetBinding(ButtonBase.FontWeightProperty, tagBinding);
 
-                AddEntry(execCustomCmdsEntryKey);
+                AddEntry(execCustomCmdsEntryKey, false);
             };
             // Обработчик нажатия на кнопку добавления неизвестной программе команды
             addUnknownCmdButton.Click += (sender, args) =>
@@ -1688,7 +1702,7 @@ namespace ConfigMaker
                 if (customCmdPanel.Children.Count > 0)
                 {
                     customCmdPanel.Tag = customCmdPanel.Children[0];
-                    this.AddEntry(execCustomCmdsEntryKey);
+                    this.AddEntry(execCustomCmdsEntryKey, false);
                 }
                 else
                 {
@@ -1834,8 +1848,8 @@ namespace ConfigMaker
 
             cycleChSlider.ValueChanged += (_, __) =>
             {
-                if ((bool)cycleChHeaderCheckbox.IsChecked == true)
-                    this.AddEntry(cycleCrosshairEntryKey);
+                //if ((bool)cycleChHeaderCheckbox.IsChecked == true)
+                this.AddEntry(cycleCrosshairEntryKey, true);
             };
 
 
@@ -1871,8 +1885,8 @@ namespace ConfigMaker
                 volumeStepSlider.Maximum = delta;
 
                 // Обновим регулировщик в конфиге, если изменение было сделано пользователем
-                if ((bool)volumeRegulatorCheckbox.IsChecked)
-                    this.AddEntry(volumeRegulatorEntryKey);
+                //if ((bool)volumeRegulatorCheckbox.IsChecked)
+                this.AddEntry(volumeRegulatorEntryKey, true);
             }
             minVolumeSlider.ValueChanged += volumeSliderValueChanged;
             maxVolumeSlider.ValueChanged += volumeSliderValueChanged;
@@ -1880,8 +1894,8 @@ namespace ConfigMaker
             volumeDirectionCombobox.SelectionChanged += (_, __) =>
             {
                 // Обновим регулировщик в конфиге, если изменение было сделано пользователем
-                if ((bool)volumeRegulatorCheckbox.IsChecked)
-                    this.AddEntry(volumeRegulatorEntryKey);
+                //if ((bool)volumeRegulatorCheckbox.IsChecked)
+                this.AddEntry(volumeRegulatorEntryKey, true);
             };
 
             this.entryControllers.Add(volumeRegulatorEntryKey, new EntryController()
@@ -2220,9 +2234,15 @@ namespace ConfigMaker
             return bindEntry;
         }
 
-        void AddEntry(string cfgEntryKey)
+        void AddEntry(string cfgEntryKey, bool abortIfNotUser)
         {
-            Entry generatedEntry = (Entry)this.entryControllers[cfgEntryKey].Generate();
+            EntryController controller = this.entryControllers[cfgEntryKey];
+
+            // Если сказано, что отмена, если добавление идет не из-за действий пользователя
+            // То значит гарантированно AttachedCheckbox не может быть равен null
+            if (abortIfNotUser && controller.AttachedCheckbox.IsChecked == false) return;
+
+            Entry generatedEntry = (Entry)controller.Generate();
             this.AddEntry(generatedEntry);
         }
 
