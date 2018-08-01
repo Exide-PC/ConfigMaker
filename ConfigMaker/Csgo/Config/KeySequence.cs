@@ -86,10 +86,11 @@ namespace ConfigMaker.Csgo.Config
         {
             int keyCount = reader.AttributeCount;
             List<string> keys = new List<string>();
-            reader.MoveToFirstAttribute();
 
             for (int i = 0; i < keyCount; i++)
             {
+                reader.MoveToNextAttribute();
+
                 // Если пользователь особо одаренный, то он мог изменить в конфиге регистр кнопок
                 string key = reader.Value.Trim().ToLower();
                 keys.Add(key);

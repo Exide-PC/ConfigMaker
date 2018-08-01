@@ -1578,6 +1578,7 @@ namespace ConfigMaker
             AddTextboxNumberCmdController("sv_airaccelerate", 12, true);
             AddTextboxNumberCmdController("sv_accelerate", 5.5, false);
             AddComboboxCmdController("sv_showimpacts", new string[] { "Off", "Server/client", "Client only" }, 0, true);
+            AddTextboxNumberCmdController("mp_restartgame", 1, true);
             AddComboboxCmdController("mp_solid_teammates", toggleStrings, 0, true);
             AddComboboxCmdController("mp_ct_default_primary", primaryWeapons, 0, false);
             AddComboboxCmdController("mp_t_default_primary", primaryWeapons, 1, false);
@@ -1594,6 +1595,7 @@ namespace ConfigMaker
             AddGroupHeader(Res.CategoryOther);
             AddTextboxStringCmdController("say", "vk.com/exideprod");
             AddTextboxStringCmdController("say_team", "Hello world!");
+            AddTextboxStringCmdController("exec", "config");
             AddTextboxNumberCmdController("rate", 786432, true);
             AddTextboxStringCmdController("connect", "12.34.56.78:27015");
             AddTextboxStringCmdController("map", "de_mirage");
@@ -2428,6 +2430,9 @@ namespace ConfigMaker
         /// <param name="args"></param>
         void HandleAttachedEntryClick(object obj, RoutedEventArgs args)
         {
+            // Сбросим поиск, чтобы вывелись все элементы
+            searchCmdBox.Text = string.Empty;
+
             // Узнаем за привязку к какому типу отвечает нажатая кнопка
             FrameworkElement element = (FrameworkElement)obj;
             if (element.Tag == null) return; // TODO: УДАЛИТЬ

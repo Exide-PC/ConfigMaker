@@ -448,7 +448,11 @@ namespace ConfigMaker.Csgo.Config
             List<List<BindEntry>> cfgEntries = (List<List<BindEntry>>)entriesSerializer.Deserialize(reader);
 
             for (int i = 0; i < keySeqs.Length; i++)
-                this.entries.Add(keySeqs[i], cfgEntries[i]);
+            {
+                KeySequence keySeq = keySeqs[i];
+                List<BindEntry> bindEntries = cfgEntries[i];
+                this.entries.Add(keySeq, bindEntries);
+            }
 
             XmlSerializer defaultSerializer = new XmlSerializer(typeof(List<Entry>));
             this.defaultEntries = (List<Entry>)defaultSerializer.Deserialize(reader);
@@ -456,8 +460,6 @@ namespace ConfigMaker.Csgo.Config
 
         public void WriteXml(XmlWriter writer)
         {
-            //writer.WriteAttributeString("TargetPath", this.TargetPath);
-            
             XmlSerializer keysSerializer = new XmlSerializer(typeof(KeySequence[]));
             keysSerializer.Serialize(writer, this.entries.Keys.ToArray());
 
