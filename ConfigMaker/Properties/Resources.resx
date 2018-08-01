@@ -663,4 +663,7 @@
   <data name="CategoryBuy" xml:space="preserve">
     <value>Buy commands</value>
   </data>
+  <data name="Cl_clearhinthistory" xml:space="preserve">
+    <value>Clear hint history</value>
+  </data>
 </root>

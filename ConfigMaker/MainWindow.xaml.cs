@@ -654,6 +654,7 @@ namespace ConfigMaker
             AddAction("teammenu", false);
             AddAction("toggleconsole", false);
             AddAction("clear", false);
+            AddAction("cl_clearhinthistory", false);
             AddAction("screenshot", false);
             AddAction("pause", false);
             AddAction("quit", false);
@@ -1616,6 +1617,7 @@ namespace ConfigMaker
             AddTextboxStringCmdController("echo", "blog.exideprod.com");
             AddTextboxStringCmdController("record", "demo_name");
             AddComboboxCmdController("developer", toggleStrings, 0, true);
+            AddComboboxCmdController("gameinstructor_enable", toggleStrings, 0, true);
             AddComboboxCmdController("r_drawothermodels", new string[] { "Off", "Normal", "Wireframe" }, 1, true);
             AddTextboxStringCmdController("host_writeconfig", "config_name");
             AddIntervalCmdController("mat_monitorgamma", 1.6, 2.6, 0.1, 2.2);

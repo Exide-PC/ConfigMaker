@@ -376,6 +376,15 @@ namespace ConfigMaker.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Clear hint history.
+        /// </summary>
+        public static string Cl_clearhinthistory {
+            get {
+                return ResourceManager.GetString("Cl_clearhinthistory", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Show team equipment.
         /// </summary>
         public static string Cl_show_team_equipment {
