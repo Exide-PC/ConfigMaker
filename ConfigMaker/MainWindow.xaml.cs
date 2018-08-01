@@ -1974,7 +1974,7 @@ namespace ConfigMaker
                         Type = EntryType.Semistatic,
                         IsMetaScript = false,
                         Dependencies = dependencies,
-                        Arg = new double[] { minVolume, maxVolume, volumeStep, volumeUp? 1 : 0 }
+                        Arg = new double[] { minVolume, maxVolume, volumeStep }
                     };
                 },
                 UpdateUI = (entry) =>
@@ -1985,7 +1985,7 @@ namespace ConfigMaker
                     minVolumeSlider.Value = args[0];
                     maxVolumeSlider.Value = args[1];
                     volumeStepSlider.Value = args[2];
-                    volumeDirectionCombobox.SelectedIndex = (int)args[3];
+                    volumeDirectionCombobox.SelectedIndex = entry.Cmd.ToString() == "volume_up"? 1 : 0;
                 },
                 Restore = () =>
                 {
