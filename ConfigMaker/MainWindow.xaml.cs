@@ -717,8 +717,7 @@ namespace ConfigMaker
                             "developer 1",
                             "con_filter_text \"Damage Given\"",
                             "con_filter_text_out \"Player:\"",
-                            "con_filter_enable 2",
-                            "echo \"Display damage: On!\""
+                            "con_filter_enable 2"
                         };
                         CommandCollection cmds = new CommandCollection(
                             stringCmds.Select(cmd => new SingleCmd(cmd)));
@@ -1172,7 +1171,7 @@ namespace ConfigMaker
                 slider.Value = defaultValue;
             };
             
-            void AddComboboxCmdController(string cmd, string[] names, int defaultIndex, bool isIntegerArg)
+            void AddComboboxCmdController(string cmd, string[] names, int defaultIndex, bool isIntegerArg, int baseIndex = 0)
             {
                 var tuple = PrepareNewRow(cmd, true);
                 TextBlock resultCmdBlock = tuple.Item1;
@@ -1290,7 +1289,7 @@ namespace ConfigMaker
 
                     string resultCmdStr;
                     if (isIntegerArg)
-                        resultCmdStr = $"{cmd} {combobox.SelectedIndex}";
+                        resultCmdStr = $"{cmd} {combobox.SelectedIndex + baseIndex}";
                     else
                         resultCmdStr = $"{cmd} {combobox.SelectedItem}";
 
@@ -1532,13 +1531,12 @@ namespace ConfigMaker
             AddComboboxCmdController("cl_dm_buyrandomweapons", toggleStrings, 1, true);
             AddComboboxCmdController("cl_draw_only_deathnotices", toggleStrings, 1, true);
             AddComboboxCmdController("cl_hud_color",
-                new string[] { Res.Default, Res.White, Res.LightBlue, Res.Blue, Res.Purple, Res.Pink, Res.Red, Res.Orange, Res.Yellow, Res.Green, Res.Aqua }, 0, true);
+                new string[] { Res.White, Res.LightBlue, Res.Blue, Res.Purple, Res.Red, Res.Orange, Res.Yellow, Res.Green, Res.Aqua, Res.Pink, Res.Default }, 0, true, baseIndex: 1);
             AddComboboxCmdController("cl_hud_healthammo_style", new string[] { Res.Health_Style0, Res.Health_Style1 }, 0, true);
             AddIntervalCmdController("cl_hud_radar_scale", 0.8, 1.3, 0.1, 1);
             AddIntervalCmdController("cl_hud_background_alpha", 0, 1, 0.1, 1);
             AddComboboxCmdController("cl_hud_playercount_pos", new string[] { Res.Top, Res.Bottom }, 0, true);
             AddComboboxCmdController("cl_hud_playercount_showcount", new string[] { Res.ShowAvatars, Res.ShowCount}, 0, true);
-            AddComboboxCmdController("cl_loadout_colorweaponnames", toggleStrings, 0, true);
             AddComboboxCmdController("cl_mute_enemy_team", toggleStrings, 0, true);
             AddTextboxNumberCmdController("cl_pdump", -1, true);
             AddComboboxCmdController("cl_radar_always_centered", toggleStrings, 0, true);
@@ -1550,7 +1548,6 @@ namespace ConfigMaker
             AddComboboxCmdController("cl_showpos", toggleStrings, 0, true);
             AddComboboxCmdController("cl_teammate_colors_show", toggleStrings, 0, true);
             AddComboboxCmdController("cl_teamid_overhead_always", toggleStrings, 0, true);
-            AddIntervalCmdController("cl_teamid_overhead_name_alpha", 0, 255, 1, 100);
             AddIntervalCmdController("cl_timeout", 4, 30, 1, 30);
             AddComboboxCmdController("cl_use_opens_buy_menu", toggleStrings, 1, true);
             AddIntervalCmdController("cl_viewmodel_shift_left_amt", 0.5, 2, 0.05, 1.5);
