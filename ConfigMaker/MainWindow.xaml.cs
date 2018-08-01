@@ -1106,10 +1106,9 @@ namespace ConfigMaker
                 slider.IsSnapToTickEnabled = true;
                 slider.TickFrequency = step;
 
-                slider.ValueChanged += (obj, args) =>
+                void HandleSliderValue(double value)
                 {
-                    double value = args.NewValue;
-                    string formatted = Executable.FormatNumber(args.NewValue, isInteger);
+                    string formatted = Executable.FormatNumber(value, isInteger);
                     Executable.TryParseDouble(formatted, out double fixedValue);
                     fixedValue = isInteger ? ((int)fixedValue) : fixedValue;
 
@@ -1118,8 +1117,23 @@ namespace ConfigMaker
 
                     //if ((bool)checkbox.IsChecked) // Добавляем в конфиг только если это сделал сам пользователь
                     this.AddEntry(cmd, true);
-                };
+                }
 
+                slider.ValueChanged += (obj, args) =>
+                {
+                    HandleSliderValue(args.NewValue);
+                    //double value = args.NewValue;
+                    //string formatted = Executable.FormatNumber(args.NewValue, isInteger);
+                    //Executable.TryParseDouble(formatted, out double fixedValue);
+                    //fixedValue = isInteger ? ((int)fixedValue) : fixedValue;
+
+                    //resultCmdBlock.Text = new SingleCmd($"{cmd} {formatted}").ToString();
+                    //resultCmdBlock.Tag = fixedValue;
+
+                    ////if ((bool)checkbox.IsChecked) // Добавляем в конфиг только если это сделал сам пользователь
+                    //this.AddEntry(cmd, true);
+                };
+                
                 // обработчик интерфейса
                 EntryController entryBinding = new EntryController()
                 {
@@ -1184,6 +1198,9 @@ namespace ConfigMaker
 
                 // Задаем начальное значение и тут же подключаем обработчика интерфейса
                 slider.Value = defaultValue;
+                // Вручную вызовем метод для обновления выводимой команды, если стандартное значение равно 0
+                if (defaultValue == 0)
+                    HandleSliderValue(defaultValue);
             };
             
             void AddComboboxCmdController(string cmd, string[] names, int defaultIndex, bool isIntegerArg, int baseIndex = 0)
@@ -1589,24 +1606,6 @@ namespace ConfigMaker
             AddComboboxCmdController("cl_crosshairusealpha", toggleStrings, 1, true);
             AddTextboxNumberCmdController("cl_fixedcrosshairgap", 3, false);
 
-            AddGroupHeader(Res.CategoryServer);
-            AddTextboxNumberCmdController("sv_airaccelerate", 12, true);
-            AddTextboxNumberCmdController("sv_accelerate", 5.5, false);
-            AddComboboxCmdController("sv_showimpacts", new string[] { "Off", "Server/client", "Client only" }, 0, true);
-            AddTextboxNumberCmdController("mp_restartgame", 1, true);
-            AddComboboxCmdController("mp_solid_teammates", toggleStrings, 0, true);
-            AddComboboxCmdController("mp_ct_default_primary", primaryWeapons, 0, false);
-            AddComboboxCmdController("mp_t_default_primary", primaryWeapons, 1, false);
-            AddComboboxCmdController("mp_ct_default_secondary", secondaryWeapons, 0, false);
-            AddComboboxCmdController("mp_t_default_secondary", secondaryWeapons, 1, false);
-            
-            AddGroupHeader(Res.CategoryBots);
-            AddComboboxCmdController("bot_stop", toggleStrings, 0, true);
-            AddComboboxCmdController("bot_mimic", toggleStrings, 0, true);
-            AddComboboxCmdController("bot_crouch", toggleStrings, 0, true);
-            AddIntervalCmdController("bot_mimic_yaw_offset", 0, 180, 5, 0);
-
-            // текстовые аргументы
             AddGroupHeader(Res.CategoryOther);
             AddTextboxStringCmdController("say", "vk.com/exideprod");
             AddTextboxStringCmdController("say_team", "Hello world!");
@@ -1625,6 +1624,17 @@ namespace ConfigMaker
             AddTextboxNumberCmdController("host_timescale", 1, false);
             AddTextboxNumberCmdController("demo_timescale", 1, false);
 
+            AddGroupHeader(Res.CategoryServer);
+            AddTextboxNumberCmdController("sv_airaccelerate", 12, true);
+            AddTextboxNumberCmdController("sv_accelerate", 5.5, false);
+            AddComboboxCmdController("sv_showimpacts", new string[] { "Off", "Server/client", "Client only" }, 0, true);
+            AddTextboxNumberCmdController("mp_restartgame", 1, true);
+            AddComboboxCmdController("mp_solid_teammates", toggleStrings, 0, true);
+            AddComboboxCmdController("mp_ct_default_primary", primaryWeapons, 0, false);
+            AddComboboxCmdController("mp_t_default_primary", primaryWeapons, 1, false);
+            AddComboboxCmdController("mp_ct_default_secondary", secondaryWeapons, 0, false);
+            AddComboboxCmdController("mp_t_default_secondary", secondaryWeapons, 1, false);
+            
             AddGroupHeader(Res.CategoryVoiceAndSound);
             AddIntervalCmdController("volume", 0, 1, 0.05, 1);
             AddComboboxCmdController("voice_enable", toggleStrings, 1, true);
@@ -1640,6 +1650,12 @@ namespace ConfigMaker
             AddTextboxNumberCmdController("net_graphheight", 64, true);
             AddTextboxNumberCmdController("net_graphpos", 1, true);
             AddComboboxCmdController("net_graphproportionalfont", toggleStrings, 0, true);
+
+            AddGroupHeader(Res.CategoryBots);
+            AddComboboxCmdController("bot_stop", toggleStrings, 0, true);
+            AddComboboxCmdController("bot_mimic", toggleStrings, 0, true);
+            AddComboboxCmdController("bot_crouch", toggleStrings, 0, true);
+            AddIntervalCmdController("bot_mimic_yaw_offset", 0, 180, 5, 0);
         }
 
         void InitExtra()
