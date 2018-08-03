@@ -493,6 +493,15 @@ namespace ConfigMaker.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Disconnect.
+        /// </summary>
+        public static string Disconnect {
+            get {
+                return ResourceManager.GetString("Disconnect", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Display damage OFF.
         /// </summary>
         public static string DisplayDamage_Off {

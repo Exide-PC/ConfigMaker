@@ -666,4 +666,7 @@
   <data name="Cl_clearhinthistory" xml:space="preserve">
     <value>Очистить историю подсказок</value>
   </data>
+  <data name="Disconnect" xml:space="preserve">
+    <value>Отключиться</value>
+  </data>
 </root>

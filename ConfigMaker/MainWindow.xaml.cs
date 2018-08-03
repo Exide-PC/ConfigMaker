@@ -657,6 +657,7 @@ namespace ConfigMaker
             AddAction("cl_clearhinthistory", false);
             AddAction("screenshot", false);
             AddAction("pause", false);
+            AddAction("disconnect", false);
             AddAction("quit", false);
 
             AddActionGroupSeparator(Res.CategoryDemo);
@@ -2565,7 +2566,8 @@ namespace ConfigMaker
                 binding.Restore();
 
             // Зададим привязку к дефолтному состоянию
-            this.StateBinding = EntryStateBinding.Default;
+            keyboardAliasCombobox.SelectedIndex = 0;
+            //this.StateBinding = EntryStateBinding.Default;
 
             foreach (Entry entry in this.cfgManager.DefaultEntries)
                 this.entryControllers[entry.PrimaryKey].UpdateUI(entry);
