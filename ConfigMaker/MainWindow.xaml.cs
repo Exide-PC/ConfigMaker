@@ -79,7 +79,6 @@ namespace ConfigMaker
         {
             get => (EntryStateBinding) GetValue(StateBindingProperty);
             set => SetValue(StateBindingProperty, value);
-            }   
         }
 
         public string CsgoCfgPath
@@ -798,38 +797,46 @@ namespace ConfigMaker
         {
             const string buyScenarioEntryKey = "BuyScenario";
 
-            // Добавляем главный чекбокс
-            CheckBox mainCheckbox = new CheckBox
+            BuyViewModel buyVM = new BuyViewModel
             {
                 Content = Localize(buyScenarioEntryKey),
-                Tag = buyScenarioEntryKey
+                Key = buyScenarioEntryKey
             };
-            mainCheckbox.Click += HandleEntryClick;
-            buyTabStackPanel.Children.Add(mainCheckbox);
+            // Зададим контент в лице самой модели представления из которой будет формироваться интерфейс закупки
+            buyTabContentControl.Content = buyVM;
+
+            buyVM.PropertyChanged += (sender, arg) =>
+            {
+                string prop = arg.PropertyName;
+
+                if (prop == nameof(BuyViewModel.IsChecked))
+                    HandleEntryClick(buyScenarioEntryKey);
+            };
+                
+            //buyTabStackPanel.Children.Add(buyVM);
 
             // Панель на которой будут располагаться все элементы для закупки
-            WrapPanel buyPanel = new WrapPanel();
-            buyTabStackPanel.Children.Add(buyPanel);
+            //WrapPanel buyPanel = new WrapPanel();
+            //buyTabStackPanel.Children.Add(buyPanel);
 
             // Свяжем свойство активности с чекбоксом
-            Binding enabledBinding = new Binding("IsChecked")
-            {
-                Source = mainCheckbox
-            };
-            buyPanel.SetBinding(WrapPanel.IsEnabledProperty, enabledBinding);
+            //Binding enabledBinding = new Binding("IsChecked")
+            //{
+            //    Source = buyVM
+            //};
+            //buyPanel.SetBinding(WrapPanel.IsEnabledProperty, enabledBinding);
 
 
-            // Локальный метод для получения всех чекбоксов с оружием
-            List<CheckBox> GetWeaponCheckboxes()
+            // Локальный метод для получения всего оружия
+            List<EntryViewModel> GetWeaponViewModels()
             {
-                return buyPanel.Children.OfType<StackPanel>()
-                .SelectMany(s => s.Children.OfType<CheckBox>()).ToList();
+                return buyVM.Categories.SelectMany(c => c.Weapons).ToList();
             };
 
             // Обработчик интерфейса настроек закупки
-            EntryController buyEntryBinding = new EntryController()
+            this.entryV2Controllers.Add(new EntryControllerV2()
             {
-                AttachedCheckbox = mainCheckbox,
+                AttachedViewModel = buyVM,
                 Focus = () => buyTabButton.IsChecked = true,
                 UpdateUI = (entry) =>
                 {
@@ -837,14 +844,15 @@ namespace ConfigMaker
                     string[] weapons = extendedEntry.Arg;
 
                     // зададим состояние чекбоксов согласно аргументам
-                    GetWeaponCheckboxes().ForEach(c => c.IsChecked = weapons.Contains(((string)c.Tag)));
+                    GetWeaponViewModels().ForEach(weaponVM => weaponVM.IsChecked = weapons.Contains((weaponVM.Key)));
                     // не забываем про главный чекбокс
-                    mainCheckbox.IsChecked = true;
+                    buyVM.IsChecked = true;
                 },
                 Generate = () =>
                 {
-                    string[] weaponsToBuy = GetWeaponCheckboxes()
-                    .Where(c => (bool)c.IsChecked).Select(c => (string)c.Tag).ToArray();
+                    string[] weaponsToBuy = GetWeaponViewModels()
+                        .Where(weaponVM => weaponVM.IsChecked)
+                        .Select(weaponVM => weaponVM.Key).ToArray();
 
                     Executable cmd = null;
                     CommandCollection dependencies = null;
@@ -876,50 +884,54 @@ namespace ConfigMaker
                 },
                 Restore = () =>
                 {
-                    mainCheckbox.IsChecked = false;
-                    GetWeaponCheckboxes().ForEach(c => c.IsChecked = false);
+                    buyVM.IsChecked = false;
+                    GetWeaponViewModels().ForEach(c => c.IsChecked = false);
                 },
-                HandleState = (state) => mainCheckbox.IsEnabled = state != EntryStateBinding.InvalidState
-            };
-            // Добавляем обработчика
-            this.entryControllers.Add(buyScenarioEntryKey, buyEntryBinding);
+                HandleState = (state) => buyVM.IsEnabled = state != EntryStateBinding.InvalidState
+            });
 
-            StackPanel currentPanel = null;
+            //StackPanel currentPanel = null;
+            WeaponCategoryViewModel currentCategory = null;
 
             void AddWeapon(string weaponId, string localizedName)
             {
-                CheckBox weaponCheckbox = new CheckBox
+                EntryViewModel weaponVM = new EntryViewModel
                 {
                     Content = localizedName,
-                    Tag = weaponId
+                    Key = weaponId
                 };
 
                 // При нажатии на чекбокс оружия искусственно вызовем событие обработки нажатия на главный чекбокс
-                weaponCheckbox.Click += (_, __) =>
+                weaponVM.PropertyChanged += (sender, arg) =>
                 {
-                    this.AddEntry(buyScenarioEntryKey, false);
+                    if (arg.PropertyName == nameof(EntryViewModel.IsChecked))
+                        this.AddEntry(buyScenarioEntryKey, false);
                 };
+                //weaponVM.Click += (_, __) =>
+                //{
+                //    this.AddEntry(buyScenarioEntryKey, false);
+                //};
 
-                currentPanel.Children.Add(weaponCheckbox);
+                currentCategory.Weapons.Add(weaponVM);
             };
 
             // Метод для добавления новой категории. Определяет новый stackpanel и создает текстовую метку
             void AddGroupSeparator(string text)
             {
-                currentPanel = new StackPanel();
-                buyPanel.Children.Add(currentPanel);
+                currentCategory = new WeaponCategoryViewModel() { Name = text };
+                buyVM.Categories.Add(currentCategory);
 
-                TextBlock block = new TextBlock();
-                Inline bold = new Bold(new Run(text));
-                block.Inlines.Add(bold);
+                //TextBlock block = new TextBlock();
+                //Inline bold = new Bold(new Run(text));
+                //block.Inlines.Add(bold);
 
-                Border border = new Border
-                {
-                    Child = block,
-                    HorizontalAlignment = HorizontalAlignment.Center
-                };
+                //Border border = new Border
+                //{
+                //    Child = block,
+                //    HorizontalAlignment = HorizontalAlignment.Center
+                //};
 
-                currentPanel.Children.Add(border);
+                //currentPanel.Children.Add(border);
             };
 
             AddGroupSeparator(Res.Pistols);
@@ -963,6 +975,8 @@ namespace ConfigMaker
             AddWeapon("flashbang", Res.Grenade3);
             AddWeapon("hegrenade", Res.Grenade4);
             AddWeapon("smokegrenade", Res.Grenade5);
+
+            
         }
         
         void InitGameSettingsTab()

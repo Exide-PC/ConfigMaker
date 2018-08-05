@@ -116,10 +116,20 @@
                 </Setter.Value>
             </Setter>
         </Style>
+        
         <DataTemplate DataType="{x:Type viewmodels:TextViewModel}">
             <Border>
                 <TextBlock FontWeight="Bold" Text="{Binding Text}" HorizontalAlignment="Center"/>
             </Border>
+        </DataTemplate>
+        
+        <DataTemplate DataType="{x:Type viewmodels:EntryViewModel}">
+            <CheckBox 
+                utils:FocusExtension.IsFocused="{Binding IsFocused}"
+                IsEnabled="{Binding IsEnabled}" 
+                IsChecked="{Binding IsChecked}" 
+                Content="{Binding Content}" />
+            
         </DataTemplate>
         <DataTemplate DataType="{x:Type viewmodels:ActionViewModel}">
             <CheckBox 
@@ -128,6 +138,37 @@
                 IsChecked="{Binding IsChecked}" 
                 Content="{Binding Content}" 
                 ToolTip="{Binding ToolTip}"/>
+        </DataTemplate>
+        
+        <DataTemplate DataType="{x:Type viewmodels:BuyViewModel}">
+            <StackPanel Orientation="Vertical">
+                <CheckBox
+                    utils:FocusExtension.IsFocused="{Binding IsFocused}"
+                    IsEnabled="{Binding IsEnabled}" 
+                    IsChecked="{Binding IsChecked}" 
+                    Content="{Binding Content}"/>
+                <ItemsControl IsEnabled="{Binding IsChecked}" ItemsSource="{Binding Path=Categories}">
+                    <ItemsControl.ItemsPanel>
+                        <ItemsPanelTemplate>
+                            <WrapPanel/>
+                        </ItemsPanelTemplate>
+                    </ItemsControl.ItemsPanel>
+                </ItemsControl>
+            </StackPanel>
+        </DataTemplate>
+        <DataTemplate DataType="{x:Type viewmodels:WeaponCategoryViewModel}">
+            <StackPanel>
+                <Border>
+                    <TextBlock Text="{Binding Name}" HorizontalAlignment="Center" FontWeight="Bold"/>
+                </Border>
+                <ItemsControl ItemsSource="{Binding Path=Weapons}">
+                    <ItemsControl.ItemsPanel>
+                        <ItemsPanelTemplate>
+                            <StackPanel/>
+                        </ItemsPanelTemplate>
+                    </ItemsControl.ItemsPanel>
+                </ItemsControl>
+            </StackPanel>
         </DataTemplate>
     </Window.Resources>
     <Grid>
@@ -229,7 +270,8 @@
                                 </Style>
                             </Grid.Style>
                             <Grid>
-                                <StackPanel Name="buyTabStackPanel"/>
+                                <ContentControl Name="buyTabContentControl"/>
+                                <!--<StackPanel Name="buyTabStackPanel"/>-->
                             </Grid>
                         </Grid>
                         <!--game settings tab grid-->
