@@ -1480,10 +1480,11 @@ namespace ConfigMaker
                 textbox.TextChanged += (obj, args) =>
                 {
                     string text = textbox.Text;
-                    bool wrap = text.Contains(" ");
-                    
+                    //bool wrap = text.Contains(" ");
+
                     // Обернем в команду только название команды, т.к. аргументы в нижнем регистре не нужны
-                    resultCmdBlock.Text = $"{new SingleCmd(cmd)} {(wrap?"\"":"")}{text}{(wrap ? "\"" : "")}";
+                    //resultCmdBlock.Text = $"{new SingleCmd(cmd)} {(wrap?"\"":"")}{text}{(wrap ? "\"" : "")}";
+                    resultCmdBlock.Text = $"{new SingleCmd(cmd)} {text}";
 
                     //if ((bool)checkbox.IsChecked) // Добавляем в конфиг только если это сделал сам пользователь
                     AddEntry(cmd, true);
