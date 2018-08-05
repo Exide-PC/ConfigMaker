@@ -6,6 +6,7 @@
         xmlns:system="clr-namespace:System;assembly=mscorlib"
         xmlns:converters="clr-namespace:ConfigMaker.Utils.Converters"
         xmlns:utils="clr-namespace:ConfigMaker.Utils"
+        xmlns:viewmodels="clr-namespace:ConfigMaker.Utils.ViewModels"
         xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
         xmlns:res="clr-namespace:ConfigMaker.Properties"
         xmlns:local="clr-namespace:ConfigMaker"
@@ -115,6 +116,19 @@
                 </Setter.Value>
             </Setter>
         </Style>
+        <DataTemplate DataType="{x:Type viewmodels:TextViewModel}">
+            <Border>
+                <TextBlock FontWeight="Bold" Text="{Binding Text}" HorizontalAlignment="Center"/>
+            </Border>
+        </DataTemplate>
+        <DataTemplate DataType="{x:Type viewmodels:ActionViewModel}">
+            <CheckBox 
+                utils:FocusExtension.IsFocused="{Binding IsFocused}"
+                IsEnabled="{Binding IsEnabled}" 
+                IsChecked="{Binding IsChecked}" 
+                Content="{Binding Content}" 
+                ToolTip="{Binding ToolTip}"/>
+        </DataTemplate>
     </Window.Resources>
     <Grid>
         <DockPanel LastChildFill="True">
@@ -192,7 +206,14 @@
                                 </Style>
                             </Grid.Style>
                             <ScrollViewer VerticalScrollBarVisibility="Disabled" HorizontalScrollBarVisibility="Auto">
-                                <WrapPanel Name="actionsPanel" Orientation="Vertical"/>
+                                <ItemsControl Name="actionItemsControl">
+                                    <ItemsControl.ItemsPanel>
+                                        <ItemsPanelTemplate>
+                                            <WrapPanel Orientation="Vertical"/>
+                                        </ItemsPanelTemplate>
+                                    </ItemsControl.ItemsPanel>
+                                </ItemsControl>
+                                <!--<WrapPanel Name="actionsPanel" Orientation="Vertical"/>-->
                             </ScrollViewer>
                         </Grid>
                         <!--buy tab grid-->

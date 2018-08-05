@@ -44,6 +44,8 @@ using Res = ConfigMaker.Properties.Resources;
 using ConfigMaker.Csgo.Config.Enums;
 using ConfigMaker.Csgo.Config.Entries.interfaces;
 using ConfigMaker.Utils;
+using System.Collections.ObjectModel;
+using ConfigMaker.Utils.ViewModels;
 
 namespace ConfigMaker
 {
@@ -67,18 +69,16 @@ namespace ConfigMaker
         AppConfig cfg = null;
         string cfgPath = $"{nameof(AppConfig)}.xml";
         const string extraAliasSetEntryKey = "ExtraAliasSet";
+        
+        //ObservableCollection<object> actionTabColl = new ObservableCollection<object>();
 
         Dictionary<string, EntryController> entryControllers = new Dictionary<string, EntryController>();
+        List<EntryControllerV2> entryV2Controllers = new List<EntryControllerV2>();
 
         public EntryStateBinding StateBinding
         {
             get => (EntryStateBinding) GetValue(StateBindingProperty);
-            set
-            {
-                SetValue(StateBindingProperty, value);
-                // Т.к. привязка задается только в коде, то тут же обновим интерфейс. TODO: Remove
-                this.entryControllers.Values.ToList()
-                    .ForEach(entry => entry.HandleState(this.StateBinding));
+            set => SetValue(StateBindingProperty, value);
             }   
         }
 
@@ -180,7 +180,7 @@ namespace ConfigMaker
             if (duplicatedKeyGroup != null) throw new Exception($"Duplicate key: {duplicatedKeyGroup.Key}");
 
             // Зададим привязку по умолчанию
-            this.StateBinding = EntryStateBinding.Default;
+            this.SetStateAndUpdateUI(EntryStateBinding.Default);
         }
 
         private void Window_Closing(object sender, System.ComponentModel.CancelEventArgs e)
@@ -210,7 +210,7 @@ namespace ConfigMaker
             {
                 // Теперь создаем новую последовательность с 1 клавишей
                 currentKeySequence = new KeySequence(key);
-                this.StateBinding = EntryStateBinding.KeyDown;
+                this.SetStateAndUpdateUI(EntryStateBinding.KeyDown);
 
                 // Отредактируем текст у панелей
                 this.keyDownPanelLabel.Text = string.Format(Res.KeyDown1_Format, currentKeySequence[0].ToUpper());
@@ -223,7 +223,7 @@ namespace ConfigMaker
                 if (currentKeySequence[0] == key) return;
 
                 currentKeySequence = new KeySequence(currentKeySequence[0], key);
-                this.StateBinding = EntryStateBinding.KeyDown;
+                this.SetStateAndUpdateUI(EntryStateBinding.KeyDown);
 
                 string key1Upper = currentKeySequence[0].ToUpper();
                 string key2Upper = currentKeySequence[1].ToUpper();
@@ -247,7 +247,7 @@ namespace ConfigMaker
             Border border = (Border)sender;
             bool isKeyDownBinding = ((FrameworkElement)sender).Tag as string == EntryStateBinding.KeyDown.ToString();
 
-            this.StateBinding = isKeyDownBinding ? EntryStateBinding.KeyDown : EntryStateBinding.KeyUp;
+            this.SetStateAndUpdateUI(isKeyDownBinding ? EntryStateBinding.KeyDown : EntryStateBinding.KeyUp);
 
             UpdateAttachmentPanels();
         }
@@ -260,7 +260,7 @@ namespace ConfigMaker
             if (selectedItem.Name == iKeyboard.Name)
             {
                 // При выборе клавиатуры по умолчанию не выбрана последовательность
-                this.StateBinding = EntryStateBinding.InvalidState;
+                this.SetStateAndUpdateUI(EntryStateBinding.InvalidState);
             }
             else
             {
@@ -284,7 +284,7 @@ namespace ConfigMaker
                         EntryStateBinding.Alias;
                 }
 
-                this.StateBinding = selectedState;
+                this.SetStateAndUpdateUI(selectedState);
             }
 
             UpdateAttachmentPanels();
@@ -333,7 +333,7 @@ namespace ConfigMaker
                 // Если удалили последнюю кнопку, то удалим 
                 this.RemoveEntry(extraAliasSetEntryKey);
                 aliasPanel.Tag = null;
-                this.StateBinding = EntryStateBinding.InvalidState;
+                this.SetStateAndUpdateUI(EntryStateBinding.InvalidState);
             }
         }
 
@@ -451,7 +451,7 @@ namespace ConfigMaker
         private void ResetSequenceButton_Click(object sender, RoutedEventArgs e)
         {
             this.currentKeySequence = null;
-            this.StateBinding = EntryStateBinding.Default;
+            this.SetStateAndUpdateUI(EntryStateBinding.Default);
 
             this.ColorizeKeyboard();
             this.UpdateAttachmentPanels();
@@ -514,36 +514,53 @@ namespace ConfigMaker
         #region Filling UI with config entry managers
         void InitActionTab()
         {
+            ObservableCollection<object> actionTabItems = new ObservableCollection<object>();
+            actionItemsControl.ItemsSource = actionTabItems;
+
             //// Локальный метод для подготовки и настройки нового чекбокса-контроллера
-            CheckBox PrepareAction(string cmd, bool isMeta)
+            ActionViewModel PrepareAction(string cmd, bool isMeta)
             {
-                CheckBox checkbox = new CheckBox
+                ActionViewModel actionVM = new ActionViewModel()
                 {
                     Content = Localize(cmd),
-                    Tag = cmd
+                    Key = cmd,
+                    ToolTip = isMeta ? $"+{cmd.ToLower()}" : $"{cmd.ToLower()}"
+                };
+                
+                actionVM.PropertyChanged += (sender, arg) =>
+                {
+                    string prop = arg.PropertyName;
+
+                    if (prop == nameof(EntryViewModel.IsChecked))
+                    {
+                        HandleEntryClick(cmd);
+                    }
                 };
 
                 // переводим команду в нижний регистр для удобства восприятия
-                cmd = cmd.ToLower();
+                //cmd = cmd.ToLower();
 
-                string tooltip = isMeta ? $"+{cmd}" : $"{cmd}";
-                TextBlock tooltipBlock = new TextBlock();
-                tooltipBlock.Inlines.Add(tooltip);
-                checkbox.ToolTip = tooltipBlock;
+                //string tooltip = isMeta ? $"+{cmd}" : $"{cmd}";
+                //TextBlock tooltipBlock = new TextBlock();
+                //tooltipBlock.Inlines.Add(tooltip);
+                //checkbox.ToolTip = tooltipBlock;
 
-                checkbox.Click += HandleEntryClick;
-                actionsPanel.Children.Add(checkbox);
-                return checkbox;
+                //checkbox.Click += HandleEntryClick;
+                //actionsPanel.Children.Add(checkbox);
+                //return checkbox;
+
+                actionTabItems.Add(actionVM);
+                return actionVM;
             }
 
             // Локальный метод для добавления действий
             void AddAction(string cmd, bool isMeta)
             {
-                CheckBox checkbox = PrepareAction(cmd, isMeta);
+                ActionViewModel actionVM = PrepareAction(cmd, isMeta);
 
-                EntryController entryUiBinding = new EntryController
+                EntryControllerV2 entryController = new EntryControllerV2
                 {
-                    AttachedCheckbox = checkbox,
+                    AttachedViewModel = actionVM,
                     // генерируем каждый раз новый элемент во избежание замыкания
                     Generate = () =>
                     {
@@ -555,40 +572,42 @@ namespace ConfigMaker
                             Type = EntryType.Static
                         };
                     },
-                    UpdateUI = (entry) => checkbox.IsChecked = true,
+                    UpdateUI = (entry) => actionVM.IsChecked = true,
                     Focus = () =>
                     {
                         actionTabButton.IsChecked = true;
-                        checkbox.Focus();
+                        actionVM.IsFocused = true;
                     },
-                    Restore = () => checkbox.IsChecked = false,
+                    Restore = () => actionVM.IsChecked = false,
                     HandleState = (state) =>
                     {
-                        checkbox.IsEnabled =
+                        actionVM.IsEnabled =
                             state != EntryStateBinding.InvalidState
                             && (!isMeta || state == EntryStateBinding.KeyDown);
                     }                    
                 };
-                entryControllers.Add(cmd, entryUiBinding);
+                entryV2Controllers.Add(entryController);
             };
 
             // Метод для добавления новой категории.
-            void AddActionGroupSeparator(string text)
+            void AddActionGroupHeader(string text)
             {
-                TextBlock block = new TextBlock();
-                Inline bold = new Bold(new Run(text));
-                block.Inlines.Add(bold);
+                TextViewModel headerVM = new TextViewModel() { Text = text };
+                //TextBlock block = new TextBlock();
+                //Inline bold = new Bold(new Run(text));
+                //block.Inlines.Add(bold);
 
-                Border border = new Border
-                {
-                    Child = block,
-                    HorizontalAlignment = HorizontalAlignment.Center
-                };
+                //Border border = new Border
+                //{
+                //    Child = block,
+                //    HorizontalAlignment = HorizontalAlignment.Center
+                //};
 
-                actionsPanel.Children.Add(border);
+                //actionsPanel.Children.Add(border);
+                actionTabItems.Add(headerVM);
             };
 
-            AddActionGroupSeparator(Res.CategoryCommonActions);
+            AddActionGroupHeader(Res.CategoryCommonActions);
             AddAction("attack", true);
             AddAction("attack2", true);
             AddAction("reload", true);
@@ -596,7 +615,7 @@ namespace ConfigMaker
             AddAction("use", true);
             AddAction("showscores", true);
 
-            AddActionGroupSeparator(Res.CategoryMovement);
+            AddActionGroupHeader(Res.CategoryMovement);
             AddAction("forward", true);
             AddAction("back", true);
             AddAction("moveleft", true);
@@ -605,7 +624,7 @@ namespace ConfigMaker
             AddAction("duck", true);
             AddAction("speed", true);
 
-            AddActionGroupSeparator(Res.CategoryEquipment);
+            AddActionGroupHeader(Res.CategoryEquipment);
             AddAction("slot1", false);
             AddAction("slot2", false);
             AddAction("slot3", false);
@@ -622,12 +641,12 @@ namespace ConfigMaker
             AddAction("lastinv", false);
             AddAction("cl_show_team_equipment", true);
 
-            AddActionGroupSeparator(Res.CategoryBuy);
+            AddActionGroupHeader(Res.CategoryBuy);
             AddAction("buymenu", false);
             AddAction("autobuy", false);
             AddAction("rebuy", false);
             
-            AddActionGroupSeparator(Res.CategoryCommunication);
+            AddActionGroupHeader(Res.CategoryCommunication);
             AddAction("voicerecord", true);
             AddAction("radio1", false);
             AddAction("radio2", false);
@@ -635,7 +654,7 @@ namespace ConfigMaker
             AddAction("messagemode2", false);
             AddAction("messagemode", false);
 
-            AddActionGroupSeparator(Res.CategoryWarmup);
+            AddActionGroupHeader(Res.CategoryWarmup);
             AddAction("god", false);
             AddAction("noclip", false);
             AddAction("impulse 101", false);
@@ -646,7 +665,7 @@ namespace ConfigMaker
             AddAction("bot_add_ct", false);
             AddAction("bot_place", false);
 
-            AddActionGroupSeparator(Res.CategoryOther);
+            AddActionGroupHeader(Res.CategoryOther);
             AddAction("lookatweapon", true);
             AddAction("spray_menu", true);
             AddAction("r_cleardecals", false);
@@ -660,23 +679,23 @@ namespace ConfigMaker
             AddAction("disconnect", false);
             AddAction("quit", false);
 
-            AddActionGroupSeparator(Res.CategoryDemo);
+            AddActionGroupHeader(Res.CategoryDemo);
             AddAction("demo_resume", false);
             AddAction("demo_togglepause", false);
 
-            AddActionGroupSeparator(Res.CategoryBonusScripts);
+            AddActionGroupHeader(Res.CategoryBonusScripts);
 
             // jumpthrow script
             const string jumpthrowEntryKey = "Jumpthrow";
-            CheckBox jumpthrowCheckbox = PrepareAction(jumpthrowEntryKey, true);
+            ActionViewModel jumpthrowVM = PrepareAction(jumpthrowEntryKey, true);
 
-            EntryController jumpthrowBinding = new EntryController()
+            this.entryV2Controllers.Add(new EntryControllerV2()
             {
-                AttachedCheckbox = jumpthrowCheckbox,
+                AttachedViewModel = jumpthrowVM,
                 Focus = () =>
                 {
                     actionTabButton.IsChecked = true;
-                    jumpthrowCheckbox.Focus();
+                    jumpthrowVM.IsFocused = true;
                 },
                 Generate = () =>
                 {
@@ -694,23 +713,22 @@ namespace ConfigMaker
                         Dependencies = metaCmd
                     };
                 },
-                UpdateUI = (entry) => jumpthrowCheckbox.IsChecked = true,
-                Restore = () => jumpthrowCheckbox.IsChecked = false,
-                HandleState = (state) => jumpthrowCheckbox.IsEnabled = state == EntryStateBinding.KeyDown
-            };
-            this.entryControllers.Add(jumpthrowEntryKey, jumpthrowBinding);
+                UpdateUI = (entry) => jumpthrowVM.IsChecked = true,
+                Restore = () => jumpthrowVM.IsChecked = false,
+                HandleState = (state) => jumpthrowVM.IsEnabled = state == EntryStateBinding.KeyDown
+            });
 
             // DisplayDamageOn
             const string displayDamageOnEntryKey = "DisplayDamage_On";
-            CheckBox displayDamageOnCheckbox = PrepareAction(displayDamageOnEntryKey, false);
+            ActionViewModel displayDamageOnVM = PrepareAction(displayDamageOnEntryKey, false);
 
-            this.entryControllers.Add(displayDamageOnEntryKey, new EntryController()
+            this.entryV2Controllers.Add(new EntryControllerV2()
                 {
-                    AttachedCheckbox = displayDamageOnCheckbox,
+                    AttachedViewModel = displayDamageOnVM,
                     Focus = () =>
                     {
                         actionTabButton.IsChecked = true;
-                        displayDamageOnCheckbox.Focus();
+                        displayDamageOnVM.IsFocused = true;
                     },
                     Generate = () =>
                     {
@@ -733,22 +751,22 @@ namespace ConfigMaker
                             Dependencies = new CommandCollection(new AliasCmd(displayDamageOnEntryKey, cmds))
                         };
                     },
-                    UpdateUI = (entry) => displayDamageOnCheckbox.IsChecked = true,
-                    Restore = () => displayDamageOnCheckbox.IsChecked = false,
-                    HandleState = (state) => displayDamageOnCheckbox.IsEnabled = state != EntryStateBinding.InvalidState
+                    UpdateUI = (entry) => displayDamageOnVM.IsChecked = true,
+                    Restore = () => displayDamageOnVM.IsChecked = false,
+                    HandleState = (state) => displayDamageOnVM.IsEnabled = state != EntryStateBinding.InvalidState
                 });
 
             // DisplayDamageOff
             const string displayDamageOffEntryKey = "DisplayDamage_Off";
-            CheckBox displayDamageOffCheckbox = PrepareAction(displayDamageOffEntryKey, false);
+            ActionViewModel displayDamageOffVM = PrepareAction(displayDamageOffEntryKey, false);
 
-            this.entryControllers.Add(displayDamageOffEntryKey, new EntryController()
+            this.entryV2Controllers.Add(new EntryControllerV2()
                 {
-                    AttachedCheckbox = displayDamageOffCheckbox,
+                    AttachedViewModel = displayDamageOffVM,
                     Focus = () =>
                     {
                         actionTabButton.IsChecked = true;
-                        displayDamageOffCheckbox.Focus();
+                        displayDamageOffVM.IsFocused = true;
                     },
                     Generate = () =>
                     {
@@ -770,9 +788,9 @@ namespace ConfigMaker
                             Dependencies = new CommandCollection(new AliasCmd(displayDamageOffEntryKey, cmds))
                         };
                     },
-                    UpdateUI = (entry) => displayDamageOffCheckbox.IsChecked = true,
-                    Restore = () => displayDamageOffCheckbox.IsChecked = false,
-                    HandleState = (state) => displayDamageOffCheckbox.IsEnabled = state != EntryStateBinding.InvalidState
+                    UpdateUI = (entry) => displayDamageOffVM.IsChecked = true,
+                    Restore = () => displayDamageOffVM.IsChecked = false,
+                    HandleState = (state) => displayDamageOffVM.IsEnabled = state != EntryStateBinding.InvalidState
                 });
         }
 
@@ -1479,12 +1497,8 @@ namespace ConfigMaker
 
                 textbox.TextChanged += (obj, args) =>
                 {
-                    string text = textbox.Text;
-                    //bool wrap = text.Contains(" ");
-
                     // Обернем в команду только название команды, т.к. аргументы в нижнем регистре не нужны
-                    //resultCmdBlock.Text = $"{new SingleCmd(cmd)} {(wrap?"\"":"")}{text}{(wrap ? "\"" : "")}";
-                    resultCmdBlock.Text = $"{new SingleCmd(cmd)} {text}";
+                    resultCmdBlock.Text = $"{new SingleCmd(cmd)} {textbox.Text}";
 
                     //if ((bool)checkbox.IsChecked) // Добавляем в конфиг только если это сделал сам пользователь
                     AddEntry(cmd, true);
@@ -2228,7 +2242,36 @@ namespace ConfigMaker
             // Обновим панели
             this.UpdateAttachmentPanels();
         }
-        
+
+        void HandleEntryClick(string entryKey)
+        {
+            //CheckBox checkbox = (CheckBox)sender;
+            //string entryKey = (string)checkbox.Tag;
+
+            // Получим обработчика и 
+            EntryControllerV2 entryController = this.entryV2Controllers.First(e => e.AttachedViewModel.Key == entryKey);
+            EntryViewModel entryVM = entryController.AttachedViewModel;
+            Entry entry = (Entry)entryController.Generate();
+
+            if (entryVM.IsChecked)
+                this.AddEntry(entry);
+            else
+                this.RemoveEntry(entry);
+
+            // Обновим панели
+            this.UpdateAttachmentPanels();
+        }
+
+        void SetStateAndUpdateUI(EntryStateBinding newState)
+        {
+            this.StateBinding = newState;
+
+            this.entryControllers.Values.ToList() // TODO: REMOVE
+                    .ForEach(entry => entry.HandleState(this.StateBinding));
+
+            this.entryV2Controllers.ForEach(c => c.HandleState(this.StateBinding));
+        }
+
         BindEntry ConvertToBindEntry(Entry entry)
         {
             BindEntry bindEntry = (BindEntry)entry;
@@ -2536,7 +2579,7 @@ namespace ConfigMaker
             aliasPanel.Tag = chip;
 
             if (this.StateBinding == EntryStateBinding.InvalidState)
-                this.StateBinding = EntryStateBinding.Alias;
+                this.SetStateAndUpdateUI(EntryStateBinding.Alias);
 
             // Программно настроим привязку 
             Binding binding = new Binding("Tag")

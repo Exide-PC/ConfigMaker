@@ -71,6 +71,7 @@
       <DesignTime>True</DesignTime>
       <DependentUpon>Resources.resx</DependentUpon>
     </Compile>
+    <Compile Include="Utils\BindableBase.cs" />
     <Compile Include="Utils\Converters\CfgDirValidationRule.cs" />
     <Compile Include="Utils\Converters\NameValidationRule.cs" />
     <Compile Include="Utils\Converters\TagToFontWeightConverter.cs" />
@@ -93,10 +94,15 @@
     <Compile Include="Utils\EntryController.cs" />
     <Compile Include="Utils\Converters\IsNullConverter.cs" />
     <Compile Include="Utils\Converters\AliasNameVerifier.cs" />
+    <Compile Include="Utils\EntryControllerV2.cs" />
+    <Compile Include="Utils\FocusExtension.cs" />
     <Compile Include="Utils\SelectionAssistant.cs" />
     <Compile Include="ToggleWindow.xaml.cs">
       <DependentUpon>ToggleWindow.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Utils\ViewModels\ActionViewModel.cs" />
+    <Compile Include="Utils\ViewModels\EntryViewModel.cs" />
+    <Compile Include="Utils\ViewModels\TextViewModel.cs" />
     <Compile Include="VirtualKeyboard.xaml.cs">
       <DependentUpon>VirtualKeyboard.xaml</DependentUpon>
     </Compile>
