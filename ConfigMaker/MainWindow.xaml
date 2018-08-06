@@ -170,6 +170,29 @@
                 </ItemsControl>
             </StackPanel>
         </DataTemplate>
+
+        <DataTemplate DataType="{x:Type viewmodels:DynamicEntryViewModel}">
+            <Grid Height="30">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="3*"/>
+                    <ColumnDefinition Width="6*"/>
+                    <ColumnDefinition Width="1*"/>
+                </Grid.ColumnDefinitions>
+                <TextBlock Text="{Binding Content}"/>
+                <Grid Grid.Column="1">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="1*"/>
+                        <ColumnDefinition Width="Auto"/>
+                    </Grid.ColumnDefinitions>
+                    <ContentControl Content="{Binding ControllerViewModel}" IsEnabled="{Binding IsChecked}"/>
+                    <Button Grid.Column="1" Style="{StaticResource MaterialDesignFlatButton}" Content="⇄"/>
+                </Grid>
+                <CheckBox Grid.Column="2"
+                    utils:FocusExtension.IsFocused="{Binding IsFocused}"
+                    IsEnabled="{Binding IsEnabled}" 
+                    IsChecked="{Binding IsChecked}"/>
+            </Grid>
+        </DataTemplate>
     </Window.Resources>
     <Grid>
         <DockPanel LastChildFill="True">

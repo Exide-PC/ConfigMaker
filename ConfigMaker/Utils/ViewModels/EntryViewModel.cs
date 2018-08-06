@@ -14,6 +14,17 @@ namespace ConfigMaker.Utils.ViewModels
         string _key = null;
         bool _isFocused = false;
 
+        public event EventHandler Click;
+
+        public EntryViewModel()
+        {
+            this.PropertyChanged += (_, arg) =>
+            {
+                if (this._isEnabled && arg.PropertyName == nameof(EntryViewModel.IsChecked))
+                    this.Click.Invoke(this, null);
+            };
+        }
+
         public string Key
         {
             get => _key;

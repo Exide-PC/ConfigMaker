@@ -102,6 +102,7 @@
     </Compile>
     <Compile Include="Utils\ViewModels\ActionViewModel.cs" />
     <Compile Include="Utils\ViewModels\BuyViewModel.cs" />
+    <Compile Include="Utils\ViewModels\DynamicEntryViewModel.cs" />
     <Compile Include="Utils\ViewModels\EntryViewModel.cs" />
     <Compile Include="Utils\ViewModels\TextViewModel.cs" />
     <Compile Include="Utils\ViewModels\WeaponCategoryViewModel.cs" />

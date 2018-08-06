@@ -526,15 +526,7 @@ namespace ConfigMaker
                     ToolTip = isMeta ? $"+{cmd.ToLower()}" : $"{cmd.ToLower()}"
                 };
                 
-                actionVM.PropertyChanged += (sender, arg) =>
-                {
-                    string prop = arg.PropertyName;
-
-                    if (prop == nameof(EntryViewModel.IsChecked))
-                    {
-                        HandleEntryClick(cmd);
-                    }
-                };
+                actionVM.Click += (sender, arg) => HandleEntryClick(cmd);
 
                 // переводим команду в нижний регистр для удобства восприятия
                 //cmd = cmd.ToLower();
@@ -805,13 +797,7 @@ namespace ConfigMaker
             // Зададим контент в лице самой модели представления из которой будет формироваться интерфейс закупки
             buyTabContentControl.Content = buyVM;
 
-            buyVM.PropertyChanged += (sender, arg) =>
-            {
-                string prop = arg.PropertyName;
-
-                if (prop == nameof(BuyViewModel.IsChecked))
-                    HandleEntryClick(buyScenarioEntryKey);
-            };
+            buyVM.Click += (sender, arg) => HandleEntryClick(buyScenarioEntryKey);
                 
             //buyTabStackPanel.Children.Add(buyVM);
 
@@ -902,11 +888,8 @@ namespace ConfigMaker
                 };
 
                 // При нажатии на чекбокс оружия искусственно вызовем событие обработки нажатия на главный чекбокс
-                weaponVM.PropertyChanged += (sender, arg) =>
-                {
-                    if (arg.PropertyName == nameof(EntryViewModel.IsChecked))
-                        this.AddEntry(buyScenarioEntryKey, false);
-                };
+                weaponVM.Click += (sender, arg) => this.AddEntry(buyScenarioEntryKey, false);
+
                 //weaponVM.Click += (_, __) =>
                 //{
                 //    this.AddEntry(buyScenarioEntryKey, false);
