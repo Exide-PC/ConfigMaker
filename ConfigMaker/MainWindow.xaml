@@ -22,6 +22,7 @@
     <Window.Resources>
         <converters:AliasNameVerifier x:Key="nameToEnableConverter"/>
         <converters:IsNullConverter x:Key="isNullConverter"/>
+        <converters:BoolToVisibilityConverter x:Key="boolToVisibilityConverter"/>
         <Style x:Key="BubbleButton" TargetType="materialDesign:Chip">
             <Setter Property="FontSize" Value="10"/>
             <Setter Property="MinWidth" Value="40"/>
@@ -118,8 +119,12 @@
         </Style>
         
         <DataTemplate DataType="{x:Type viewmodels:TextViewModel}">
-            <Border>
-                <TextBlock FontWeight="Bold" Text="{Binding Text}" HorizontalAlignment="Center"/>
+            <Border Margin="{Binding Margin}">
+                <TextBlock 
+                    FontWeight="Bold" 
+                    Text="{Binding Text}" 
+                    HorizontalAlignment="{Binding HorizontalAlignment}"
+                    VerticalAlignment="{Binding VerticalAlignment}"/>
             </Border>
         </DataTemplate>
         
@@ -172,25 +177,55 @@
         </DataTemplate>
 
         <DataTemplate DataType="{x:Type viewmodels:DynamicEntryViewModel}">
-            <Grid Height="30">
+            <Grid Height="30" ShowGridLines="True">
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="3*"/>
                     <ColumnDefinition Width="6*"/>
                     <ColumnDefinition Width="1*"/>
                 </Grid.ColumnDefinitions>
-                <TextBlock Text="{Binding Content}"/>
+                <TextBlock Text="{Binding Content}" HorizontalAlignment="Center" VerticalAlignment="Center"/>
                 <Grid Grid.Column="1">
                     <Grid.ColumnDefinitions>
                         <ColumnDefinition Width="1*"/>
                         <ColumnDefinition Width="Auto"/>
                     </Grid.ColumnDefinitions>
                     <ContentControl Content="{Binding ControllerViewModel}" IsEnabled="{Binding IsChecked}"/>
-                    <Button Grid.Column="1" Style="{StaticResource MaterialDesignFlatButton}" Content="⇄"/>
+                    <Button 
+                        Visibility="{Binding NeedToggle, Converter={StaticResource boolToVisibilityConverter}}" 
+                        Grid.Column="1" 
+                        Style="{StaticResource MaterialDesignFlatButton}" 
+                        Content="⇄"/>
                 </Grid>
                 <CheckBox Grid.Column="2"
                     utils:FocusExtension.IsFocused="{Binding IsFocused}"
                     IsEnabled="{Binding IsEnabled}" 
-                    IsChecked="{Binding IsChecked}"/>
+                    IsChecked="{Binding IsChecked}"
+                    HorizontalAlignment="Center"
+                    VerticalAlignment="Center"/>
+            </Grid>
+        </DataTemplate>
+
+        <DataTemplate DataType="{x:Type viewmodels:IntervalControllerViewModel}">
+            <Grid ShowGridLines="True">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="Auto"/>
+                    <ColumnDefinition Width="1*"/>
+                    <ColumnDefinition Width="Auto"/>
+                </Grid.ColumnDefinitions>
+                <Border Grid.Column="0" Width="25">
+                    <TextBlock Text="{Binding From}" FontSize="12" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                </Border>
+                <Slider
+                    Grid.Column="1" Width="Auto"
+                    Minimum="{Binding From}"
+                    Maximum="{Binding To}"
+                    Value="{Binding Value, Mode=TwoWay}"
+                    TickFrequency="{Binding Step}"
+                    IsSnapToTickEnabled="True"
+                    VerticalAlignment="Center"/>
+                <Border Grid.Column="2" Width="25">
+                    <TextBlock Text="{Binding To}" FontSize="12" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                </Border>
             </Grid>
         </DataTemplate>
     </Window.Resources>
@@ -319,7 +354,14 @@
                                         </StackPanel>
                                     </materialDesign:ColorZone>
                                     <ScrollViewer Margin="0,2,0,0">
-                                        <StackPanel Name="settingsTabPanel"/>
+                                        <ItemsControl Name="gameSettingsItemsControl">
+                                            <ItemsControl.ItemsPanel>
+                                                <ItemsPanelTemplate>
+                                                    <StackPanel Orientation="Vertical"/>
+                                                </ItemsPanelTemplate>
+                                            </ItemsControl.ItemsPanel>
+                                        </ItemsControl>
+                                        <!--<StackPanel Name="settingsTabPanel"/>-->
                                     </ScrollViewer>
                                 </DockPanel>
                             </Grid>

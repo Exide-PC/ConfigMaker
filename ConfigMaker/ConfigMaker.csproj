@@ -72,6 +72,7 @@
       <DependentUpon>Resources.resx</DependentUpon>
     </Compile>
     <Compile Include="Utils\BindableBase.cs" />
+    <Compile Include="Utils\Converters\BoolToVisibilityConverter.cs" />
     <Compile Include="Utils\Converters\CfgDirValidationRule.cs" />
     <Compile Include="Utils\Converters\NameValidationRule.cs" />
     <Compile Include="Utils\Converters\TagToFontWeightConverter.cs" />
@@ -104,6 +105,7 @@
     <Compile Include="Utils\ViewModels\BuyViewModel.cs" />
     <Compile Include="Utils\ViewModels\DynamicEntryViewModel.cs" />
     <Compile Include="Utils\ViewModels\EntryViewModel.cs" />
+    <Compile Include="Utils\ViewModels\IntervalControllerViewModel.cs" />
     <Compile Include="Utils\ViewModels\TextViewModel.cs" />
     <Compile Include="Utils\ViewModels\WeaponCategoryViewModel.cs" />
     <Compile Include="VirtualKeyboard.xaml.cs">

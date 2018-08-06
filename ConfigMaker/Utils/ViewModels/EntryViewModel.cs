@@ -13,6 +13,7 @@ namespace ConfigMaker.Utils.ViewModels
         string _content = string.Empty;
         string _key = null;
         bool _isFocused = false;
+        public object _arg;
 
         public event EventHandler Click;
 
@@ -21,7 +22,7 @@ namespace ConfigMaker.Utils.ViewModels
             this.PropertyChanged += (_, arg) =>
             {
                 if (this._isEnabled && arg.PropertyName == nameof(EntryViewModel.IsChecked))
-                    this.Click.Invoke(this, null);
+                    this.Click?.Invoke(this, null);
             };
         }
 
@@ -53,6 +54,12 @@ namespace ConfigMaker.Utils.ViewModels
         {
             get => this._isFocused;
             set => this.SetProperty(ref _isFocused, value);
+        }
+
+        public object Arg
+        {
+            get => this._arg;
+            set => this.SetProperty(ref _arg, value);
         }
     }
 }

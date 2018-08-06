@@ -9,19 +9,14 @@ namespace ConfigMaker.Utils.ViewModels
 {
     public class DynamicEntryViewModel: EntryViewModel
     {
-        Visibility _visibility = Visibility.Visible;
+        bool _isVisible = true;
         bool _needToggle = false;
         BindableBase _controllerViewModel;
 
-        public DynamicEntryViewModel(BindableBase controllerViewModel)
+        public bool IsVisible
         {
-            this._controllerViewModel = controllerViewModel;
-        }
-
-        public Visibility Visibility
-        {
-            get => this._visibility;
-            set => this.SetProperty(ref _visibility, value);
+            get => this._isVisible;
+            set => this.SetProperty(ref _isVisible, value);
         }
 
         public bool NeedToggle
@@ -33,6 +28,7 @@ namespace ConfigMaker.Utils.ViewModels
         public BindableBase ControllerViewModel
         {
             get => this._controllerViewModel;
+            set => this.SetProperty(ref _controllerViewModel, value);
         }
     }
 }
