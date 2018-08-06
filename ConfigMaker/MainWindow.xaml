@@ -130,12 +130,12 @@
         
         <DataTemplate DataType="{x:Type viewmodels:EntryViewModel}">
             <CheckBox 
-                utils:FocusExtension.IsFocused="{Binding IsFocused}"
+                utils:FocusExtension.IsFocused="{Binding IsFocused, Mode=TwoWay}"
                 IsEnabled="{Binding IsEnabled}" 
                 IsChecked="{Binding IsChecked}" 
                 Content="{Binding Content}" />
-            
         </DataTemplate>
+        
         <DataTemplate DataType="{x:Type viewmodels:ActionViewModel}">
             <CheckBox 
                 utils:FocusExtension.IsFocused="{Binding IsFocused}"
@@ -239,6 +239,19 @@
 
         <DataTemplate DataType="{x:Type viewmodels:TextboxControllerViewModel}">
             <TextBox Text="{Binding Text, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" VerticalAlignment="Center"/>
+        </DataTemplate>
+
+        <DataTemplate DataType="{x:Type viewmodels:ExtraEntryViewModel}">
+            <GroupBox>
+                <GroupBox.Header>
+                    <CheckBox 
+                        Content="{Binding Content}"
+                        utils:FocusExtension.IsFocused="{Binding IsFocused}"
+                        IsEnabled="{Binding IsEnabled}" 
+                        IsChecked="{Binding IsChecked}"/>
+                </GroupBox.Header>
+                <ContentControl Content="{Binding ControllerViewModel}" IsEnabled="{Binding IsChecked}"/>
+            </GroupBox>
         </DataTemplate>
     </Window.Resources>
     <Grid>

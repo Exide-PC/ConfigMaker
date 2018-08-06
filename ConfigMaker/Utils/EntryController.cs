@@ -33,6 +33,7 @@ using static ConfigMaker.MainWindow;
 
 namespace ConfigMaker.Utils
 {
+    [Obsolete("Use EntryControllerV2", true)]
     class EntryController
     {
         public System.Windows.Controls.CheckBox AttachedCheckbox { get; set; } = null;

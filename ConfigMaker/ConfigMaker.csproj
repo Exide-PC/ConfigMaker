@@ -106,6 +106,7 @@
     <Compile Include="Utils\ViewModels\ComboBoxControllerViewModel.cs" />
     <Compile Include="Utils\ViewModels\DynamicEntryViewModel.cs" />
     <Compile Include="Utils\ViewModels\EntryViewModel.cs" />
+    <Compile Include="Utils\ViewModels\ExtraEntryViewModel.cs" />
     <Compile Include="Utils\ViewModels\IntervalControllerViewModel.cs" />
     <Compile Include="Utils\ViewModels\TextboxControllerViewModel.cs" />
     <Compile Include="Utils\ViewModels\TextViewModel.cs" />

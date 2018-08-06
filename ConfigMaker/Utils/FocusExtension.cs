@@ -30,6 +30,8 @@ namespace ConfigMaker.Utils
             DependencyObject d,
             DependencyPropertyChangedEventArgs e)
         {
+            var val = GetIsFocused(d);
+
             var uie = (UIElement)d;
             if ((bool)e.NewValue)
             {

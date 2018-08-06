@@ -72,7 +72,7 @@ namespace ConfigMaker
         
         //ObservableCollection<object> actionTabColl = new ObservableCollection<object>();
 
-        Dictionary<string, EntryController> entryControllers = new Dictionary<string, EntryController>();
+        //Dictionary<string, EntryController> entryControllers = new Dictionary<string, EntryController>();
         List<EntryControllerV2> entryV2Controllers = new List<EntryControllerV2>();
 
         public EntryStateBinding StateBinding
@@ -173,7 +173,7 @@ namespace ConfigMaker
             // Проверим, что в словаре нет одинаковых ключей в разном регистре
             // Для этого сгруппируем все ключи, переведя их в нижний регистр,
             // и найдем группу, где больше 1 элемента
-            var duplicatedKeyGroup = this.entryControllers.GroupBy(pair => pair.Key.ToLower())
+            var duplicatedKeyGroup = this.entryV2Controllers.GroupBy(c => c.AttachedViewModel.Key.ToLower())
                 .FirstOrDefault(g => g.Count() > 1);
 
             if (duplicatedKeyGroup != null) throw new Exception($"Duplicate key: {duplicatedKeyGroup.Key}");
@@ -321,7 +321,7 @@ namespace ConfigMaker
                     string firstEntry =
                     (string)(this.solidAttachmentsPanel.Children[0] as FrameworkElement).Tag;
 
-                    this.entryControllers[firstEntry].Focus();
+                    this.GetController(firstEntry).Focus();
                 }
 
                 // Если в панели еще остались алиасы, то обновим конфиг
@@ -564,13 +564,13 @@ namespace ConfigMaker
                             Type = EntryType.Static
                         };
                     },
-                    UpdateUI = (entry) => actionVM.IsChecked = true,
+                    UpdateUI = (entry) => actionVM.UpdateIsChecked(true),
                     Focus = () =>
                     {
                         actionTabButton.IsChecked = true;
                         actionVM.IsFocused = true;
                     },
-                    Restore = () => actionVM.IsChecked = false,
+                    Restore = () => actionVM.UpdateIsChecked(false),
                     HandleState = (state) =>
                     {
                         actionVM.IsEnabled =
@@ -710,8 +710,8 @@ namespace ConfigMaker
                         Dependencies = metaCmd
                     };
                 },
-                UpdateUI = (entry) => jumpthrowVM.IsChecked = true,
-                Restore = () => jumpthrowVM.IsChecked = false,
+                UpdateUI = (entry) => jumpthrowVM.UpdateIsChecked(true),
+                Restore = () => jumpthrowVM.UpdateIsChecked(false),
                 HandleState = (state) => jumpthrowVM.IsEnabled = state == EntryStateBinding.KeyDown
             });
 
@@ -748,8 +748,8 @@ namespace ConfigMaker
                             Dependencies = new CommandCollection(new AliasCmd(displayDamageOnEntryKey, cmds))
                         };
                     },
-                    UpdateUI = (entry) => displayDamageOnVM.IsChecked = true,
-                    Restore = () => displayDamageOnVM.IsChecked = false,
+                    UpdateUI = (entry) => displayDamageOnVM.UpdateIsChecked(true),
+                    Restore = () => displayDamageOnVM.UpdateIsChecked(false),
                     HandleState = (state) => displayDamageOnVM.IsEnabled = state != EntryStateBinding.InvalidState
                 });
 
@@ -785,8 +785,8 @@ namespace ConfigMaker
                             Dependencies = new CommandCollection(new AliasCmd(displayDamageOffEntryKey, cmds))
                         };
                     },
-                    UpdateUI = (entry) => displayDamageOffVM.IsChecked = true,
-                    Restore = () => displayDamageOffVM.IsChecked = false,
+                    UpdateUI = (entry) => displayDamageOffVM.UpdateIsChecked(true),
+                    Restore = () => displayDamageOffVM.UpdateIsChecked(false),
                     HandleState = (state) => displayDamageOffVM.IsEnabled = state != EntryStateBinding.InvalidState
                 });
         }
@@ -838,7 +838,7 @@ namespace ConfigMaker
                     // зададим состояние чекбоксов согласно аргументам
                     GetWeaponViewModels().ForEach(weaponVM => weaponVM.IsChecked = weapons.Contains((weaponVM.Key)));
                     // не забываем про главный чекбокс
-                    buyVM.IsChecked = true;
+                    buyVM.UpdateIsChecked(true);
                 },
                 Generate = () =>
                 {
@@ -876,7 +876,7 @@ namespace ConfigMaker
                 },
                 Restore = () =>
                 {
-                    buyVM.IsChecked = false;
+                    buyVM.UpdateIsChecked(false);
                     GetWeaponViewModels().ForEach(c => c.IsChecked = false);
                 },
                 HandleState = (state) => buyVM.IsEnabled = state != EntryStateBinding.InvalidState
@@ -1202,7 +1202,7 @@ namespace ConfigMaker
                     Restore = () =>
                     {
                         // Сперва сбрасываем чекбокс, это важно
-                        entryVM.IsChecked = false;
+                        entryVM.UpdateIsChecked(false);
                         sliderVM.Value = defaultValue;
                         entryVM.Arg = defaultValue;
                     },
@@ -1233,7 +1233,7 @@ namespace ConfigMaker
                     },
                     UpdateUI = (entry) =>
                     {
-                        entryVM.IsChecked = true;
+                        entryVM.UpdateIsChecked(true);
                         if (entry is IParametrizedEntry<double>)
                         {
                             IParametrizedEntry<double> extendedEntry = (IParametrizedEntry<double>)entry;
@@ -1320,7 +1320,7 @@ namespace ConfigMaker
                     Restore = () =>
                     {
                         // Сначала сбрасываем чекбокс, ибо дальше мы с ним сверяемся
-                        entryVM.IsChecked = false;
+                        entryVM.UpdateIsChecked(false);
                         // искусственно сбрасываем выделенный элемент
                         comboboxVM.SelectedIndex = -1;
                         // и гарантированно вызываем обработчик SelectedIndexChanged
@@ -1355,7 +1355,7 @@ namespace ConfigMaker
                     },
                     UpdateUI = (entry) =>
                     {
-                        entryVM.IsChecked = true;
+                        entryVM.UpdateIsChecked(true);
 
                         if (entry is IParametrizedEntry<int>)
                         {
@@ -1487,7 +1487,7 @@ namespace ConfigMaker
                     },
                     Restore = () =>
                     {
-                        entryVM.IsChecked = false;
+                        entryVM.UpdateIsChecked(false);
                         textboxVM.Text = formattedDefaultStrValue;
                         entryVM.Arg = coercedDefaultValue;
                     },
@@ -1520,7 +1520,7 @@ namespace ConfigMaker
                     },
                     UpdateUI = (entry) =>
                     {
-                        entryVM.IsChecked = true;
+                        entryVM.UpdateIsChecked(true);
 
                         if (entry is IParametrizedEntry<double>)
                         {
@@ -1580,7 +1580,7 @@ namespace ConfigMaker
                     },
                     Restore = () =>
                     {
-                        entryVM.IsChecked = false;
+                        entryVM.UpdateIsChecked(false);
                         textboxVM.Text = defaultValue;
                     },
                     Generate = () =>
@@ -1598,7 +1598,7 @@ namespace ConfigMaker
                     },
                     UpdateUI = (entry) =>
                     {
-                        entryVM.IsChecked = true;
+                        entryVM.UpdateIsChecked(true);
                         IParametrizedEntry<string> extendedEntry = (IParametrizedEntry<string>)entry;
                         textboxVM.Text = extendedEntry.Arg;
                     },
@@ -1780,7 +1780,7 @@ namespace ConfigMaker
             addUnknownCmdButton.Click += (sender, args) =>
             {
                 // Перейдем в клатке с соответствующим контроллером
-                this.entryControllers[execCustomCmdsEntryKey].Focus();
+                this.GetController(execCustomCmdsEntryKey).Focus();
                 //this.entryControllers[execCustomCmdsEntryKey].
 
                 // Добавим указанную пользователем команду в контроллер ExecCustomCmds
@@ -1815,378 +1815,378 @@ namespace ConfigMaker
                 }
             };
 
-            this.entryControllers.Add(execCustomCmdsEntryKey, new EntryController()
-            {
-                AttachedCheckbox = customCmdHeaderCheckbox,
-                Focus = () => extraTabButton.IsChecked = true,
-                HandleState = (state) => customCmdHeaderCheckbox.IsEnabled = state != EntryStateBinding.InvalidState,
-                Restore = () =>
-                {
-                    this.ClearPanel_s(customCmdPanel);
+            //this.entryControllers.Add(execCustomCmdsEntryKey, new EntryController()
+            //{
+            //    AttachedCheckbox = customCmdHeaderCheckbox,
+            //    Focus = () => extraTabButton.IsChecked = true,
+            //    HandleState = (state) => customCmdHeaderCheckbox.IsEnabled = state != EntryStateBinding.InvalidState,
+            //    Restore = () =>
+            //    {
+            //        this.ClearPanel_s(customCmdPanel);
 
-                    cmdTextbox.Text = string.Empty;
-                    customCmdHeaderCheckbox.IsChecked = false;
-                },
-                Generate = () =>
-                {
-                    // Получим все указанные пользователем команды
-                    string[] cmds = customCmdPanel.Children.OfType<ButtonBase>()
-                        .Select(b => b.Content.ToString()).ToArray();
+            //        cmdTextbox.Text = string.Empty;
+            //        customCmdHeaderCheckbox.IsChecked = false;
+            //    },
+            //    Generate = () =>
+            //    {
+            //        // Получим все указанные пользователем команды
+            //        string[] cmds = customCmdPanel.Children.OfType<ButtonBase>()
+            //            .Select(b => b.Content.ToString()).ToArray();
 
-                    SingleCmd cmd = null;
-                    CommandCollection dependencies = null;
+            //        SingleCmd cmd = null;
+            //        CommandCollection dependencies = null;
 
-                    // Если указана только одна команда - просто выписываем её в конфиг напрямую
-                    if (cmds.Length == 1)
-                    {
-                        cmd = new SingleCmd(cmds[0].Trim());
-                        dependencies = new CommandCollection();
-                    }
-                    else
-                    {
-                        // Иначе генерируем специальный алиас и привязываемся к нему
-                        string aliasName = $"{GeneratePrefix()}_exec";
-                        AliasCmd execCmdsAlias = new AliasCmd(aliasName, cmds.Select(strCmd => new SingleCmd(strCmd)));
+            //        // Если указана только одна команда - просто выписываем её в конфиг напрямую
+            //        if (cmds.Length == 1)
+            //        {
+            //            cmd = new SingleCmd(cmds[0].Trim());
+            //            dependencies = new CommandCollection();
+            //        }
+            //        else
+            //        {
+            //            // Иначе генерируем специальный алиас и привязываемся к нему
+            //            string aliasName = $"{GeneratePrefix()}_exec";
+            //            AliasCmd execCmdsAlias = new AliasCmd(aliasName, cmds.Select(strCmd => new SingleCmd(strCmd)));
 
-                        cmd = new SingleCmd(aliasName);
-                        dependencies = new CommandCollection(execCmdsAlias);
-                    }
+            //            cmd = new SingleCmd(aliasName);
+            //            dependencies = new CommandCollection(execCmdsAlias);
+            //        }
 
-                    return new ParametrizedEntry<string[]>()
-                    {
-                        PrimaryKey = execCustomCmdsEntryKey,
-                        Cmd = cmd,
-                        IsMetaScript = false,
-                        Type = EntryType.Dynamic,
-                        Dependencies = dependencies,
-                        Arg = cmds
-                    };
-                },
-                UpdateUI = (entry) =>
-                {
-                    customCmdHeaderCheckbox.IsChecked = true;
+            //        return new ParametrizedEntry<string[]>()
+            //        {
+            //            PrimaryKey = execCustomCmdsEntryKey,
+            //            Cmd = cmd,
+            //            IsMetaScript = false,
+            //            Type = EntryType.Dynamic,
+            //            Dependencies = dependencies,
+            //            Arg = cmds
+            //        };
+            //    },
+            //    UpdateUI = (entry) =>
+            //    {
+            //        customCmdHeaderCheckbox.IsChecked = true;
 
-                    IParametrizedEntry<string[]> extendedEntry = (IParametrizedEntry<string[]>)entry;
-                    string[] cmds = extendedEntry.Arg;
+            //        IParametrizedEntry<string[]> extendedEntry = (IParametrizedEntry<string[]>)entry;
+            //        string[] cmds = extendedEntry.Arg;
 
-                    this.ClearPanel_s(customCmdPanel);
+            //        this.ClearPanel_s(customCmdPanel);
 
-                    foreach (string cmd in cmds)
-                    {
-                        cmdTextbox.Text = cmd;
-                        addCmdButton.RaiseEvent(new RoutedEventArgs(ButtonBase.ClickEvent));
-                    }
-                }
-            });
+            //        foreach (string cmd in cmds)
+            //        {
+            //            cmdTextbox.Text = cmd;
+            //            addCmdButton.RaiseEvent(new RoutedEventArgs(ButtonBase.ClickEvent));
+            //        }
+            //    }
+            //});
 
-            // cycle crosshairs
-            const string cycleCrosshairEntryKey = "CycleCrosshair";
+            //// cycle crosshairs
+            //const string cycleCrosshairEntryKey = "CycleCrosshair";
 
-            this.cycleChHeaderCheckbox.Click += HandleEntryClick;
-            this.cycleChHeaderCheckbox.Tag = cycleCrosshairEntryKey;
-            this.entryControllers.Add(cycleCrosshairEntryKey, new EntryController()
-            {
-                AttachedCheckbox = cycleChHeaderCheckbox,
-                Focus = () =>
-                {
-                    extraTabButton.IsChecked = true;
-                    cycleChHeaderCheckbox.Focus();
-                },
-                Generate = () =>
-                {
-                    int crosshairCount = (int)cycleChSlider.Value;
-                    string prefix = GeneratePrefix();
-                    string scriptName = $"{prefix}_crosshairLoop";
+            //this.cycleChHeaderCheckbox.Click += HandleEntryClick;
+            //this.cycleChHeaderCheckbox.Tag = cycleCrosshairEntryKey;
+            //this.entryControllers.Add(cycleCrosshairEntryKey, new EntryController()
+            //{
+            //    AttachedCheckbox = cycleChHeaderCheckbox,
+            //    Focus = () =>
+            //    {
+            //        extraTabButton.IsChecked = true;
+            //        cycleChHeaderCheckbox.Focus();
+            //    },
+            //    Generate = () =>
+            //    {
+            //        int crosshairCount = (int)cycleChSlider.Value;
+            //        string prefix = GeneratePrefix();
+            //        string scriptName = $"{prefix}_crosshairLoop";
 
-                    // Зададим имена итерациям
-                    string[] iterationNames = new string[crosshairCount];
+            //        // Зададим имена итерациям
+            //        string[] iterationNames = new string[crosshairCount];
 
-                    for (int i = 0; i < crosshairCount; i++)
-                        iterationNames[i] = $"{scriptName}{i + 1}";
+            //        for (int i = 0; i < crosshairCount; i++)
+            //            iterationNames[i] = $"{scriptName}{i + 1}";
 
-                    List<CommandCollection> iterations = new List<CommandCollection>();
+            //        List<CommandCollection> iterations = new List<CommandCollection>();
 
-                    for (int i = 0; i < crosshairCount; i++)
-                    {
-                        CommandCollection currentIteration = new CommandCollection()
-                        {
-                            new SingleCmd($"exec {prefix}_ch{i + 1}"),
-                            new SingleCmd($"echo \"Crosshair {i + 1} loaded\"")
-                        };
-                        iterations.Add(currentIteration);
-                    }
+            //        for (int i = 0; i < crosshairCount; i++)
+            //        {
+            //            CommandCollection currentIteration = new CommandCollection()
+            //            {
+            //                new SingleCmd($"exec {prefix}_ch{i + 1}"),
+            //                new SingleCmd($"echo \"Crosshair {i + 1} loaded\"")
+            //            };
+            //            iterations.Add(currentIteration);
+            //        }
 
-                    CycleCmd crosshairLoop = new CycleCmd(scriptName, iterations, iterationNames);
+            //        CycleCmd crosshairLoop = new CycleCmd(scriptName, iterations, iterationNames);
 
-                    // Задаем начальную команду для алиаса
-                    CommandCollection dependencies = new CommandCollection();
+            //        // Задаем начальную команду для алиаса
+            //        CommandCollection dependencies = new CommandCollection();
 
-                    // И добавим в конец все итерации нашего цикла
-                    foreach (Executable iteration in crosshairLoop)
-                        dependencies.Add(iteration);
+            //        // И добавим в конец все итерации нашего цикла
+            //        foreach (Executable iteration in crosshairLoop)
+            //            dependencies.Add(iteration);
 
-                    return new ParametrizedEntry<int>()
-                    {
-                        PrimaryKey = cycleCrosshairEntryKey,
-                        Cmd = new SingleCmd(scriptName),
-                        Type = EntryType.Dynamic,
-                        IsMetaScript = false,
-                        Arg = crosshairCount,
-                        Dependencies = dependencies
-                    };
-                },
-                UpdateUI = (entry) =>
-                {
-                    cycleChHeaderCheckbox.IsChecked = true;
-                    int crosshairCount = (entry as IParametrizedEntry<int>).Arg;
+            //        return new ParametrizedEntry<int>()
+            //        {
+            //            PrimaryKey = cycleCrosshairEntryKey,
+            //            Cmd = new SingleCmd(scriptName),
+            //            Type = EntryType.Dynamic,
+            //            IsMetaScript = false,
+            //            Arg = crosshairCount,
+            //            Dependencies = dependencies
+            //        };
+            //    },
+            //    UpdateUI = (entry) =>
+            //    {
+            //        cycleChHeaderCheckbox.IsChecked = true;
+            //        int crosshairCount = (entry as IParametrizedEntry<int>).Arg;
 
-                    cycleChSlider.Value = crosshairCount;
-                },
-                Restore = () =>
-                {
-                    cycleChHeaderCheckbox.IsChecked = false;
-                    cycleChSlider.Value = cycleChSlider.Minimum;
-                },
-                HandleState = (state) => cycleChHeaderCheckbox.IsEnabled =
-                    state != EntryStateBinding.Default && state != EntryStateBinding.InvalidState
-            });
+            //        cycleChSlider.Value = crosshairCount;
+            //    },
+            //    Restore = () =>
+            //    {
+            //        cycleChHeaderCheckbox.IsChecked = false;
+            //        cycleChSlider.Value = cycleChSlider.Minimum;
+            //    },
+            //    HandleState = (state) => cycleChHeaderCheckbox.IsEnabled =
+            //        state != EntryStateBinding.Default && state != EntryStateBinding.InvalidState
+            //});
 
-            cycleChSlider.ValueChanged += (_, __) =>
-            {
-                //if ((bool)cycleChHeaderCheckbox.IsChecked == true)
-                this.AddEntry(cycleCrosshairEntryKey, true);
-            };
+            //cycleChSlider.ValueChanged += (_, __) =>
+            //{
+            //    //if ((bool)cycleChHeaderCheckbox.IsChecked == true)
+            //    this.AddEntry(cycleCrosshairEntryKey, true);
+            //};
 
 
-            // volume regulator
-            const string volumeRegulatorEntryKey = "VolumeRegulator";
-            this.volumeRegulatorCheckbox.Click += HandleEntryClick;
-            this.volumeRegulatorCheckbox.Tag = volumeRegulatorEntryKey;
+            //// volume regulator
+            //const string volumeRegulatorEntryKey = "VolumeRegulator";
+            //this.volumeRegulatorCheckbox.Click += HandleEntryClick;
+            //this.volumeRegulatorCheckbox.Tag = volumeRegulatorEntryKey;
 
-            void volumeSliderValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
-            {
-                if (volumeStepSlider == null || maxVolumeSlider == null || minVolumeSlider == null)
-                    return;
+            //void volumeSliderValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
+            //{
+            //    if (volumeStepSlider == null || maxVolumeSlider == null || minVolumeSlider == null)
+            //        return;
 
-                Slider slider = (Slider)sender;
+            //    Slider slider = (Slider)sender;
 
-                // Нижняя граница изменилась
-                if (slider.Name == minVolumeSlider.Name)
-                {
-                    maxVolumeSlider.Minimum = slider.Value + 0.01;
-                }
-                else if (slider.Name == maxVolumeSlider.Name)
-                {
-                    // Иначе верхняя граница изменилась
-                    minVolumeSlider.Maximum = slider.Value - 0.01;
-                }
-                else
-                {
-                    // Иначе изменился шаг
-                }
+            //    // Нижняя граница изменилась
+            //    if (slider.Name == minVolumeSlider.Name)
+            //    {
+            //        maxVolumeSlider.Minimum = slider.Value + 0.01;
+            //    }
+            //    else if (slider.Name == maxVolumeSlider.Name)
+            //    {
+            //        // Иначе верхняя граница изменилась
+            //        minVolumeSlider.Maximum = slider.Value - 0.01;
+            //    }
+            //    else
+            //    {
+            //        // Иначе изменился шаг
+            //    }
 
-                // Определим дельту
-                double delta = maxVolumeSlider.Value - minVolumeSlider.Value;
-                volumeStepSlider.Maximum = delta;
+            //    // Определим дельту
+            //    double delta = maxVolumeSlider.Value - minVolumeSlider.Value;
+            //    volumeStepSlider.Maximum = delta;
 
-                // Обновим регулировщик в конфиге, если изменение было сделано пользователем
-                //if ((bool)volumeRegulatorCheckbox.IsChecked)
-                this.AddEntry(volumeRegulatorEntryKey, true);
-            }
-            minVolumeSlider.ValueChanged += volumeSliderValueChanged;
-            maxVolumeSlider.ValueChanged += volumeSliderValueChanged;
-            volumeStepSlider.ValueChanged += volumeSliderValueChanged;
-            volumeDirectionCombobox.SelectionChanged += (_, __) =>
-            {
-                // Обновим регулировщик в конфиге, если изменение было сделано пользователем
-                //if ((bool)volumeRegulatorCheckbox.IsChecked)
-                this.AddEntry(volumeRegulatorEntryKey, true);
-            };
+            //    // Обновим регулировщик в конфиге, если изменение было сделано пользователем
+            //    //if ((bool)volumeRegulatorCheckbox.IsChecked)
+            //    this.AddEntry(volumeRegulatorEntryKey, true);
+            //}
+            //minVolumeSlider.ValueChanged += volumeSliderValueChanged;
+            //maxVolumeSlider.ValueChanged += volumeSliderValueChanged;
+            //volumeStepSlider.ValueChanged += volumeSliderValueChanged;
+            //volumeDirectionCombobox.SelectionChanged += (_, __) =>
+            //{
+            //    // Обновим регулировщик в конфиге, если изменение было сделано пользователем
+            //    //if ((bool)volumeRegulatorCheckbox.IsChecked)
+            //    this.AddEntry(volumeRegulatorEntryKey, true);
+            //};
 
-            this.entryControllers.Add(volumeRegulatorEntryKey, new EntryController()
-            {
-                AttachedCheckbox = volumeRegulatorCheckbox,
-                Focus = () =>
-                {
-                    extraTabButton.IsChecked = true;
-                    volumeRegulatorCheckbox.Focus();
-                },
-                Generate = () =>
-                {
-                    double minVolume = Math.Round(minVolumeSlider.Value, 2);
-                    double maxVolume = Math.Round(maxVolumeSlider.Value, 2);
-                    double volumeStep = Math.Round(volumeStepSlider.Value, 2);
-                    volumeStep = volumeStep == 0 ? 0.01 : volumeStep;
-                    bool volumeUp = volumeDirectionCombobox.SelectedIndex == 1;
+            //this.entryControllers.Add(volumeRegulatorEntryKey, new EntryController()
+            //{
+            //    AttachedCheckbox = volumeRegulatorCheckbox,
+            //    Focus = () =>
+            //    {
+            //        extraTabButton.IsChecked = true;
+            //        volumeRegulatorCheckbox.Focus();
+            //    },
+            //    Generate = () =>
+            //    {
+            //        double minVolume = Math.Round(minVolumeSlider.Value, 2);
+            //        double maxVolume = Math.Round(maxVolumeSlider.Value, 2);
+            //        double volumeStep = Math.Round(volumeStepSlider.Value, 2);
+            //        volumeStep = volumeStep == 0 ? 0.01 : volumeStep;
+            //        bool volumeUp = volumeDirectionCombobox.SelectedIndex == 1;
 
-                    // Определяем промежуточные значения от максимума к минимуму
-                    List<double> volumeValues = new List<double>();
+            //        // Определяем промежуточные значения от максимума к минимуму
+            //        List<double> volumeValues = new List<double>();
 
-                    double currentValue = maxVolume;
+            //        double currentValue = maxVolume;
 
-                    while (currentValue >= minVolume)
-                    {
-                        volumeValues.Add(currentValue);
-                        currentValue -= volumeStep;
-                        string formatted = Executable.FormatNumber(currentValue, false);
-                        Executable.TryParseDouble(formatted, out currentValue);
-                    }
-                    // Если минимальное значение не захватилось, то добавим его вручную
-                    if (volumeValues.Last() != minVolume)
-                        volumeValues.Add(minVolume);
+            //        while (currentValue >= minVolume)
+            //        {
+            //            volumeValues.Add(currentValue);
+            //            currentValue -= volumeStep;
+            //            string formatted = Executable.FormatNumber(currentValue, false);
+            //            Executable.TryParseDouble(formatted, out currentValue);
+            //        }
+            //        // Если минимальное значение не захватилось, то добавим его вручную
+            //        if (volumeValues.Last() != minVolume)
+            //            volumeValues.Add(minVolume);
 
-                    // Теперь упорядочим по возрастанию
-                    volumeValues.Reverse();
+            //        // Теперь упорядочим по возрастанию
+            //        volumeValues.Reverse();
 
-                    // Создаем цикл
-                    string volumeUpCmd = "volume_up";
-                    string volumeDownCmd = "volume_down";
+            //        // Создаем цикл
+            //        string volumeUpCmd = "volume_up";
+            //        string volumeDownCmd = "volume_down";
 
-                    SingleCmd[] iterationNames = volumeValues
-                        .Select(v => new SingleCmd($"volume_{Executable.FormatNumber(v, false)}")).ToArray();
+            //        SingleCmd[] iterationNames = volumeValues
+            //            .Select(v => new SingleCmd($"volume_{Executable.FormatNumber(v, false)}")).ToArray();
 
-                    CommandCollection dependencies = new CommandCollection();
+            //        CommandCollection dependencies = new CommandCollection();
 
-                    for (int i = 0; i < volumeValues.Count; i++)
-                    {
-                        double value = volumeValues[i];
-                        string formattedValue = Executable.FormatNumber(value, false);
+            //        for (int i = 0; i < volumeValues.Count; i++)
+            //        {
+            //            double value = volumeValues[i];
+            //            string formattedValue = Executable.FormatNumber(value, false);
 
-                        CommandCollection iterationCmds = new CommandCollection();
+            //            CommandCollection iterationCmds = new CommandCollection();
 
-                        // Задаем звук на текущей итерации с комментарием в консоль
-                        SingleCmd volumeCmd = new SingleCmd($"volume {formattedValue}");
-                        iterationCmds.Add(volumeCmd);
-                        iterationCmds.Add(new SingleCmd($"echo {volumeCmd.ToString()}"));
+            //            // Задаем звук на текущей итерации с комментарием в консоль
+            //            SingleCmd volumeCmd = new SingleCmd($"volume {formattedValue}");
+            //            iterationCmds.Add(volumeCmd);
+            //            iterationCmds.Add(new SingleCmd($"echo {volumeCmd.ToString()}"));
 
-                        if (i == 0)
-                        {
-                            iterationCmds.Add(
-                                new AliasCmd(volumeDownCmd, new SingleCmd("echo Volume: Min")));
-                            iterationCmds.Add(
-                                new AliasCmd(volumeUpCmd, iterationNames[i + 1]));
-                        }
-                        else if (i == volumeValues.Count - 1)
-                        {
-                            iterationCmds.Add(
-                                new AliasCmd(volumeUpCmd, new SingleCmd("echo Volume: Max")));
-                            iterationCmds.Add(
-                                new AliasCmd(volumeDownCmd, iterationNames[i - 1]));
-                        }
-                        else
-                        {
-                            iterationCmds.Add(
-                                new AliasCmd(volumeDownCmd, iterationNames[i - 1]));
-                            iterationCmds.Add(
-                                new AliasCmd(volumeUpCmd, iterationNames[i + 1]));
-                        }
+            //            if (i == 0)
+            //            {
+            //                iterationCmds.Add(
+            //                    new AliasCmd(volumeDownCmd, new SingleCmd("echo Volume: Min")));
+            //                iterationCmds.Add(
+            //                    new AliasCmd(volumeUpCmd, iterationNames[i + 1]));
+            //            }
+            //            else if (i == volumeValues.Count - 1)
+            //            {
+            //                iterationCmds.Add(
+            //                    new AliasCmd(volumeUpCmd, new SingleCmd("echo Volume: Max")));
+            //                iterationCmds.Add(
+            //                    new AliasCmd(volumeDownCmd, iterationNames[i - 1]));
+            //            }
+            //            else
+            //            {
+            //                iterationCmds.Add(
+            //                    new AliasCmd(volumeDownCmd, iterationNames[i - 1]));
+            //                iterationCmds.Add(
+            //                    new AliasCmd(volumeUpCmd, iterationNames[i + 1]));
+            //            }
 
-                        // Добавим зависимость
-                        dependencies.Add(new AliasCmd(iterationNames[i].ToString(), iterationCmds));
-                    }
+            //            // Добавим зависимость
+            //            dependencies.Add(new AliasCmd(iterationNames[i].ToString(), iterationCmds));
+            //        }
 
-                    // По умолчанию будет задано минимальное значение звука
-                    dependencies.Add(iterationNames[0]);
+            //        // По умолчанию будет задано минимальное значение звука
+            //        dependencies.Add(iterationNames[0]);
 
-                    return new ParametrizedEntry<double[]>()
-                    {
-                        PrimaryKey = volumeRegulatorEntryKey,
-                        Cmd = volumeUp ? new SingleCmd(volumeUpCmd) : new SingleCmd(volumeDownCmd),
-                        Type = EntryType.Semistatic,
-                        IsMetaScript = false,
-                        Dependencies = dependencies,
-                        Arg = new double[] { minVolume, maxVolume, volumeStep }
-                    };
-                },
-                UpdateUI = (entry) =>
-                {
-                    volumeRegulatorCheckbox.IsChecked = true;
-                    double[] args = ((IParametrizedEntry<double[]>)entry).Arg;
+            //        return new ParametrizedEntry<double[]>()
+            //        {
+            //            PrimaryKey = volumeRegulatorEntryKey,
+            //            Cmd = volumeUp ? new SingleCmd(volumeUpCmd) : new SingleCmd(volumeDownCmd),
+            //            Type = EntryType.Semistatic,
+            //            IsMetaScript = false,
+            //            Dependencies = dependencies,
+            //            Arg = new double[] { minVolume, maxVolume, volumeStep }
+            //        };
+            //    },
+            //    UpdateUI = (entry) =>
+            //    {
+            //        volumeRegulatorCheckbox.IsChecked = true;
+            //        double[] args = ((IParametrizedEntry<double[]>)entry).Arg;
 
-                    minVolumeSlider.Value = args[0];
-                    maxVolumeSlider.Value = args[1];
-                    volumeStepSlider.Value = args[2];
-                    volumeDirectionCombobox.SelectedIndex = entry.Cmd.ToString() == "volume_up"? 1 : 0;
-                },
-                Restore = () =>
-                {
-                    volumeRegulatorCheckbox.IsChecked = false;
-                },
-                HandleState = (state) => volumeRegulatorCheckbox.IsEnabled =
-                    state != EntryStateBinding.InvalidState && state != EntryStateBinding.Default
-            });
+            //        minVolumeSlider.Value = args[0];
+            //        maxVolumeSlider.Value = args[1];
+            //        volumeStepSlider.Value = args[2];
+            //        volumeDirectionCombobox.SelectedIndex = entry.Cmd.ToString() == "volume_up"? 1 : 0;
+            //    },
+            //    Restore = () =>
+            //    {
+            //        volumeRegulatorCheckbox.IsChecked = false;
+            //    },
+            //    HandleState = (state) => volumeRegulatorCheckbox.IsEnabled =
+            //        state != EntryStateBinding.InvalidState && state != EntryStateBinding.Default
+            //});
         }
 
         void InitAliasController()
         {
             const string extraAliasEntryKey = "ExtraAlias";
 
-            this.entryControllers.Add(extraAliasSetEntryKey, new EntryController()
-            {
-                Generate = () =>
-                {
-                    List<ParametrizedEntry<Entry[]>> aliases =
-                    new List<ParametrizedEntry<Entry[]>>();
+            //this.entryControllers.Add(extraAliasSetEntryKey, new EntryController()
+            //{
+            //    Generate = () =>
+            //    {
+            //        List<ParametrizedEntry<Entry[]>> aliases =
+            //        new List<ParametrizedEntry<Entry[]>>();
 
-                    CommandCollection dependencies = new CommandCollection();
+            //        CommandCollection dependencies = new CommandCollection();
 
-                    foreach (ContentControl aliaselement in aliasPanel.Children.OfType<ContentControl>())
-                    {
-                        string aliasName = aliaselement.Content.ToString();
-                        List<Entry> attachedEntries = (List<Entry>)aliaselement.Tag;
+            //        foreach (ContentControl aliaselement in aliasPanel.Children.OfType<ContentControl>())
+            //        {
+            //            string aliasName = aliaselement.Content.ToString();
+            //            List<Entry> attachedEntries = (List<Entry>)aliaselement.Tag;
 
-                        // Выпишем все зависимости, которые есть для текущего элемента
-                        foreach (Entry entry in attachedEntries)
-                            foreach (Executable dependency in entry.Dependencies)
-                                dependencies.Add(dependency);
+            //            // Выпишем все зависимости, которые есть для текущего элемента
+            //            foreach (Entry entry in attachedEntries)
+            //                foreach (Executable dependency in entry.Dependencies)
+            //                    dependencies.Add(dependency);
 
-                        ParametrizedEntry<Entry[]> aliasEntry = new ParametrizedEntry<Entry[]>()
-                        {
-                            PrimaryKey = extraAliasEntryKey,
-                            Cmd = new SingleCmd(aliasName),
-                            IsMetaScript = false,
-                            Type = EntryType.Dynamic,
-                            Arg = attachedEntries.ToArray()
-                        };
+            //            ParametrizedEntry<Entry[]> aliasEntry = new ParametrizedEntry<Entry[]>()
+            //            {
+            //                PrimaryKey = extraAliasEntryKey,
+            //                Cmd = new SingleCmd(aliasName),
+            //                IsMetaScript = false,
+            //                Type = EntryType.Dynamic,
+            //                Arg = attachedEntries.ToArray()
+            //            };
 
-                        AliasCmd alias = new AliasCmd(
-                            aliaselement.Content.ToString(),
-                            attachedEntries.Select(e => e.Cmd));
+            //            AliasCmd alias = new AliasCmd(
+            //                aliaselement.Content.ToString(),
+            //                attachedEntries.Select(e => e.Cmd));
 
-                        aliases.Add(aliasEntry);
-                        dependencies.Add(alias);
-                    }
+            //            aliases.Add(aliasEntry);
+            //            dependencies.Add(alias);
+            //        }
 
-                    // сформируем итоговый элемент конфига
-                    return new ParametrizedEntry<Entry[]>()
-                    {
-                        PrimaryKey = extraAliasSetEntryKey,
-                        Cmd = null,
-                        IsMetaScript = false,
-                        Type = EntryType.Dynamic,
-                        Arg = aliases.ToArray(),
-                        Dependencies = dependencies
-                    };
-                },
-                UpdateUI = (entry) =>
-                {
-                    ParametrizedEntry<Entry[]> extendedEntry = (ParametrizedEntry<Entry[]>)entry;
+            //        // сформируем итоговый элемент конфига
+            //        return new ParametrizedEntry<Entry[]>()
+            //        {
+            //            PrimaryKey = extraAliasSetEntryKey,
+            //            Cmd = null,
+            //            IsMetaScript = false,
+            //            Type = EntryType.Dynamic,
+            //            Arg = aliases.ToArray(),
+            //            Dependencies = dependencies
+            //        };
+            //    },
+            //    UpdateUI = (entry) =>
+            //    {
+            //        ParametrizedEntry<Entry[]> extendedEntry = (ParametrizedEntry<Entry[]>)entry;
 
-                    Entry[] aliases = extendedEntry.Arg;
+            //        Entry[] aliases = extendedEntry.Arg;
 
-                    foreach (Entry alias in aliases)
-                    {
-                        AddAliasButton(
-                            alias.Cmd.ToString(),
-                            (alias as ParametrizedEntry<Entry[]>).Arg.ToList());
-                    }
-                },
-                Restore = () =>
-                {
-                    this.ResetAttachmentPanels();
-                    this.ClearPanel_s(aliasPanel);
-                }
-            });
+            //        foreach (Entry alias in aliases)
+            //        {
+            //            AddAliasButton(
+            //                alias.Cmd.ToString(),
+            //                (alias as ParametrizedEntry<Entry[]>).Arg.ToList());
+            //        }
+            //    },
+            //    Restore = () =>
+            //    {
+            //        this.ResetAttachmentPanels();
+            //        this.ClearPanel_s(aliasPanel);
+            //    }
+            //});
         }
         #endregion
 
@@ -2301,17 +2301,7 @@ namespace ConfigMaker
             CheckBox checkbox = (CheckBox)sender;
             string entryKey = (string)checkbox.Tag;
 
-            // Получим обработчика и 
-            EntryController entryBinding = this.entryControllers[entryKey];
-            Entry entry = (Entry)entryBinding.Generate();
-
-            if ((bool)checkbox.IsChecked)
-                this.AddEntry(entry);
-            else
-                this.RemoveEntry(entry);
-
-            // Обновим панели
-            this.UpdateAttachmentPanels();
+            this.HandleEntryClick(entryKey);
         }
 
         void HandleEntryClick(string entryKey)
@@ -2320,7 +2310,7 @@ namespace ConfigMaker
             //string entryKey = (string)checkbox.Tag;
 
             // Получим обработчика и 
-            EntryControllerV2 entryController = this.entryV2Controllers.First(e => e.AttachedViewModel.Key == entryKey);
+            EntryControllerV2 entryController = this.GetController(entryKey);
             EntryViewModel entryVM = entryController.AttachedViewModel;
             Entry entry = (Entry)entryController.Generate();
 
@@ -2336,10 +2326,7 @@ namespace ConfigMaker
         void SetStateAndUpdateUI(EntryStateBinding newState)
         {
             this.StateBinding = newState;
-
-            this.entryControllers.Values.ToList() // TODO: REMOVE
-                    .ForEach(entry => entry.HandleState(this.StateBinding));
-
+            
             this.entryV2Controllers.ForEach(c => c.HandleState(this.StateBinding));
         }
 
@@ -2372,7 +2359,6 @@ namespace ConfigMaker
         {
             EntryControllerV2 controller = this.GetController(cfgEntryKey);
 
-            if (controller == null) return; // TODO: REMOVE WHEN ALL VIEWMODELS WILL BE SET
             // Если сказано, что отмена, если добавление идет не из-за действий пользователя
             // То значит гарантированно AttachedCheckbox не может быть равен null
             if (abortIfNotUser && !controller.AttachedViewModel.IsChecked) return;
@@ -2383,7 +2369,7 @@ namespace ConfigMaker
 
         void RemoveEntry(string cfgEntryKey)
         {
-            Entry generatedEntry = (Entry)this.entryControllers[cfgEntryKey].Generate();
+            Entry generatedEntry = (Entry)this.GetController(cfgEntryKey).Generate();
             this.RemoveEntry(generatedEntry);
         }
 
@@ -2416,7 +2402,7 @@ namespace ConfigMaker
                                 .Concat(new Entry[] { entry }).ToList();
 
                             // И вызываем обработчика пользовательских алиасов
-                            Entry aliasSetEntry = (Entry)this.entryControllers[extraAliasSetEntryKey].Generate();
+                            Entry aliasSetEntry = (Entry)this.GetController(extraAliasSetEntryKey).Generate();
                             this.cfgManager.AddEntry(aliasSetEntry);
                         }
                         else
@@ -2458,7 +2444,7 @@ namespace ConfigMaker
                                 .ToList();
 
                             // Напрямую обновим узел в менеджере
-                            Entry aliasSetEntry = (Entry)this.entryControllers[extraAliasSetEntryKey].Generate();
+                            Entry aliasSetEntry = (Entry)this.GetController(extraAliasSetEntryKey).Generate();
                             this.cfgManager.AddEntry(aliasSetEntry);
                         }
                         else
@@ -2490,12 +2476,13 @@ namespace ConfigMaker
             };
 
             IEnumerable<FrameworkElement> mergedElements = attachmentPanels.SelectMany(p => p.Children.Cast<FrameworkElement>());
+            int count = mergedElements.Count();
 
             foreach (FrameworkElement element in mergedElements)
             {
-                EntryController entryBinding = this.entryControllers[(string)element.Tag];
+                EntryControllerV2 controller = this.GetController((string)element.Tag);
                 // Метод, отвечающий непосредственно за сброс состояния интерфейса
-                entryBinding.Restore();
+                controller.Restore();
             }
 
             // Очистим панели
@@ -2549,21 +2536,21 @@ namespace ConfigMaker
 
                     // Обновим интерфейс согласно элементам, привязанным к текущему состоянию
                     attachedEntries.Where(e => this.IsEntryAttachedToCurrentState(e))
-                        .ToList().ForEach(e => this.entryControllers[e.PrimaryKey].UpdateUI(e));
+                        .ToList().ForEach(e => this.GetController(e.PrimaryKey).UpdateUI(e));
                 });
             }
             else if (this.StateBinding == EntryStateBinding.Default)
             {
                 // Получаем все элементы по умолчанию, которые должны быть отображены в панели
                 List<Entry> attachedEntries = this.cfgManager.DefaultEntries
-                    .Where(e => this.entryControllers[e.PrimaryKey].AttachedCheckbox != null).ToList();
+                    .Where(e => this.GetController(e.PrimaryKey).AttachedViewModel != null).ToList();
 
                 // Теперь заполним панели новыми элементами
                 attachedEntries.ForEach(entry =>
                 {
                     AddAttachment(entry.PrimaryKey, solidAttachmentsPanel);
                     // Обновим интерфейс согласно элементам, привязанным к текущему состоянию
-                    this.entryControllers[entry.PrimaryKey].UpdateUI(entry);
+                    this.GetController(entry.PrimaryKey).UpdateUI(entry);
                 });
             }
             else if (this.StateBinding == EntryStateBinding.Alias)
@@ -2577,7 +2564,7 @@ namespace ConfigMaker
                 {
                     AddAttachment(entry.PrimaryKey, solidAttachmentsPanel);
                     // Обновим интерфейс согласно элементам, привязанным к текущему состоянию
-                    this.entryControllers[entry.PrimaryKey].UpdateUI(entry);
+                    this.GetController(entry.PrimaryKey).UpdateUI(entry);
                 });
             }
             else { } // InvalidState
@@ -2595,11 +2582,11 @@ namespace ConfigMaker
 
             // Узнаем за привязку к какому типу отвечает нажатая кнопка
             FrameworkElement element = (FrameworkElement)obj;
-            if (element.Tag == null) return; // TODO: УДАЛИТЬ
+
             string entryKey = (string) element.Tag;
 
             // Получим обработчика и переведем фокус на нужный элемент
-            this.entryControllers[entryKey].Focus();
+            this.GetController(entryKey).Focus();
         }
         
         private void GenerateConfig(object sender, RoutedEventArgs e)
@@ -2683,15 +2670,15 @@ namespace ConfigMaker
         void UpdateCfgManager()
         {
             // Сбросим все настройки от прошлого конфига
-            foreach (EntryController binding in this.entryControllers.Values)
-                binding.Restore();
+            foreach (EntryControllerV2 controller in this.entryV2Controllers)
+                controller.Restore();
 
             // Зададим привязку к дефолтному состоянию
             keyboardAliasCombobox.SelectedIndex = 0;
             //this.StateBinding = EntryStateBinding.Default;
 
             foreach (Entry entry in this.cfgManager.DefaultEntries)
-                this.entryControllers[entry.PrimaryKey].UpdateUI(entry);
+                this.GetController(entry.PrimaryKey).UpdateUI(entry);
 
             this.UpdateAttachmentPanels();
             this.ColorizeKeyboard();
