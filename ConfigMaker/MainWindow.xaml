@@ -177,7 +177,7 @@
         </DataTemplate>
 
         <DataTemplate DataType="{x:Type viewmodels:DynamicEntryViewModel}">
-            <Grid Height="30" ShowGridLines="True">
+            <Grid Height="30" Visibility="{Binding IsVisible, Converter={StaticResource boolToVisibilityConverter}}">
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="3*"/>
                     <ColumnDefinition Width="6*"/>
@@ -206,7 +206,7 @@
         </DataTemplate>
 
         <DataTemplate DataType="{x:Type viewmodels:IntervalControllerViewModel}">
-            <Grid ShowGridLines="True">
+            <Grid>
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="Auto"/>
                     <ColumnDefinition Width="1*"/>
@@ -227,6 +227,18 @@
                     <TextBlock Text="{Binding To}" FontSize="12" HorizontalAlignment="Center" VerticalAlignment="Center"/>
                 </Border>
             </Grid>
+        </DataTemplate>
+
+        <DataTemplate DataType="{x:Type viewmodels:ComboBoxControllerViewModel}">
+            <ComboBox 
+                ItemsSource="{Binding Items}" 
+                SelectedIndex="{Binding SelectedIndex, Mode=TwoWay}"
+                SelectedItem="{Binding SelectedItem, Mode=OneWayToSource}"
+                materialDesign:ComboBoxAssist.ClassicMode="True"/>
+        </DataTemplate>
+
+        <DataTemplate DataType="{x:Type viewmodels:TextboxControllerViewModel}">
+            <TextBox Text="{Binding Text, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" VerticalAlignment="Center"/>
         </DataTemplate>
     </Window.Resources>
     <Grid>

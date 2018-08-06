@@ -12,7 +12,6 @@ namespace ConfigMaker.Utils.ViewModels
         public double _to;
         public double _step;
         public double _value;
-        public bool _isInteger;
         
         public double From
         {
@@ -36,12 +35,6 @@ namespace ConfigMaker.Utils.ViewModels
         {
             get => this._value;
             set => this.SetProperty(ref _value, value);
-        }
-
-        public bool IsInteger
-        {
-            get => this._isInteger;
-            set => this.SetProperty(ref _isInteger, value);
         }
     }
 }

@@ -460,9 +460,7 @@ namespace ConfigMaker
         {
             TextBox textbox = (TextBox)sender;
             string input = textbox.Text.Trim().ToLower();
-
-            //UIElementCollection elements = null; // TODO: FIX
-            //UIElementCollection elements = settingsTabPanel.Children;
+            
             DynamicEntryViewModel[] elements = ((IEnumerable<BindableBase>)gameSettingsItemsControl.ItemsSource)
                 .Where(item => item is DynamicEntryViewModel).Cast<DynamicEntryViewModel>().ToArray();
 
@@ -586,7 +584,12 @@ namespace ConfigMaker
             // Метод для добавления новой категории.
             void AddActionGroupHeader(string text)
             {
-                TextViewModel headerVM = new TextViewModel() { Text = text };
+                TextViewModel headerVM = new TextViewModel()
+                {
+                    Text = text,
+                    HorizontalAlignment = HorizontalAlignment.Center,
+                    VerticalAlignment = VerticalAlignment.Center
+                };
                 //TextBlock block = new TextBlock();
                 //Inline bold = new Bold(new Run(text));
                 //block.Inlines.Add(bold);
@@ -1045,9 +1048,9 @@ namespace ConfigMaker
                 return new Tuple<TextBlock, Grid, Button, CheckBox>(resultCmd, controlsGrid, toggleButton, checkbox);
             };
 
-            DynamicEntryViewModel PrepareEntryVM(string cmd, bool needToggle)
+            DynamicEntryViewModel PrepareEntryVM(string cmd, BindableBase controllerViewModel, bool needToggle)
             {
-                DynamicEntryViewModel entryVM = new DynamicEntryViewModel()
+                DynamicEntryViewModel entryVM = new DynamicEntryViewModel(controllerViewModel)
                 {
                     Key = cmd,
                     NeedToggle = needToggle
@@ -1059,20 +1062,19 @@ namespace ConfigMaker
             
             void AddIntervalCmdController(string cmd, double from, double to, double step, double defaultValue)
             {
-                // Получим базовую модель представления
-                DynamicEntryViewModel entryVM = PrepareEntryVM(cmd, true);
                 // Определим целочисленный должен быть слайдер или нет
                 bool isInteger = from % 1 == 0 && to % 1 == 0 && step % 1 == 0;
-
+                // И создадим модель представления
                 IntervalControllerViewModel sliderVM = new IntervalControllerViewModel()
                 {
                     From = from,
                     To = to,
-                    Step = step,
-                    IsInteger = isInteger
+                    Step = step
                 };
 
-                entryVM.ControllerViewModel = sliderVM;
+                // Получим базовую модель представления
+                DynamicEntryViewModel entryVM = PrepareEntryVM(cmd, sliderVM, true);
+                
 
                 //var tuple = PrepareNewRow(cmd, true);
                 //TextBlock resultCmdBlock = tuple.Item1;
@@ -1260,72 +1262,75 @@ namespace ConfigMaker
             
             void AddComboboxCmdController(string cmd, string[] names, int defaultIndex, bool isIntegerArg, int baseIndex = 0)
             {
-                var tuple = PrepareNewRow(cmd, true);
-                TextBlock resultCmdBlock = tuple.Item1;
-                Grid comboboxGrid = tuple.Item2;
-                Button toggleButton = tuple.Item3;
-                CheckBox checkbox = tuple.Item4;
+                //var tuple = PrepareNewRow(cmd, true);
+                //TextBlock resultCmdBlock = tuple.Item1;
+                //Grid comboboxGrid = tuple.Item2;
+                //Button toggleButton = tuple.Item3;
+                //CheckBox checkbox = tuple.Item4;
 
-                // Если аргумент - число, то создадим сетку с 2-мя кнопками
-                //Grid comboboxGrid = new Grid();
-                comboboxGrid.ColumnDefinitions.Add(new ColumnDefinition());
+                //// Если аргумент - число, то создадим сетку с 2-мя кнопками
+                ////Grid comboboxGrid = new Grid();
+                //comboboxGrid.ColumnDefinitions.Add(new ColumnDefinition());
 
-                ComboBox combobox = new ComboBox
-                {
-                    MaxHeight = rowHeight
-                };
-                comboboxGrid.Children.Add(combobox);
-                ComboBoxAssist.SetClassicMode(combobox, true);
+                //ComboBox combobox = new ComboBox
+                //{
+                //    MaxHeight = rowHeight
+
+                ComboBoxControllerViewModel comboboxVM = new ComboBoxControllerViewModel();
+                DynamicEntryViewModel entryVM = PrepareEntryVM(cmd, comboboxVM, isIntegerArg);
+                //};
+                //comboboxGrid.Children.Add(combobox);
+                //ComboBoxAssist.SetClassicMode(combobox, true);
 
                 // Если надо предусмотреть функцию toggle, то расширяем сетку и добавляем кнопку
                 if (isIntegerArg)
                 {
-                    toggleButton.Click += (_, __) =>
-                    {
-                        ToggleWindow toggleWindow = new ToggleWindow(true, 0, names.Length - 1);
-                        if ((bool)toggleWindow.ShowDialog())
-                        {
-                            int[] values = toggleWindow.GeneratedArg.Split(' ').Select(n => int.Parse(n)).ToArray();
-                            resultCmdBlock.Text = Executable.GenerateToggleCmd(cmd, values).ToString();
-                            // Сохраним аргумент в теге
-                            resultCmdBlock.Tag = values;
+                    //toggleButton.Click += (_, __) =>
+                    //{
+                    //    ToggleWindow toggleWindow = new ToggleWindow(true, 0, names.Length - 1);
+                    //    if ((bool)toggleWindow.ShowDialog())
+                    //    {
+                    //        int[] values = toggleWindow.GeneratedArg.Split(' ').Select(n => int.Parse(n)).ToArray();
+                    //        resultCmdBlock.Text = Executable.GenerateToggleCmd(cmd, values).ToString();
+                    //        // Сохраним аргумент в теге
+                    //        resultCmdBlock.Tag = values;
 
-                            //if ((bool)checkbox.IsChecked) // Добавляем в конфиг только если это сделал сам пользователь
-                            this.AddEntry(cmd, true);
-                        }
-                        else
-                        {
+                    //        //if ((bool)checkbox.IsChecked) // Добавляем в конфиг только если это сделал сам пользователь
+                    //        this.AddEntry(cmd, true);
+                    //    }
+                    //    else
+                    //    {
 
-                        }
-                    };
+                    //    }
+                    //};
                 }
 
                 // Зададим элементы комбобокса
-                names.ToList().ForEach(name => combobox.Items.Add(name));
+                names.ToList().ForEach(name => comboboxVM.Items.Add(name));
 
                 // Создадим обработчика пораньше, т.к. он понадобится уже при задании начального индекса комбобокса
-                EntryController entryBinding = new EntryController()
+                entryV2Controllers.Add(new EntryControllerV2()
                 {
-                    AttachedCheckbox = checkbox,
+                    AttachedViewModel = entryVM,
                     Focus = () =>
                     {
                         gameSettingsTabButton.IsChecked = true;
-                        checkbox.Focus();
+                        entryVM.IsFocused = true;
                     },
                     Restore = () =>
                     {
                         // Сначала сбрасываем чекбокс, ибо дальше мы с ним сверяемся
-                        checkbox.IsChecked = false;
+                        entryVM.IsChecked = false;
                         // искусственно сбрасываем выделенный элемент
-                        combobox.SelectedIndex = -1; 
+                        comboboxVM.SelectedIndex = -1;
                         // и гарантированно вызываем обработчик SelectedIndexChanged
-                        combobox.SelectedIndex = defaultIndex; 
+                        comboboxVM.SelectedIndex = defaultIndex; 
                     },
                     Generate = () =>
                     {
-                        SingleCmd resultCmd = new SingleCmd(resultCmdBlock.Text);
+                        SingleCmd resultCmd = new SingleCmd(entryVM.Content);
 
-                        if (resultCmdBlock.Tag is int)
+                        if (entryVM.Arg is int)
                         {
                             return new ParametrizedEntry<int>()
                             {
@@ -1333,7 +1338,7 @@ namespace ConfigMaker
                                 Type = EntryType.Dynamic,
                                 IsMetaScript = false,
                                 Cmd = resultCmd,
-                                Arg = (int)resultCmdBlock.Tag
+                                Arg = (int)entryVM.Arg
                             };
                         }
                         else
@@ -1344,130 +1349,153 @@ namespace ConfigMaker
                                 Type = EntryType.Dynamic,
                                 IsMetaScript = false,
                                 Cmd = resultCmd,
-                                Arg = (int[])resultCmdBlock.Tag
+                                Arg = (int[])entryVM.Arg
                             };
                         }
                     },
                     UpdateUI = (entry) =>
                     {
-                        checkbox.IsChecked = true;
+                        entryVM.IsChecked = true;
 
                         if (entry is IParametrizedEntry<int>)
                         {
                             IParametrizedEntry<int> extendedEntry = (IParametrizedEntry<int>)entry;
-                            combobox.SelectedIndex = extendedEntry.Arg;
-                            resultCmdBlock.Tag = extendedEntry.Arg;
+                            comboboxVM.SelectedIndex = extendedEntry.Arg;
+                            entryVM.Arg = extendedEntry.Arg;
                         }
                         else
                         {
                             IParametrizedEntry<int[]> extendedEntry = (IParametrizedEntry<int[]>)entry;
-                            resultCmdBlock.Text = Executable.GenerateToggleCmd(cmd, extendedEntry.Arg).ToString();
-                            resultCmdBlock.Tag = extendedEntry.Arg;
+                            entryVM.Content = Executable.GenerateToggleCmd(cmd, extendedEntry.Arg).ToString();
+                            entryVM.Arg = extendedEntry.Arg;
                         }
                     },
-                    HandleState = (state) => checkbox.IsEnabled = state != EntryStateBinding.InvalidState
-                };
-                // Добавим его в словарь
-                this.entryControllers.Add(cmd, entryBinding);
+                    HandleState = (state) => entryVM.IsEnabled = state != EntryStateBinding.InvalidState
+                });
 
-                combobox.SelectionChanged += (obj, args) =>
+                comboboxVM.PropertyChanged += (_, arg) =>
                 {
-                    if (combobox.SelectedIndex == -1) return;
+                    if (arg.PropertyName == nameof(ComboBoxControllerViewModel.SelectedIndex))
+                    {
+                        if (comboboxVM.SelectedIndex == -1) return;
 
-                    string resultCmdStr;
-                    if (isIntegerArg)
-                        resultCmdStr = $"{cmd} {combobox.SelectedIndex + baseIndex}";
-                    else
-                        resultCmdStr = $"{cmd} {combobox.SelectedItem}";
+                        string resultCmdStr;
+                        if (isIntegerArg)
+                            resultCmdStr = $"{cmd} {comboboxVM.SelectedIndex + baseIndex}";
+                        else
+                            resultCmdStr = $"{cmd} {comboboxVM.SelectedItem}";
 
-                    resultCmdBlock.Text = new SingleCmd(resultCmdStr).ToString();
-                    resultCmdBlock.Tag = combobox.SelectedIndex;
-                    //if ((bool)checkbox.IsChecked) // Добавляем в конфиг только если это сделал сам пользователь
-                    this.AddEntry(cmd, true);
+                        entryVM.Content = new SingleCmd(resultCmdStr).ToString();
+                        entryVM.Arg = comboboxVM.SelectedIndex;
+                        //if ((bool)checkbox.IsChecked) // Добавляем в конфиг только если это сделал сам пользователь
+                        this.AddEntry(cmd, true);
+                    }
                 };
+                //combobox.SelectionChanged += (obj, args) =>
+                //{
+                //    if (combobox.SelectedIndex == -1) return;
+
+                //    string resultCmdStr;
+                //    if (isIntegerArg)
+                //        resultCmdStr = $"{cmd} {combobox.SelectedIndex + baseIndex}";
+                //    else
+                //        resultCmdStr = $"{cmd} {combobox.SelectedItem}";
+
+                //    resultCmdBlock.Text = new SingleCmd(resultCmdStr).ToString();
+                //    resultCmdBlock.Tag = combobox.SelectedIndex;
+                //    //if ((bool)checkbox.IsChecked) // Добавляем в конфиг только если это сделал сам пользователь
+                //    this.AddEntry(cmd, true);
+                //};
                 
                 // Команда по умолчанию обновится, т.к. уже есть обработчик
-                combobox.SelectedIndex = defaultIndex;                
+                comboboxVM.SelectedIndex = defaultIndex;                
             };
 
             void AddTextboxNumberCmdController(string cmd, double defaultValue, bool asInteger)
             {
-                var tuple = PrepareNewRow(cmd, true);
-                TextBlock resultCmdBlock = tuple.Item1;
-                Grid textboxGrid = tuple.Item2;
-                Button toggleButton = tuple.Item3;
-                CheckBox checkbox = tuple.Item4;
-                string fixedDefaultStrValue = Executable.FormatNumber(defaultValue, asInteger);
-                double fixedDefaultValue = double.Parse(fixedDefaultStrValue, CultureInfo.InvariantCulture);
+                //var tuple = PrepareNewRow(cmd, true);
+                //TextBlock resultCmdBlock = tuple.Item1;
+                //Grid textboxGrid = tuple.Item2;
+                //Button toggleButton = tuple.Item3;
+                //CheckBox checkbox = tuple.Item4;
+
+                string formattedDefaultStrValue = Executable.FormatNumber(defaultValue, asInteger);
+                double coercedDefaultValue = Executable.CoerceNumber(defaultValue, asInteger);
+
+                TextboxControllerViewModel textboxVM = new TextboxControllerViewModel();
+                DynamicEntryViewModel entryVM = PrepareEntryVM(cmd, textboxVM, true);
 
                 //Grid textboxGrid = new Grid();
 
-                TextBox textbox = new TextBox
-                {
-                    MaxHeight = rowHeight
-                };
-                textboxGrid.Children.Add(textbox);
+                //TextBox textbox = new TextBox
+                //{
+                //    MaxHeight = rowHeight
+                //};
+                //textboxGrid.Children.Add(textbox);
 
-                toggleButton.Click += (_, __) =>
+                //toggleButton.Click += (_, __) =>
+                //{
+                    //ToggleWindow toggleWindow = new ToggleWindow(asInteger, double.MinValue, double.MaxValue);
+                    //if ((bool)toggleWindow.ShowDialog())
+                    //{
+                    //    double[] values = toggleWindow.GeneratedArg.Split(' ').Select(value =>
+                    //    {
+                    //        Executable.TryParseDouble(value, out double parsedValue);
+                    //        return parsedValue;
+                    //    }).ToArray();
+
+                    //    resultCmdBlock.Text = Executable.GenerateToggleCmd(cmd, values, asInteger).ToString();
+                    //    // Сохраним аргумент в теге
+                    //    resultCmdBlock.Tag = values;
+
+                    //    //if ((bool)checkbox.IsChecked) // Добавляем в конфиг только если это сделал сам пользователь
+                    //    this.AddEntry(cmd, true);
+                    //}
+                    //else
+                    //{
+
+                    //}
+                //};
+
+                textboxVM.PropertyChanged += (_, arg) =>
                 {
-                    ToggleWindow toggleWindow = new ToggleWindow(asInteger, double.MinValue, double.MaxValue);
-                    if ((bool)toggleWindow.ShowDialog())
+                    if (arg.PropertyName == nameof(TextboxControllerViewModel.Text))
                     {
-                        double[] values = toggleWindow.GeneratedArg.Split(' ').Select(value =>
-                        {
-                            Executable.TryParseDouble(value, out double parsedValue);
-                            return parsedValue;
-                        }).ToArray();
+                        if (!Executable.TryParseDouble(textboxVM.Text.Trim(), out double fixedValue))
+                            return;
+                        // Обрезаем дробную часть, если необходимо
+                        fixedValue = asInteger ? (int)fixedValue : fixedValue;
 
-                        resultCmdBlock.Text = Executable.GenerateToggleCmd(cmd, values, asInteger).ToString();
-                        // Сохраним аргумент в теге
-                        resultCmdBlock.Tag = values;
+                        // сохраним последнее верное значение в тег текстового блока
+                        entryVM.Arg = fixedValue;
+
+                        string formatted = Executable.FormatNumber(fixedValue, asInteger);
+                        entryVM.Content = new SingleCmd($"{cmd} {formatted}").ToString();
 
                         //if ((bool)checkbox.IsChecked) // Добавляем в конфиг только если это сделал сам пользователь
-                        this.AddEntry(cmd, true);
-                    }
-                    else
-                    {
-
+                        AddEntry(cmd, true);
                     }
                 };
 
-                textbox.TextChanged += (obj, args) =>
+                this.entryV2Controllers.Add(new EntryControllerV2()
                 {
-                    if (!Executable.TryParseDouble(textbox.Text.Trim(), out double fixedValue))
-                        return;
-                    // Обрезаем дробную часть, если необходимо
-                    fixedValue = asInteger? (int)fixedValue: fixedValue;
-
-                    // сохраним последнее верное значение в тег текстового блока
-                    resultCmdBlock.Tag = fixedValue;
-
-                    string formatted = Executable.FormatNumber(fixedValue, asInteger);
-                    resultCmdBlock.Text = new SingleCmd($"{cmd} {formatted}").ToString();
-
-                    //if ((bool)checkbox.IsChecked) // Добавляем в конфиг только если это сделал сам пользователь
-                    AddEntry(cmd, true);
-                };
-
-                EntryController entryBinding = new EntryController()
-                {
-                    AttachedCheckbox = checkbox,
+                    AttachedViewModel = entryVM,
                     Focus = () =>
                     {
                         gameSettingsTabButton.IsChecked = true;
-                        checkbox.Focus();
+                        entryVM.IsFocused = true;
                     },
                     Restore = () =>
                     {
-                        checkbox.IsChecked = false;
-                        textbox.Text = fixedDefaultStrValue;
-                        resultCmdBlock.Tag = fixedDefaultValue;
+                        entryVM.IsChecked = false;
+                        textboxVM.Text = formattedDefaultStrValue;
+                        entryVM.Arg = coercedDefaultValue;
                     },
                     Generate = () =>
                     {
-                        SingleCmd generatedCmd = new SingleCmd(resultCmdBlock.Text);
+                        SingleCmd generatedCmd = new SingleCmd(entryVM.Content);
 
-                        if (resultCmdBlock.Tag is double)
+                        if (entryVM.Arg is double)
                         {
                             return new ParametrizedEntry<double>()
                             {
@@ -1475,7 +1503,7 @@ namespace ConfigMaker
                                 Cmd = generatedCmd,
                                 Type = EntryType.Dynamic,
                                 IsMetaScript = false,
-                                Arg = (double)resultCmdBlock.Tag // Подтягиваем аргумент из тега
+                                Arg = (double)entryVM.Arg // Подтягиваем аргумент из тега
                             };
                         }
                         else
@@ -1486,35 +1514,34 @@ namespace ConfigMaker
                                 Cmd = generatedCmd,
                                 Type = EntryType.Dynamic,
                                 IsMetaScript = false,
-                                Arg = (double[])resultCmdBlock.Tag // Подтягиваем аргумент из тега
+                                Arg = (double[])entryVM.Arg // Подтягиваем аргумент из тега
                             };
                         }
                     },
                     UpdateUI = (entry) =>
                     {
-                        checkbox.IsChecked = true;
+                        entryVM.IsChecked = true;
 
                         if (entry is IParametrizedEntry<double>)
                         {
                             IParametrizedEntry<double> extendedEntry = (IParametrizedEntry<double>)entry;
-                            textbox.Text = Executable.FormatNumber(extendedEntry.Arg, asInteger);
-                            resultCmdBlock.Tag = extendedEntry.Arg;
+                            textboxVM.Text = Executable.FormatNumber(extendedEntry.Arg, asInteger);
+                            entryVM.Arg = extendedEntry.Arg;
                         }
                         else
                         {
                             IParametrizedEntry<double[]> extendedEntry = (IParametrizedEntry<double[]>)entry;
                             double[] values = extendedEntry.Arg;
 
-                            resultCmdBlock.Text = Executable.GenerateToggleCmd(cmd, values, asInteger).ToString();
-                            resultCmdBlock.Tag = extendedEntry.Arg;                            
+                            entryVM.Content = Executable.GenerateToggleCmd(cmd, values, asInteger).ToString();
+                            entryVM.Arg = extendedEntry.Arg;                            
                         }                        
                     },
-                    HandleState = (state) => checkbox.IsEnabled = state != EntryStateBinding.InvalidState
-                };
-                this.entryControllers.Add(cmd, entryBinding);
+                    HandleState = (state) => entryVM.IsEnabled = state != EntryStateBinding.InvalidState
+                });
 
                 // Начальное значение
-                textbox.Text = fixedDefaultStrValue;
+                textboxVM.Text = formattedDefaultStrValue;
             };
 
             void AddTextboxStringCmdController(string cmd, string defaultValue)

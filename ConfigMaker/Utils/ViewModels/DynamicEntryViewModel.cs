@@ -12,6 +12,12 @@ namespace ConfigMaker.Utils.ViewModels
         bool _isVisible = true;
         bool _needToggle = false;
         BindableBase _controllerViewModel;
+        object _arg = null;
+
+        public DynamicEntryViewModel(BindableBase controllerViewModel)
+        {
+            this._controllerViewModel = controllerViewModel;
+        }
 
         public bool IsVisible
         {
@@ -28,7 +34,12 @@ namespace ConfigMaker.Utils.ViewModels
         public BindableBase ControllerViewModel
         {
             get => this._controllerViewModel;
-            set => this.SetProperty(ref _controllerViewModel, value);
+        }
+
+        public object Arg
+        {
+            get => this._arg;
+            set => this.SetProperty(ref _arg, value);
         }
     }
 }

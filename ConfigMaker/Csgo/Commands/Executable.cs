@@ -56,6 +56,12 @@ namespace ConfigMaker.Csgo.Commands
             return (asInteger/* || value % 1 == 0*/) ? ((int)value).ToString() : value.ToString("0.00", CultureInfo.InvariantCulture);
         }
 
+        public static double CoerceNumber(double value, bool asInteger)
+        {
+            string formattedDefaultStrValue = Executable.FormatNumber(value, asInteger);
+            return double.Parse(formattedDefaultStrValue, CultureInfo.InvariantCulture);
+        }
+
         public static bool TryParseDouble(string str, out double value)
         {
             double valueInTextbox;
