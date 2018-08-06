@@ -1048,7 +1048,7 @@ namespace ConfigMaker
                 return new Tuple<TextBlock, Grid, Button, CheckBox>(resultCmd, controlsGrid, toggleButton, checkbox);
             };
 
-            DynamicEntryViewModel PrepareEntryVM(string cmd, BindableBase controllerViewModel, bool needToggle)
+            DynamicEntryViewModel RegisterEntry(string cmd, BindableBase controllerViewModel, bool needToggle)
             {
                 DynamicEntryViewModel entryVM = new DynamicEntryViewModel(controllerViewModel)
                 {
@@ -1073,7 +1073,7 @@ namespace ConfigMaker
                 };
 
                 // Получим базовую модель представления
-                DynamicEntryViewModel entryVM = PrepareEntryVM(cmd, sliderVM, true);
+                DynamicEntryViewModel entryVM = RegisterEntry(cmd, sliderVM, true);
                 
 
                 //var tuple = PrepareNewRow(cmd, true);
@@ -1277,7 +1277,7 @@ namespace ConfigMaker
                 //    MaxHeight = rowHeight
 
                 ComboBoxControllerViewModel comboboxVM = new ComboBoxControllerViewModel();
-                DynamicEntryViewModel entryVM = PrepareEntryVM(cmd, comboboxVM, isIntegerArg);
+                DynamicEntryViewModel entryVM = RegisterEntry(cmd, comboboxVM, isIntegerArg);
                 //};
                 //comboboxGrid.Children.Add(combobox);
                 //ComboBoxAssist.SetClassicMode(combobox, true);
@@ -1423,7 +1423,7 @@ namespace ConfigMaker
                 double coercedDefaultValue = Executable.CoerceNumber(defaultValue, asInteger);
 
                 TextboxControllerViewModel textboxVM = new TextboxControllerViewModel();
-                DynamicEntryViewModel entryVM = PrepareEntryVM(cmd, textboxVM, true);
+                DynamicEntryViewModel entryVM = RegisterEntry(cmd, textboxVM, true);
 
                 //Grid textboxGrid = new Grid();
 
@@ -1546,43 +1546,46 @@ namespace ConfigMaker
 
             void AddTextboxStringCmdController(string cmd, string defaultValue)
             {
-                var tuple = PrepareNewRow(cmd, false);
-                TextBlock resultCmdBlock = tuple.Item1;
-                Grid textBoxGrid = tuple.Item2;
-                CheckBox checkbox = tuple.Item4;
+                //var tuple = PrepareNewRow(cmd, false);
+                //TextBlock resultCmdBlock = tuple.Item1;
+                //Grid textBoxGrid = tuple.Item2;
+                //CheckBox checkbox = tuple.Item4;
 
-                TextBox textbox = new TextBox
-                {
-                    MaxHeight = rowHeight
-                };
+                //TextBox textbox = new TextBox
+                //{
+                //    MaxHeight = rowHeight
+                //};
 
-                textBoxGrid.Children.Add(textbox);
+                //textBoxGrid.Children.Add(textbox);
 
-                textbox.TextChanged += (obj, args) =>
+                TextboxControllerViewModel textboxVM = new TextboxControllerViewModel();
+                DynamicEntryViewModel entryVM = RegisterEntry(cmd, textboxVM, false);
+
+                textboxVM.PropertyChanged += (_, arg) =>
                 {
                     // Обернем в команду только название команды, т.к. аргументы в нижнем регистре не нужны
-                    resultCmdBlock.Text = $"{new SingleCmd(cmd)} {textbox.Text}";
+                    entryVM.Content = $"{new SingleCmd(cmd)} {textboxVM.Text}";
 
                     //if ((bool)checkbox.IsChecked) // Добавляем в конфиг только если это сделал сам пользователь
                     AddEntry(cmd, true);
                 };
 
-                EntryController entryBinding = new EntryController()
+                this.entryV2Controllers.Add(new EntryControllerV2()
                 {
-                    AttachedCheckbox = checkbox,
+                    AttachedViewModel = entryVM,
                     Focus = () =>
                     {
                         gameSettingsTabButton.IsChecked = true;
-                        checkbox.Focus();
+                        entryVM.IsFocused = true;
                     },
                     Restore = () =>
                     {
-                        checkbox.IsChecked = false;
-                        textbox.Text = defaultValue;
+                        entryVM.IsChecked = false;
+                        textboxVM.Text = defaultValue;
                     },
                     Generate = () =>
                     {
-                        SingleCmd generatedCmd = new SingleCmd(resultCmdBlock.Text, false);
+                        SingleCmd generatedCmd = new SingleCmd(entryVM.Content, false);
 
                         return new ParametrizedEntry<string>()
                         {
@@ -1590,21 +1593,20 @@ namespace ConfigMaker
                             Cmd = generatedCmd,
                             Type = EntryType.Dynamic,
                             IsMetaScript = false,
-                            Arg = (string)textbox.Text // Подтягиваем аргумент из тега
+                            Arg = (string)textboxVM.Text // Подтягиваем аргумент из тега
                         };
                     },
                     UpdateUI = (entry) =>
                     {
-                        checkbox.IsChecked = true;
+                        entryVM.IsChecked = true;
                         IParametrizedEntry<string> extendedEntry = (IParametrizedEntry<string>)entry;
-                        textbox.Text = extendedEntry.Arg;
+                        textboxVM.Text = extendedEntry.Arg;
                     },
-                    HandleState = (state) => checkbox.IsEnabled = state != EntryStateBinding.InvalidState
-                };
-                this.entryControllers.Add(cmd, entryBinding);
+                    HandleState = (state) => entryVM.IsEnabled = state != EntryStateBinding.InvalidState
+                });
 
                 // Начальное значение
-                textbox.Text = defaultValue;
+                textboxVM.Text = defaultValue;
             };
 
             void AddGroupHeader(string text)
