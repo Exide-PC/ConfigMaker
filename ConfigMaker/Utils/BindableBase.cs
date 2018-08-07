@@ -21,6 +21,7 @@ namespace ConfigMaker.Utils
     /// <summary>
     /// Implementation of <see cref="INotifyPropertyChanged"/> to simplify models.
     /// </summary>
+    [System.Diagnostics.DebuggerStepThrough]
     public abstract class BindableBase : INotifyPropertyChanged
     {
         /// <summary>

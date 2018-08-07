@@ -117,6 +117,7 @@
     <Compile Include="Utils\ViewModels\IntervalControllerViewModel.cs" />
     <Compile Include="Utils\ViewModels\TextboxControllerViewModel.cs" />
     <Compile Include="Utils\ViewModels\TextViewModel.cs" />
+    <Compile Include="Utils\ViewModels\VolumeRegulatorControllerViewModel.cs" />
     <Compile Include="Utils\ViewModels\WeaponCategoryViewModel.cs" />
     <Compile Include="VirtualKeyboard.xaml.cs">
       <DependentUpon>VirtualKeyboard.xaml</DependentUpon>

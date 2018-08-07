@@ -320,6 +320,48 @@
                 </StackPanel>
             </GroupBox>
         </DataTemplate>
+
+        <DataTemplate DataType="{x:Type viewmodels:VolumeRegulatorControllerViewModel}">
+            <GroupBox>
+                <GroupBox.Header>
+                    <CheckBox
+                        Content="{Binding Content}"
+                        utils:FocusExtension.IsFocused="{Binding IsFocused}"
+                        IsEnabled="{Binding IsEnabled}" 
+                        IsChecked="{Binding IsChecked}"/>
+                </GroupBox.Header>
+                <StackPanel IsEnabled="{Binding IsChecked}">
+                    <StackPanel Orientation="Horizontal" Height="28">
+                        <TextBlock Width="30" Text="{x:Static res:Resources.From_Label}" />
+                        <Slider x:Name="minVolumeSlider" Value="{Binding From}" Width="150" Minimum="{Binding FromMinimum}" 
+                            Maximum="{Binding FromMaximum}" IsSnapToTickEnabled="True" TickFrequency="0.01"/>
+                        <Border Width="30">
+                            <TextBlock HorizontalAlignment="Center" Text="{Binding Path=Value, ElementName=minVolumeSlider}"/>
+                        </Border>
+                        <ComboBox Margin="25,0,0,0" Width="170" Name="volumeDirectionCombobox" SelectedIndex="{Binding Path=Mode}">
+                            <ComboBoxItem Content="{x:Static res:Resources.VolumeReduce_ComboboxItem}"/>
+                            <ComboBoxItem Content="{x:Static res:Resources.VolumeIncrease_ComboboxItem}"/>
+                        </ComboBox>
+                    </StackPanel>
+                    <StackPanel Orientation="Horizontal" Height="28">
+                        <TextBlock Width="30" Text="{x:Static res:Resources.To_Label}"/>
+                        <Slider x:Name="maxVolumeSlider" Value="{Binding To}" Width="150" Minimum="{Binding ToMinimum}" 
+                                Maximum="{Binding ToMaximum}" IsSnapToTickEnabled="True" TickFrequency="0.01"/>
+                        <Border Width="30">
+                            <TextBlock HorizontalAlignment="Center" Text="{Binding Path=Value, ElementName=maxVolumeSlider}"/>
+                        </Border>
+                    </StackPanel>
+                    <StackPanel Orientation="Horizontal" Height="28">
+                        <TextBlock Width="30" Text="{x:Static res:Resources.Step_Label}"/>
+                        <Slider x:Name="volumeStepSlider" Value="{Binding Step}" Width="150" Minimum="{Binding StepMinimum}"
+                                Maximum="{Binding StepMaximum}" IsSnapToTickEnabled="True" TickFrequency="0.01"/>
+                        <Border Width="30">
+                            <TextBlock HorizontalAlignment="Center" Text="{Binding Path=Value, ElementName=volumeStepSlider}"/>
+                        </Border>
+                    </StackPanel>
+                </StackPanel>
+            </GroupBox>
+        </DataTemplate>
     </Window.Resources>
     <Grid>
         <DockPanel LastChildFill="True">

@@ -2042,13 +2042,53 @@ namespace ConfigMaker
             cycleChVM.PropertyChanged += (_, arg) =>
             {
                 //if ((bool)cycleChHeaderCheckbox.IsChecked == true)
-                if (cycleChVM.IsChecked && arg.PropertyName == nameof(CycleCrosshairViewModel.CrosshairCount))
+                if (arg.PropertyName == nameof(CycleCrosshairViewModel.CrosshairCount))
                     this.AddEntry(cycleCrosshairEntryKey, true);
             };
 
 
-            //// volume regulator
-            //const string volumeRegulatorEntryKey = "VolumeRegulator";
+            // volume regulator
+            const string volumeRegulatorEntryKey = "VolumeRegulator";
+
+            VolumeRegulatorControllerViewModel volumeVM = new VolumeRegulatorControllerViewModel()
+            {
+                Content = Localize(volumeRegulatorEntryKey),
+                Key = volumeRegulatorEntryKey
+            };
+            extraItemsControl.Items.Add(volumeVM);
+
+            volumeVM.PropertyChanged += (_, arg) =>
+            {
+                string prop = arg.PropertyName;
+
+                if (prop == nameof(VolumeRegulatorControllerViewModel.Mode))
+                {
+                    this.AddEntry(volumeRegulatorEntryKey, true);
+                    return;
+                }
+                else if (prop == nameof(VolumeRegulatorControllerViewModel.From))
+                {
+                    volumeVM.ToMinimum = volumeVM.From + 0.01;
+                }
+                else if (prop == nameof(VolumeRegulatorControllerViewModel.To))
+                {
+                    volumeVM.FromMaximum = volumeVM.To - 0.01;
+                }
+                else if (prop == nameof(VolumeRegulatorControllerViewModel.Step))
+                {
+                    
+                }
+
+                // Определим дельту
+                double delta = volumeVM.To - volumeVM.From;
+                volumeVM.StepMaximum = delta;
+
+                // Обновим регулировщик в конфиге, если изменение было сделано пользователем
+                //if ((bool)volumeRegulatorCheckbox.IsChecked)
+                this.AddEntry(volumeRegulatorEntryKey, true);
+            };
+
+
             //this.volumeRegulatorCheckbox.Click += HandleEntryClick;
             //this.volumeRegulatorCheckbox.Tag = volumeRegulatorEntryKey;
 
@@ -2092,118 +2132,119 @@ namespace ConfigMaker
             //    this.AddEntry(volumeRegulatorEntryKey, true);
             //};
 
-            //this.entryControllers.Add(volumeRegulatorEntryKey, new EntryController()
-            //{
-            //    AttachedCheckbox = volumeRegulatorCheckbox,
-            //    Focus = () =>
-            //    {
-            //        extraTabButton.IsChecked = true;
-            //        volumeRegulatorCheckbox.Focus();
-            //    },
-            //    Generate = () =>
-            //    {
-            //        double minVolume = Math.Round(minVolumeSlider.Value, 2);
-            //        double maxVolume = Math.Round(maxVolumeSlider.Value, 2);
-            //        double volumeStep = Math.Round(volumeStepSlider.Value, 2);
-            //        volumeStep = volumeStep == 0 ? 0.01 : volumeStep;
-            //        bool volumeUp = volumeDirectionCombobox.SelectedIndex == 1;
+            this.entryV2Controllers.Add(new EntryControllerV2()
+            {
+                AttachedViewModel = volumeVM,
+                Focus = () =>
+                {
+                    extraTabButton.IsChecked = true;
+                    volumeVM.IsFocused = true;
+                },
+                Generate = () =>
+                {
+                    double minVolume = Math.Round(volumeVM.From, 2);
+                    double maxVolume = Math.Round(volumeVM.To, 2);
+                    double volumeStep = Math.Round(volumeVM.Step, 2);
+                    volumeStep = volumeStep == 0 ? 0.01 : volumeStep;
+                    bool volumeUp = volumeVM.Mode == 1;
 
-            //        // Определяем промежуточные значения от максимума к минимуму
-            //        List<double> volumeValues = new List<double>();
+                    // Определяем промежуточные значения от максимума к минимуму
+                    List<double> volumeValues = new List<double>();
 
-            //        double currentValue = maxVolume;
+                    double currentValue = maxVolume;
 
-            //        while (currentValue >= minVolume)
-            //        {
-            //            volumeValues.Add(currentValue);
-            //            currentValue -= volumeStep;
-            //            string formatted = Executable.FormatNumber(currentValue, false);
-            //            Executable.TryParseDouble(formatted, out currentValue);
-            //        }
-            //        // Если минимальное значение не захватилось, то добавим его вручную
-            //        if (volumeValues.Last() != minVolume)
-            //            volumeValues.Add(minVolume);
+                    while (currentValue >= minVolume)
+                    {
+                        volumeValues.Add(currentValue);
+                        currentValue -= volumeStep;
+                        string formatted = Executable.FormatNumber(currentValue, false);
+                        Executable.TryParseDouble(formatted, out currentValue);
+                    }
+                    // Если минимальное значение не захватилось, то добавим его вручную
+                    if (volumeValues.Last() != minVolume)
+                        volumeValues.Add(minVolume);
 
-            //        // Теперь упорядочим по возрастанию
-            //        volumeValues.Reverse();
+                    // Теперь упорядочим по возрастанию
+                    volumeValues.Reverse();
 
-            //        // Создаем цикл
-            //        string volumeUpCmd = "volume_up";
-            //        string volumeDownCmd = "volume_down";
+                    // Создаем цикл
+                    string volumeUpCmd = "volume_up";
+                    string volumeDownCmd = "volume_down";
 
-            //        SingleCmd[] iterationNames = volumeValues
-            //            .Select(v => new SingleCmd($"volume_{Executable.FormatNumber(v, false)}")).ToArray();
+                    SingleCmd[] iterationNames = volumeValues
+                        .Select(v => new SingleCmd($"volume_{Executable.FormatNumber(v, false)}")).ToArray();
 
-            //        CommandCollection dependencies = new CommandCollection();
+                    CommandCollection dependencies = new CommandCollection();
 
-            //        for (int i = 0; i < volumeValues.Count; i++)
-            //        {
-            //            double value = volumeValues[i];
-            //            string formattedValue = Executable.FormatNumber(value, false);
+                    for (int i = 0; i < volumeValues.Count; i++)
+                    {
+                        double value = volumeValues[i];
+                        string formattedValue = Executable.FormatNumber(value, false);
 
-            //            CommandCollection iterationCmds = new CommandCollection();
+                        CommandCollection iterationCmds = new CommandCollection();
 
-            //            // Задаем звук на текущей итерации с комментарием в консоль
-            //            SingleCmd volumeCmd = new SingleCmd($"volume {formattedValue}");
-            //            iterationCmds.Add(volumeCmd);
-            //            iterationCmds.Add(new SingleCmd($"echo {volumeCmd.ToString()}"));
+                        // Задаем звук на текущей итерации с комментарием в консоль
+                        SingleCmd volumeCmd = new SingleCmd($"volume {formattedValue}");
+                        iterationCmds.Add(volumeCmd);
+                        iterationCmds.Add(new SingleCmd($"echo {volumeCmd.ToString()}"));
 
-            //            if (i == 0)
-            //            {
-            //                iterationCmds.Add(
-            //                    new AliasCmd(volumeDownCmd, new SingleCmd("echo Volume: Min")));
-            //                iterationCmds.Add(
-            //                    new AliasCmd(volumeUpCmd, iterationNames[i + 1]));
-            //            }
-            //            else if (i == volumeValues.Count - 1)
-            //            {
-            //                iterationCmds.Add(
-            //                    new AliasCmd(volumeUpCmd, new SingleCmd("echo Volume: Max")));
-            //                iterationCmds.Add(
-            //                    new AliasCmd(volumeDownCmd, iterationNames[i - 1]));
-            //            }
-            //            else
-            //            {
-            //                iterationCmds.Add(
-            //                    new AliasCmd(volumeDownCmd, iterationNames[i - 1]));
-            //                iterationCmds.Add(
-            //                    new AliasCmd(volumeUpCmd, iterationNames[i + 1]));
-            //            }
+                        if (i == 0)
+                        {
+                            iterationCmds.Add(
+                                new AliasCmd(volumeDownCmd, new SingleCmd("echo Volume: Min")));
+                            iterationCmds.Add(
+                                new AliasCmd(volumeUpCmd, iterationNames[i + 1]));
+                        }
+                        else if (i == volumeValues.Count - 1)
+                        {
+                            iterationCmds.Add(
+                                new AliasCmd(volumeUpCmd, new SingleCmd("echo Volume: Max")));
+                            iterationCmds.Add(
+                                new AliasCmd(volumeDownCmd, iterationNames[i - 1]));
+                        }
+                        else
+                        {
+                            iterationCmds.Add(
+                                new AliasCmd(volumeDownCmd, iterationNames[i - 1]));
+                            iterationCmds.Add(
+                                new AliasCmd(volumeUpCmd, iterationNames[i + 1]));
+                        }
 
-            //            // Добавим зависимость
-            //            dependencies.Add(new AliasCmd(iterationNames[i].ToString(), iterationCmds));
-            //        }
+                        // Добавим зависимость
+                        dependencies.Add(new AliasCmd(iterationNames[i].ToString(), iterationCmds));
+                    }
 
-            //        // По умолчанию будет задано минимальное значение звука
-            //        dependencies.Add(iterationNames[0]);
+                    // По умолчанию будет задано минимальное значение звука
+                    dependencies.Add(iterationNames[0]);
 
-            //        return new ParametrizedEntry<double[]>()
-            //        {
-            //            PrimaryKey = volumeRegulatorEntryKey,
-            //            Cmd = volumeUp ? new SingleCmd(volumeUpCmd) : new SingleCmd(volumeDownCmd),
-            //            Type = EntryType.Semistatic,
-            //            IsMetaScript = false,
-            //            Dependencies = dependencies,
-            //            Arg = new double[] { minVolume, maxVolume, volumeStep }
-            //        };
-            //    },
-            //    UpdateUI = (entry) =>
-            //    {
-            //        volumeRegulatorCheckbox.IsChecked = true;
-            //        double[] args = ((IParametrizedEntry<double[]>)entry).Arg;
+                    return new ParametrizedEntry<double[]>()
+                    {
+                        PrimaryKey = volumeRegulatorEntryKey,
+                        Cmd = volumeUp ? new SingleCmd(volumeUpCmd) : new SingleCmd(volumeDownCmd),
+                        Type = EntryType.Semistatic,
+                        IsMetaScript = false,
+                        Dependencies = dependencies,
+                        Arg = new double[] { minVolume, maxVolume, volumeStep }
+                    };
+                },
+                UpdateUI = (entry) =>
+                {
+                    volumeVM.UpdateIsChecked(true);
+                    double[] args = ((IParametrizedEntry<double[]>)entry).Arg;
 
-            //        minVolumeSlider.Value = args[0];
-            //        maxVolumeSlider.Value = args[1];
-            //        volumeStepSlider.Value = args[2];
-            //        volumeDirectionCombobox.SelectedIndex = entry.Cmd.ToString() == "volume_up"? 1 : 0;
-            //    },
-            //    Restore = () =>
-            //    {
-            //        volumeRegulatorCheckbox.IsChecked = false;
-            //    },
-            //    HandleState = (state) => volumeRegulatorCheckbox.IsEnabled =
-            //        state != EntryStateBinding.InvalidState && state != EntryStateBinding.Default
-            //});
+                    volumeVM.From = args[0];
+                    volumeVM.To = args[1];
+                    volumeVM.Step = args[2];
+                    volumeVM.Mode = entry.Cmd.ToString() == "volume_up" ? 1 : 0;
+                },
+                Restore = () =>
+                {
+                    volumeVM.UpdateIsChecked(false);
+                    volumeVM.Mode = 0;
+                },
+                HandleState = (state) => volumeVM.IsEnabled =
+                    state != EntryStateBinding.InvalidState && state != EntryStateBinding.Default
+            });
         }
 
         void InitAliasController()
