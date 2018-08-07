@@ -1960,83 +1960,91 @@ namespace ConfigMaker
                 }
             });
 
-            //// cycle crosshairs
-            //const string cycleCrosshairEntryKey = "CycleCrosshair";
+            // cycle crosshairs
+            const string cycleCrosshairEntryKey = "CycleCrosshair";
+
+            CycleCrosshairViewModel cycleChVM = new CycleCrosshairViewModel()
+            {
+                Content = Localize(cycleCrosshairEntryKey),
+                Key = cycleCrosshairEntryKey
+            };
+            extraItemsControl.Items.Add(cycleChVM);
 
             //this.cycleChHeaderCheckbox.Click += HandleEntryClick;
             //this.cycleChHeaderCheckbox.Tag = cycleCrosshairEntryKey;
-            //this.entryControllers.Add(cycleCrosshairEntryKey, new EntryController()
-            //{
-            //    AttachedCheckbox = cycleChHeaderCheckbox,
-            //    Focus = () =>
-            //    {
-            //        extraTabButton.IsChecked = true;
-            //        cycleChHeaderCheckbox.Focus();
-            //    },
-            //    Generate = () =>
-            //    {
-            //        int crosshairCount = (int)cycleChSlider.Value;
-            //        string prefix = GeneratePrefix();
-            //        string scriptName = $"{prefix}_crosshairLoop";
+            this.entryV2Controllers.Add(new EntryControllerV2()
+            {
+                AttachedViewModel = cycleChVM,
+                Focus = () =>
+                {
+                    extraTabButton.IsChecked = true;
+                    cycleChVM.IsFocused = true;
+                },
+                Generate = () =>
+                {
+                    int crosshairCount = cycleChVM.CrosshairCount;
+                    string prefix = GeneratePrefix();
+                    string scriptName = $"{prefix}_crosshairLoop";
 
-            //        // Зададим имена итерациям
-            //        string[] iterationNames = new string[crosshairCount];
+                    // Зададим имена итерациям
+                    string[] iterationNames = new string[crosshairCount];
 
-            //        for (int i = 0; i < crosshairCount; i++)
-            //            iterationNames[i] = $"{scriptName}{i + 1}";
+                    for (int i = 0; i < crosshairCount; i++)
+                        iterationNames[i] = $"{scriptName}{i + 1}";
 
-            //        List<CommandCollection> iterations = new List<CommandCollection>();
+                    List<CommandCollection> iterations = new List<CommandCollection>();
 
-            //        for (int i = 0; i < crosshairCount; i++)
-            //        {
-            //            CommandCollection currentIteration = new CommandCollection()
-            //            {
-            //                new SingleCmd($"exec {prefix}_ch{i + 1}"),
-            //                new SingleCmd($"echo \"Crosshair {i + 1} loaded\"")
-            //            };
-            //            iterations.Add(currentIteration);
-            //        }
+                    for (int i = 0; i < crosshairCount; i++)
+                    {
+                        CommandCollection currentIteration = new CommandCollection()
+                        {
+                            new SingleCmd($"exec {prefix}_ch{i + 1}"),
+                            new SingleCmd($"echo \"Crosshair {i + 1} loaded\"")
+                        };
+                        iterations.Add(currentIteration);
+                    }
 
-            //        CycleCmd crosshairLoop = new CycleCmd(scriptName, iterations, iterationNames);
+                    CycleCmd crosshairLoop = new CycleCmd(scriptName, iterations, iterationNames);
 
-            //        // Задаем начальную команду для алиаса
-            //        CommandCollection dependencies = new CommandCollection();
+                    // Задаем начальную команду для алиаса
+                    CommandCollection dependencies = new CommandCollection();
 
-            //        // И добавим в конец все итерации нашего цикла
-            //        foreach (Executable iteration in crosshairLoop)
-            //            dependencies.Add(iteration);
+                    // И добавим в конец все итерации нашего цикла
+                    foreach (Executable iteration in crosshairLoop)
+                        dependencies.Add(iteration);
 
-            //        return new ParametrizedEntry<int>()
-            //        {
-            //            PrimaryKey = cycleCrosshairEntryKey,
-            //            Cmd = new SingleCmd(scriptName),
-            //            Type = EntryType.Dynamic,
-            //            IsMetaScript = false,
-            //            Arg = crosshairCount,
-            //            Dependencies = dependencies
-            //        };
-            //    },
-            //    UpdateUI = (entry) =>
-            //    {
-            //        cycleChHeaderCheckbox.IsChecked = true;
-            //        int crosshairCount = (entry as IParametrizedEntry<int>).Arg;
+                    return new ParametrizedEntry<int>()
+                    {
+                        PrimaryKey = cycleCrosshairEntryKey,
+                        Cmd = new SingleCmd(scriptName),
+                        Type = EntryType.Dynamic,
+                        IsMetaScript = false,
+                        Arg = crosshairCount,
+                        Dependencies = dependencies
+                    };
+                },
+                UpdateUI = (entry) =>
+                {
+                    cycleChVM.UpdateIsChecked(true);
+                    int crosshairCount = (entry as IParametrizedEntry<int>).Arg;
 
-            //        cycleChSlider.Value = crosshairCount;
-            //    },
-            //    Restore = () =>
-            //    {
-            //        cycleChHeaderCheckbox.IsChecked = false;
-            //        cycleChSlider.Value = cycleChSlider.Minimum;
-            //    },
-            //    HandleState = (state) => cycleChHeaderCheckbox.IsEnabled =
-            //        state != EntryStateBinding.Default && state != EntryStateBinding.InvalidState
-            //});
+                    cycleChVM.CrosshairCount = crosshairCount;
+                },
+                Restore = () =>
+                {
+                    cycleChVM.UpdateIsChecked(false);
+                    cycleChVM.CrosshairCount = cycleChVM.MinimumCount;
+                },
+                HandleState = (state) => cycleChVM.IsEnabled =
+                    state != EntryStateBinding.Default && state != EntryStateBinding.InvalidState
+            });
 
-            //cycleChSlider.ValueChanged += (_, __) =>
-            //{
-            //    //if ((bool)cycleChHeaderCheckbox.IsChecked == true)
-            //    this.AddEntry(cycleCrosshairEntryKey, true);
-            //};
+            cycleChVM.PropertyChanged += (_, arg) =>
+            {
+                //if ((bool)cycleChHeaderCheckbox.IsChecked == true)
+                if (cycleChVM.IsChecked && arg.PropertyName == nameof(CycleCrosshairViewModel.CrosshairCount))
+                    this.AddEntry(cycleCrosshairEntryKey, true);
+            };
 
 
             //// volume regulator

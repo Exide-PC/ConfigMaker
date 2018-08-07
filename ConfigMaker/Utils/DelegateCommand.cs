@@ -15,7 +15,7 @@ namespace ConfigMaker.Utils
             this._execute = execute;
         }
 
-        public bool CanExecute(object parameter) => true;
+        public bool CanExecute(object parameter) => _canExecute != null ? _canExecute(parameter) : true;
 
         public void Execute(object parameter)
         {

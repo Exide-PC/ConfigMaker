@@ -290,6 +290,36 @@
                 </StackPanel>
             </GroupBox>
         </DataTemplate>
+
+        <DataTemplate DataType="{x:Type viewmodels:CycleCrosshairViewModel}">
+            <GroupBox>
+                <GroupBox.Header>
+                    <CheckBox
+                        Content="{Binding Content}"
+                        utils:FocusExtension.IsFocused="{Binding IsFocused}"
+                        IsEnabled="{Binding IsEnabled}" 
+                        IsChecked="{Binding IsChecked}"/>
+                </GroupBox.Header>
+                <StackPanel Margin="0,3,0,3" Orientation="Horizontal" IsEnabled="{Binding IsChecked}">
+                    <Slider 
+                        VerticalAlignment="Center" 
+                        x:Name="cycleChSlider" 
+                        Minimum="{Binding MinimumCount}" 
+                        Maximum="{Binding MaximumCount}" 
+                        TickFrequency="1" 
+                        Value="{Binding CrosshairCount, Mode=TwoWay}" 
+                        Width="100" 
+                        IsSnapToTickEnabled="True" />
+                    <TextBlock 
+                        VerticalAlignment="Center" 
+                        Margin="5,0,5,0" 
+                        Text="{Binding ElementName=cycleChSlider, Path=Value}"/>
+                    <Button 
+                        Content="{x:Static res:Resources.GenerateCrosshairs_Button}"
+                        Click="GenerateRandomCrosshairsButton_Click"/>
+                </StackPanel>
+            </GroupBox>
+        </DataTemplate>
     </Window.Resources>
     <Grid>
         <DockPanel LastChildFill="True">

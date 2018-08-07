@@ -111,6 +111,7 @@
     <Compile Include="Utils\ViewModels\BuyViewModel.cs" />
     <Compile Include="Utils\ViewModels\ComboBoxControllerViewModel.cs" />
     <Compile Include="Utils\ViewModels\CustomCmdControllerViewModel.cs" />
+    <Compile Include="Utils\ViewModels\CycleCrosshairViewModel.cs" />
     <Compile Include="Utils\ViewModels\DynamicEntryViewModel.cs" />
     <Compile Include="Utils\ViewModels\EntryViewModel.cs" />
     <Compile Include="Utils\ViewModels\IntervalControllerViewModel.cs" />
