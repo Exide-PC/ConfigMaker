@@ -17,11 +17,13 @@
          TextOptions.TextRenderingMode="Auto"
          Background="{DynamicResource MaterialDesignPaper}"
          FontFamily="{DynamicResource MaterialDesignFont}"
+        xmlns:i="http://schemas.microsoft.com/expression/2010/interactivity"
         mc:Ignorable="d"
         Title="" Height="500" Width="1120" MinHeight="500" MinWidth="1120" Loaded="Window_Loaded" Closing="Window_Closing" Name="mainWindow" WindowState="Maximized">
     <Window.Resources>
         <converters:AliasNameVerifier x:Key="nameToEnableConverter"/>
         <converters:IsNullConverter x:Key="isNullConverter"/>
+        <converters:BoolToFontWeightConverter x:Key="boolToFontweightConverter"/>
         <converters:BoolToVisibilityConverter x:Key="boolToVisibilityConverter"/>
         <Style x:Key="BubbleButton" TargetType="materialDesign:Chip">
             <Setter Property="FontSize" Value="10"/>
@@ -241,16 +243,51 @@
             <TextBox Text="{Binding Text, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" VerticalAlignment="Center"/>
         </DataTemplate>
 
-        <DataTemplate DataType="{x:Type viewmodels:ExtraEntryViewModel}">
+        <DataTemplate DataType="{x:Type viewmodels:BubbleViewModel}">
+            <materialDesign:Chip 
+                Style="{StaticResource BubbleButton}"
+                Content="{Binding Text}"
+                FontSize="{Binding FontSize}" 
+                FontWeight="{Binding IsSelected, Converter={StaticResource boolToFontweightConverter}}"
+                Command="{Binding SelectCommand}">
+            </materialDesign:Chip>
+        </DataTemplate>
+
+        <DataTemplate DataType="{x:Type viewmodels:CustomCmdControllerViewModel}">
             <GroupBox>
                 <GroupBox.Header>
-                    <CheckBox 
+                    <CheckBox
                         Content="{Binding Content}"
                         utils:FocusExtension.IsFocused="{Binding IsFocused}"
                         IsEnabled="{Binding IsEnabled}" 
                         IsChecked="{Binding IsChecked}"/>
                 </GroupBox.Header>
-                <ContentControl Content="{Binding ControllerViewModel}" IsEnabled="{Binding IsChecked}"/>
+                <StackPanel Orientation="Vertical" IsEnabled="{Binding IsChecked}">
+                    <StackPanel Orientation="Horizontal">
+                        <TextBox 
+                            Text="{Binding CmdName, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" 
+                            Width="250" 
+                            TextChanged="TextBox_TextChanged"/>
+                        <Button 
+                            IsEnabled="{Binding AddButtonEnabled}" 
+                            Content="{x:Static res:Resources.Add_Button}"
+                            Click="AddCmdButton_Click"/>
+                        <Button 
+                            IsEnabled="{Binding DeleteButtonEnabled}" 
+                            Content="{x:Static res:Resources.Remove_Button}"
+                            Click="DeleteCmdButton_Click"/>
+                    </StackPanel>
+                    <Border Style="{StaticResource CustomBorder}" Margin="0,2,0,0">
+                        <ItemsControl ItemsSource="{Binding Bubbles}">
+                            <ItemsControl.ItemsPanel>
+                                <ItemsPanelTemplate>
+                                    <WrapPanel Orientation="Horizontal" Height="70"/>
+                                </ItemsPanelTemplate>
+                            </ItemsControl.ItemsPanel>
+                        </ItemsControl>
+                        <!--<WrapPanel Name="customCmdPanel" Height="70"/>-->
+                    </Border>
+                </StackPanel>
             </GroupBox>
         </DataTemplate>
     </Window.Resources>
@@ -406,15 +443,20 @@
                             <Grid>
                                 <ScrollViewer>
                                     <Grid>
-                                        <StackPanel Margin="3" Orientation="Vertical">
-                                            <StackPanel.Resources>
-                                                <Style TargetType="CheckBox" BasedOn="{StaticResource {x:Type CheckBox}}">
-                                                    <Setter Property="Foreground" Value="{StaticResource PrimaryHueMidForegroundBrush}"/>
-                                                    <Setter Property="Background" Value="{StaticResource MaterialDesignPaper}"/>
-                                                </Style>
-                                            </StackPanel.Resources>
+                                        <Grid.Resources>
+                                            <Style TargetType="CheckBox" BasedOn="{StaticResource {x:Type CheckBox}}">
+                                                <Setter Property="Foreground" Value="{StaticResource PrimaryHueMidForegroundBrush}"/>
+                                                <Setter Property="Background" Value="{StaticResource MaterialDesignPaper}"/>
+                                            </Style>
+                                        </Grid.Resources>
+                                        <ItemsControl Name="extraItemsControl">
+                                            <ItemsControl.ItemsPanel>
+                                                <ItemsPanelTemplate>
+                                                    <StackPanel Orientation="Vertical"/>
+                                                </ItemsPanelTemplate>
+                                            </ItemsControl.ItemsPanel>
                                             <!--Exec custom cmd-->
-                                            <GroupBox>
+                                            <!--<GroupBox>
                                                 <GroupBox.Header>
                                                     <CheckBox Content="{x:Static res:Resources.ExecCustomCmds}" Name="customCmdHeaderCheckbox"/>
                                                 </GroupBox.Header>
@@ -453,9 +495,9 @@
                                                         </Border>
                                                     </StackPanel>
                                                 </Grid>
-                                            </GroupBox>
+                                            </GroupBox>-->
                                             <!--Cycle crosshair groupbox-->
-                                            <GroupBox>
+                                            <!--<GroupBox>
                                                 <GroupBox.Header>
                                                     <CheckBox Content="{x:Static res:Resources.CycleCrosshair}" Name="cycleChHeaderCheckbox"/>
                                                 </GroupBox.Header>
@@ -477,7 +519,7 @@
                                                     </StackPanel>
                                                 </Grid>
                                             </GroupBox>
-                                            <!--Volume regulator groupbox-->
+                                            --><!--Volume regulator groupbox--><!--
                                             <GroupBox>
                                                 <GroupBox.Header>
                                                     <CheckBox Content="{x:Static res:Resources.VolumeRegulator}" Name="volumeRegulatorCheckbox"/>
@@ -521,8 +563,8 @@
                                                         </StackPanel>
                                                     </StackPanel>
                                                 </Grid>
-                                            </GroupBox>
-                                        </StackPanel>
+                                            </GroupBox>-->
+                                        </ItemsControl>
                                     </Grid>
                                 </ScrollViewer>
                             </Grid>

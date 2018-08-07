@@ -14,6 +14,7 @@ namespace ConfigMaker.Utils.ViewModels
         string _key = null;
         bool _isFocused = false;
         bool isRestoreMode = false;
+        object _arg = null;
 
         public event EventHandler Click;
 
@@ -75,6 +76,12 @@ namespace ConfigMaker.Utils.ViewModels
                 // Сбросим свойство обратно, чтобы можно было фокусить элемент снова
                 //this.SetProperty(ref _isFocused, false);
             }
+        }
+
+        public object Arg
+        {
+            get => this._arg;
+            set => this.SetProperty(ref _arg, value);
         }
     }
 }

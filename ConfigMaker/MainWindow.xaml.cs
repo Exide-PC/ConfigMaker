@@ -46,6 +46,7 @@ using ConfigMaker.Csgo.Config.Entries.interfaces;
 using ConfigMaker.Utils;
 using System.Collections.ObjectModel;
 using ConfigMaker.Utils.ViewModels;
+using System.Windows.Input;
 
 namespace ConfigMaker
 {
@@ -73,7 +74,7 @@ namespace ConfigMaker
         //ObservableCollection<object> actionTabColl = new ObservableCollection<object>();
 
         //Dictionary<string, EntryController> entryControllers = new Dictionary<string, EntryController>();
-        List<EntryControllerV2> entryV2Controllers = new List<EntryControllerV2>();
+        ObservableCollection<EntryControllerV2> entryV2Controllers = new ObservableCollection<EntryControllerV2>();
 
         public EntryStateBinding StateBinding
         {
@@ -92,6 +93,18 @@ namespace ConfigMaker
             get => (string)GetValue(CfgNameProperty);
             set => SetValue(CfgNameProperty, value);
         }
+
+        //public ICommand AddCmdCommand
+        //{
+        //    get => (ICommand)GetValue(AddCmdCommandProperty);
+        //    set => SetValue(AddCmdCommandProperty, value);
+        //}
+
+        //public ICommand HandleCmdNameCommand
+        //{
+        //    get => (ICommand)GetValue(HandleCmdNameCommandProperty);
+        //    set => SetValue(HandleCmdNameCommandProperty, value);
+        //}
 
         public static readonly DependencyProperty StateBindingProperty;
         public static readonly DependencyProperty CfgNameProperty;
@@ -164,6 +177,18 @@ namespace ConfigMaker
             // Добавляем слушателя на нажатие виртуальной клавиатуры
             this.kb.OnKeyboardKeyDown += KeyboardKeyDownHandler;
 
+            // Пусть коллекция сама добавляет слушатель нажатия новым элементам
+            this.entryV2Controllers.CollectionChanged += (_, arg) =>
+            {
+                if (arg.Action == System.Collections.Specialized.NotifyCollectionChangedAction.Add)
+                {
+                    EntryControllerV2 controller = (EntryControllerV2)arg.NewItems[0];
+                    EntryViewModel entryVM = controller.AttachedViewModel;
+                    entryVM.Click += (__, ___) => HandleEntryClick(entryVM.Key);
+                }
+            }; 
+
+            // Инициализируем интерфейс
             InitActionTab();
             InitBuyTab();
             InitGameSettingsTab();
@@ -335,28 +360,28 @@ namespace ConfigMaker
                 this.SetStateAndUpdateUI(EntryStateBinding.InvalidState);
             }
         }
+        
+        //private void CommandNameTextbox_TextChanged(object sender, TextChangedEventArgs e)
+        //{
+        //    TextBox box = (TextBox)sender;
+        //    string text = box.Text.Trim();
 
-        private void CommandNameTextbox_TextChanged(object sender, TextChangedEventArgs e)
-        {
-            TextBox box = (TextBox)sender;
-            string text = box.Text.Trim();
+        //    // Отключаем кнопку добавления новой команды
+        //    addCmdButton.IsEnabled = false;
 
-            // Отключаем кнопку добавления новой команды
-            addCmdButton.IsEnabled = false;
+        //    // И включаем только если задана новая команда и её до этого не было
+        //    // TODO: Проверка имени регуляркой
+        //    if (text.Length == 0)
+        //        return;
+        //    else if (customCmdPanel.Children.OfType<ButtonBase>().Any(b => b.Content.ToString() == text))
+        //        return;
 
-            // И включаем только если задана новая команда и её до этого не было
-            // TODO: Проверка имени регуляркой
-            if (text.Length == 0)
-                return;
-            else if (customCmdPanel.Children.OfType<ButtonBase>().Any(b => b.Content.ToString() == text))
-                return;
-
-            addCmdButton.IsEnabled = true;
-        }
+        //    addCmdButton.IsEnabled = true;
+        //}
         
         private void GenerateRandomCrosshairsButton_Click(object sender, RoutedEventArgs e)
         {
-            int count = (int)cycleChSlider.Value;
+            int count = 2;//(int)cycleChSlider.Value; // TODO: fix
             string prefix = GeneratePrefix();
             Random rnd = new Random();
 
@@ -509,6 +534,27 @@ namespace ConfigMaker
         {
             new AboutWindow().ShowDialog();
         }
+
+        /// <summary>
+        /// Прокси-метод, вызываемый текстбоксом, которйы в свою очередь вызывает 
+        /// команду с доступом к данным об элементе ExecCustomCmds
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void TextBox_TextChanged(object sender, TextChangedEventArgs e)
+        {
+            this.HandleCmdNameCommand.Execute(null);
+        }
+
+        private void AddCmdButton_Click(object sender, RoutedEventArgs e)
+        {
+            this.AddCmdCommand.Execute(null);
+        }
+
+        private void DeleteCmdButton_Click(object sender, RoutedEventArgs e)
+        {
+            this.DeleteCmdCommand.Execute(null);
+        }
         #endregion
 
         #region Filling UI with config entry managers
@@ -527,7 +573,7 @@ namespace ConfigMaker
                     ToolTip = isMeta ? $"+{cmd.ToLower()}" : $"{cmd.ToLower()}"
                 };
                 
-                actionVM.Click += (sender, arg) => HandleEntryClick(cmd);
+                //actionVM.Click += (sender, arg) => HandleEntryClick(cmd);
 
                 // переводим команду в нижний регистр для удобства восприятия
                 //cmd = cmd.ToLower();
@@ -803,7 +849,7 @@ namespace ConfigMaker
             // Зададим контент в лице самой модели представления из которой будет формироваться интерфейс закупки
             buyTabContentControl.Content = buyVM;
 
-            buyVM.Click += (sender, arg) => HandleEntryClick(buyScenarioEntryKey);
+            //buyVM.Click += (sender, arg) => HandleEntryClick(buyScenarioEntryKey);
                 
             //buyTabStackPanel.Children.Add(buyVM);
 
@@ -894,7 +940,7 @@ namespace ConfigMaker
                 };
 
                 // При нажатии на чекбокс оружия искусственно вызовем событие обработки нажатия на главный чекбокс
-                weaponVM.Click += (sender, arg) => this.AddEntry(buyScenarioEntryKey, false);
+                //weaponVM.Click += (sender, arg) => this.AddEntry(buyScenarioEntryKey, false);
 
                 //weaponVM.Click += (_, __) =>
                 //{
@@ -1745,37 +1791,63 @@ namespace ConfigMaker
             AddIntervalCmdController("bot_mimic_yaw_offset", 0, 180, 5, 0);
         }
 
+        public ICommand AddCmdCommand { get; set; }
+        public ICommand HandleCmdNameCommand { get; set; }
+        public ICommand DeleteCmdCommand { get; set; }
+
         void InitExtra()
         {
             // --- custom command execution ---
             const string execCustomCmdsEntryKey = "ExecCustomCmds";
-            this.customCmdHeaderCheckbox.Click += HandleEntryClick;
-            this.customCmdHeaderCheckbox.Tag = execCustomCmdsEntryKey;
+
+            CustomCmdControllerViewModel customCmdVM = new CustomCmdControllerViewModel()
+            {
+                Content = this.Localize(execCustomCmdsEntryKey),
+                Key = execCustomCmdsEntryKey
+            };
+            extraItemsControl.Items.Add(customCmdVM);
+
+            this.HandleCmdNameCommand = new DelegateCommand(() =>
+            {
+                // Получим команду
+                string cmdName = customCmdVM.CmdName.Trim();
+                // И разрешаем её добавить только если длина больше 0
+                customCmdVM.AddButtonEnabled = cmdName.Length > 0;
+            });
+            /*
+             * TODO: Доделать DataTemplate для CustomCmdControllerViewModel
+             * Создать команды, обработать клик на BubbleViewModel
+             * 
+             */
+
+            //this.customCmdHeaderCheckbox.Click += HandleEntryClick;
+            //this.customCmdHeaderCheckbox.Tag = execCustomCmdsEntryKey;
 
             // Зададим действия по клику на кнопки в этом методе, чтобы ключ нигде кроме как здесь не упоминался
             // Повесим действие по добавлению новой команды на кнопку
-            addCmdButton.Click += (sender, args) =>
+            this.AddCmdCommand = new DelegateCommand(() =>
             {
-                ButtonBase cmdElement = new Chip
-                {
-                    Style = (Style)this.Resources["BubbleButton"],
-                    Content = cmdTextbox.Text.Trim()
-                };
-                customCmdPanel.Children.Add(cmdElement);
-                customCmdPanel.Tag = cmdElement;
+                customCmdVM.Bubbles.Add(new BubbleViewModel() { Text = customCmdVM.CmdName });
+                //ButtonBase cmdElement = new Chip
+                //{
+                //    Style = (Style)this.Resources["BubbleButton"],
+                //    Content = cmdTextbox.Text.Trim()
+                //};
+                //customCmdPanel.Children.Add(cmdElement);
+                //customCmdPanel.Tag = cmdElement;
 
-                cmdElement.Click += (_, __) => customCmdPanel.Tag = cmdElement;
+                //cmdElement.Click += (_, __) => customCmdPanel.Tag = cmdElement;
 
-                Binding tagBinding = new Binding("Tag")
-                {
-                    Source = customCmdPanel,
-                    Converter = new TagToFontWeightConverter(),
-                    ConverterParameter = cmdElement
-                };
-                cmdElement.SetBinding(ButtonBase.FontWeightProperty, tagBinding);
+                //Binding tagBinding = new Binding("Tag")
+                //{
+                //    Source = customCmdPanel,
+                //    Converter = new TagToFontWeightConverter(),
+                //    ConverterParameter = cmdElement
+                //};
+                //cmdElement.SetBinding(ButtonBase.FontWeightProperty, tagBinding);
 
                 AddEntry(execCustomCmdsEntryKey, false);
-            };
+            });
             // Обработчик нажатия на кнопку добавления неизвестной программе команды
             addUnknownCmdButton.Click += (sender, args) =>
             {
@@ -1785,99 +1857,108 @@ namespace ConfigMaker
 
                 // Добавим указанную пользователем команду в контроллер ExecCustomCmds
                 string cmd = searchCmdBox.Text.Trim();
+                customCmdVM.CmdName = cmd;
+
+                // И выполним команду по добавлению
+                this.AddCmdCommand.Execute(null);
 
                 // Сделаем контроллер активным, искусственно нажав кнопку, если он не активен.
                 // Т.к. искусственный вызов ClickEvent не чекбоксе не меняет его состояния,
                 // переключим его вручную и вызовем нужный метод для добавления в конфиг элемента
-                customCmdHeaderCheckbox.IsChecked = true;
-                HandleEntryClick(customCmdHeaderCheckbox, new RoutedEventArgs(CheckBox.ClickEvent));
+                //customCmdHeaderCheckbox.IsChecked = true;
+                //HandleEntryClick(customCmdHeaderCheckbox, new RoutedEventArgs(CheckBox.ClickEvent));
+                customCmdVM.IsChecked = true;
                 
-                cmdTextbox.Text = cmd;
-                addCmdButton.RaiseEvent(new RoutedEventArgs(ButtonBase.ClickEvent));
-                cmdTextbox.Text = string.Empty;
+                //cmdTextbox.Text = cmd;
+                //addCmdButton.RaiseEvent(new RoutedEventArgs(ButtonBase.ClickEvent));
+                //cmdTextbox.Text = string.Empty;
             };
 
             // А так же повесим действие на кнопку удаления команды
-            deleteCmdButton.Click += (sender, args) =>
+            this.DeleteCmdCommand = new DelegateCommand(() =>
             {
-                ButtonBase targetButton = customCmdPanel.Tag as ButtonBase;
-                BindingOperations.ClearAllBindings(targetButton);
-                customCmdPanel.Children.Remove(targetButton);
+                int firstSelectedIndex = customCmdVM.Bubbles
+                    .IndexOf(customCmdVM.Bubbles.First(b => b.IsSelected));
 
-                if (customCmdPanel.Children.Count > 0)
+                customCmdVM.Bubbles.RemoveAt(firstSelectedIndex);
+                //ButtonBase targetButton = customCmdPanel.Tag as ButtonBase;
+                //BindingOperations.ClearAllBindings(targetButton);
+                //customCmdPanel.Children.Remove(targetButton);
+
+                //if (customCmdPanel.Children.Count > 0)
+                //{
+                //    customCmdPanel.Tag = customCmdPanel.Children[0];
+                //    this.AddEntry(execCustomCmdsEntryKey, false);
+                //}
+                //else
+                //{
+                //    customCmdPanel.Tag = null;
+                //}
+                AddEntry(execCustomCmdsEntryKey, false);
+            });
+
+            this.entryV2Controllers.Add(new EntryControllerV2()
+            {
+                AttachedViewModel = customCmdVM,
+                Focus = () => extraTabButton.IsChecked = true,
+                HandleState = (state) => customCmdVM.IsEnabled = state != EntryStateBinding.InvalidState,
+                Restore = () =>
                 {
-                    customCmdPanel.Tag = customCmdPanel.Children[0];
-                    this.AddEntry(execCustomCmdsEntryKey, false);
-                }
-                else
+                    customCmdVM.Bubbles.Clear();
+
+                    customCmdVM.CmdName = string.Empty;
+                    customCmdVM.UpdateIsChecked(false);
+                },
+                Generate = () =>
                 {
-                    customCmdPanel.Tag = null;
+                    // Получим все указанные пользователем команды
+                    string[] cmds = customCmdVM.Bubbles.Select(b => b.Text).ToArray();
+
+                    SingleCmd cmd = null;
+                    CommandCollection dependencies = null;
+
+                    // Если указана только одна команда - просто выписываем её в конфиг напрямую
+                    if (cmds.Length == 1)
+                    {
+                        cmd = new SingleCmd(cmds[0].Trim());
+                        dependencies = new CommandCollection();
+                    }
+                    else
+                    {
+                        // Иначе генерируем специальный алиас и привязываемся к нему
+                        string aliasName = $"{GeneratePrefix()}_exec";
+                        AliasCmd execCmdsAlias = new AliasCmd(aliasName, cmds.Select(strCmd => new SingleCmd(strCmd)));
+
+                        cmd = new SingleCmd(aliasName);
+                        dependencies = new CommandCollection(execCmdsAlias);
+                    }
+
+                    return new ParametrizedEntry<string[]>()
+                    {
+                        PrimaryKey = execCustomCmdsEntryKey,
+                        Cmd = cmd,
+                        IsMetaScript = false,
+                        Type = EntryType.Dynamic,
+                        Dependencies = dependencies,
+                        Arg = cmds
+                    };
+                },
+                UpdateUI = (entry) =>
+                {
+                    customCmdVM.UpdateIsChecked(true);
+
+                    IParametrizedEntry<string[]> extendedEntry = (IParametrizedEntry<string[]>)entry;
+                    string[] cmds = extendedEntry.Arg;
+
+                    customCmdVM.Bubbles.Clear();
+
+                    foreach (string cmd in cmds)
+                    {
+                        customCmdVM.CmdName = cmd;
+                        this.AddCmdCommand.Execute(null);
+                    }
                 }
-            };
-
-            //this.entryControllers.Add(execCustomCmdsEntryKey, new EntryController()
-            //{
-            //    AttachedCheckbox = customCmdHeaderCheckbox,
-            //    Focus = () => extraTabButton.IsChecked = true,
-            //    HandleState = (state) => customCmdHeaderCheckbox.IsEnabled = state != EntryStateBinding.InvalidState,
-            //    Restore = () =>
-            //    {
-            //        this.ClearPanel_s(customCmdPanel);
-
-            //        cmdTextbox.Text = string.Empty;
-            //        customCmdHeaderCheckbox.IsChecked = false;
-            //    },
-            //    Generate = () =>
-            //    {
-            //        // Получим все указанные пользователем команды
-            //        string[] cmds = customCmdPanel.Children.OfType<ButtonBase>()
-            //            .Select(b => b.Content.ToString()).ToArray();
-
-            //        SingleCmd cmd = null;
-            //        CommandCollection dependencies = null;
-
-            //        // Если указана только одна команда - просто выписываем её в конфиг напрямую
-            //        if (cmds.Length == 1)
-            //        {
-            //            cmd = new SingleCmd(cmds[0].Trim());
-            //            dependencies = new CommandCollection();
-            //        }
-            //        else
-            //        {
-            //            // Иначе генерируем специальный алиас и привязываемся к нему
-            //            string aliasName = $"{GeneratePrefix()}_exec";
-            //            AliasCmd execCmdsAlias = new AliasCmd(aliasName, cmds.Select(strCmd => new SingleCmd(strCmd)));
-
-            //            cmd = new SingleCmd(aliasName);
-            //            dependencies = new CommandCollection(execCmdsAlias);
-            //        }
-
-            //        return new ParametrizedEntry<string[]>()
-            //        {
-            //            PrimaryKey = execCustomCmdsEntryKey,
-            //            Cmd = cmd,
-            //            IsMetaScript = false,
-            //            Type = EntryType.Dynamic,
-            //            Dependencies = dependencies,
-            //            Arg = cmds
-            //        };
-            //    },
-            //    UpdateUI = (entry) =>
-            //    {
-            //        customCmdHeaderCheckbox.IsChecked = true;
-
-            //        IParametrizedEntry<string[]> extendedEntry = (IParametrizedEntry<string[]>)entry;
-            //        string[] cmds = extendedEntry.Arg;
-
-            //        this.ClearPanel_s(customCmdPanel);
-
-            //        foreach (string cmd in cmds)
-            //        {
-            //            cmdTextbox.Text = cmd;
-            //            addCmdButton.RaiseEvent(new RoutedEventArgs(ButtonBase.ClickEvent));
-            //        }
-            //    }
-            //});
+            });
 
             //// cycle crosshairs
             //const string cycleCrosshairEntryKey = "CycleCrosshair";
@@ -2326,8 +2407,9 @@ namespace ConfigMaker
         void SetStateAndUpdateUI(EntryStateBinding newState)
         {
             this.StateBinding = newState;
-            
-            this.entryV2Controllers.ForEach(c => c.HandleState(this.StateBinding));
+
+            foreach (var controller in this.entryV2Controllers)
+                controller.HandleState(this.StateBinding);
         }
 
         BindEntry ConvertToBindEntry(Entry entry)

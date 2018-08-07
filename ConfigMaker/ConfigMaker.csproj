@@ -46,6 +46,9 @@
     <Reference Include="System" />
     <Reference Include="System.Data" />
     <Reference Include="System.Drawing" />
+    <Reference Include="System.Windows.Interactivity, Version=4.5.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <HintPath>..\packages\Expression.Blend.Sdk.1.0.2\lib\net45\System.Windows.Interactivity.dll</HintPath>
+    </Reference>
     <Reference Include="System.Xaml" />
     <Reference Include="System.Xml" />
     <Reference Include="Microsoft.CSharp" />
@@ -72,6 +75,7 @@
       <DependentUpon>Resources.resx</DependentUpon>
     </Compile>
     <Compile Include="Utils\BindableBase.cs" />
+    <Compile Include="Utils\Converters\BoolToFontWeightConverter.cs" />
     <Compile Include="Utils\Converters\BoolToVisibilityConverter.cs" />
     <Compile Include="Utils\Converters\CfgDirValidationRule.cs" />
     <Compile Include="Utils\Converters\NameValidationRule.cs" />
@@ -92,6 +96,7 @@
     <Compile Include="Csgo\Config\ConfigManager.cs" />
     <Compile Include="Csgo\Config\Entries\BindEntry.cs" />
     <Compile Include="Csgo\Config\KeySequence.cs" />
+    <Compile Include="Utils\DelegateCommand.cs" />
     <Compile Include="Utils\EntryController.cs" />
     <Compile Include="Utils\Converters\IsNullConverter.cs" />
     <Compile Include="Utils\Converters\AliasNameVerifier.cs" />
@@ -102,11 +107,12 @@
       <DependentUpon>ToggleWindow.xaml</DependentUpon>
     </Compile>
     <Compile Include="Utils\ViewModels\ActionViewModel.cs" />
+    <Compile Include="Utils\ViewModels\BubbleViewModel.cs" />
     <Compile Include="Utils\ViewModels\BuyViewModel.cs" />
     <Compile Include="Utils\ViewModels\ComboBoxControllerViewModel.cs" />
+    <Compile Include="Utils\ViewModels\CustomCmdControllerViewModel.cs" />
     <Compile Include="Utils\ViewModels\DynamicEntryViewModel.cs" />
     <Compile Include="Utils\ViewModels\EntryViewModel.cs" />
-    <Compile Include="Utils\ViewModels\ExtraEntryViewModel.cs" />
     <Compile Include="Utils\ViewModels\IntervalControllerViewModel.cs" />
     <Compile Include="Utils\ViewModels\TextboxControllerViewModel.cs" />
     <Compile Include="Utils\ViewModels\TextViewModel.cs" />
