@@ -361,70 +361,6 @@ namespace ConfigMaker
             }
         }
         
-        //private void CommandNameTextbox_TextChanged(object sender, TextChangedEventArgs e)
-        //{
-        //    TextBox box = (TextBox)sender;
-        //    string text = box.Text.Trim();
-
-        //    // Отключаем кнопку добавления новой команды
-        //    addCmdButton.IsEnabled = false;
-
-        //    // И включаем только если задана новая команда и её до этого не было
-        //    // TODO: Проверка имени регуляркой
-        //    if (text.Length == 0)
-        //        return;
-        //    else if (customCmdPanel.Children.OfType<ButtonBase>().Any(b => b.Content.ToString() == text))
-        //        return;
-
-        //    addCmdButton.IsEnabled = true;
-        //}
-        
-        private void GenerateRandomCrosshairsButton_Click(object sender, RoutedEventArgs e)
-        {
-            int count = 2;//(int)cycleChSlider.Value; // TODO: fix
-            string prefix = GeneratePrefix();
-            Random rnd = new Random();
-
-            string GenerateRandomCmd(string cmd, double from, double to, bool asInteger)
-            {
-                double randomValue;
-
-                if (!asInteger)
-                    randomValue = from + rnd.NextDouble() * (to - from);
-                else
-                    randomValue = from + rnd.NextDouble() * (to - from + 1);
-
-                string formatted = Executable.FormatNumber(randomValue, asInteger);
-                return $"{cmd} {formatted}";
-            };
-
-            string firstCrosshair = null;
-
-            for (int i = 0; i < count; i++)
-            {
-                string crosshairPath = $@"{GetTargetFolder()}\{prefix}_ch{i + 1}.cfg";
-                if (firstCrosshair == null) firstCrosshair = crosshairPath;
-
-                string[] lines = new string[]
-                {
-                    GenerateRandomCmd("cl_crosshair_drawoutline", 0, 1, true),
-                    GenerateRandomCmd("cl_crosshair_outlinethickness", 1, 2, true),
-                    GenerateRandomCmd("cl_crosshair_sniper_width", 1, 5, true),
-                    GenerateRandomCmd("cl_crosshairalpha", 200, 255, true),
-                    GenerateRandomCmd("cl_crosshairdot", 0, 1, true),
-                    GenerateRandomCmd("cl_crosshairgap", 0, 1, true),
-                    GenerateRandomCmd("cl_crosshair_t", 0, 1, true),
-                    GenerateRandomCmd("cl_crosshairsize", -5, 5, true),
-                    GenerateRandomCmd("cl_crosshairstyle", 0, 5, true),
-                    GenerateRandomCmd("cl_crosshairthickness", 1, 3, true)
-                };
-
-                if (File.Exists(crosshairPath)) File.Delete(crosshairPath);
-                File.WriteAllLines(crosshairPath, lines);
-            }
-            System.Diagnostics.Process.Start("explorer.exe", $"/select,\"{firstCrosshair}\"");
-        }
-
         private void OpenCfgButton_Click(object sender, RoutedEventArgs e)
         {
             OpenFileDialog openFileDialog = new OpenFileDialog
@@ -535,12 +471,7 @@ namespace ConfigMaker
             new AboutWindow().ShowDialog();
         }
 
-        /// <summary>
-        /// Прокси-метод, вызываемый текстбоксом, которйы в свою очередь вызывает 
-        /// команду с доступом к данным об элементе ExecCustomCmds
-        /// </summary>
-        /// <param name="sender"></param>
-        /// <param name="e"></param>
+        #region Proxy methods
         private void TextBox_TextChanged(object sender, TextChangedEventArgs e)
         {
             this.HandleCmdNameCommand.Execute(null);
@@ -555,6 +486,12 @@ namespace ConfigMaker
         {
             this.DeleteCmdCommand.Execute(null);
         }
+
+        private void GenerateRandomCrosshairsButton_Click(object sender, RoutedEventArgs e)
+        {
+            this.GenerateCrosshairsCommand.Execute(null);
+        }
+        #endregion
         #endregion
 
         #region Filling UI with config entry managers
@@ -1791,9 +1728,10 @@ namespace ConfigMaker
             AddIntervalCmdController("bot_mimic_yaw_offset", 0, 180, 5, 0);
         }
 
-        public ICommand AddCmdCommand { get; set; }
-        public ICommand HandleCmdNameCommand { get; set; }
-        public ICommand DeleteCmdCommand { get; set; }
+        public ICommand AddCmdCommand { get; private set; }
+        public ICommand HandleCmdNameCommand { get; private set; }
+        public ICommand DeleteCmdCommand { get; private set; }
+        public ICommand GenerateCrosshairsCommand { get; private set; }
 
         void InitExtra()
         {
@@ -1969,6 +1907,11 @@ namespace ConfigMaker
                 Key = cycleCrosshairEntryKey
             };
             extraItemsControl.Items.Add(cycleChVM);
+
+            this.GenerateCrosshairsCommand = new DelegateCommand(() =>
+            {
+                GenerateRandomCrosshairs(cycleChVM.CrosshairCount);
+            });
 
             //this.cycleChHeaderCheckbox.Click += HandleEntryClick;
             //this.cycleChHeaderCheckbox.Tag = cycleCrosshairEntryKey;
@@ -2748,6 +2691,51 @@ namespace ConfigMaker
                 return false;
         }
 
+        private void GenerateRandomCrosshairs(int count)
+        {
+            string prefix = GeneratePrefix();
+            Random rnd = new Random();
+
+            string GenerateRandomCmd(string cmd, double from, double to, bool asInteger)
+            {
+                double randomValue;
+
+                if (!asInteger)
+                    randomValue = from + rnd.NextDouble() * (to - from);
+                else
+                    randomValue = from + rnd.NextDouble() * (to - from + 1);
+
+                string formatted = Executable.FormatNumber(randomValue, asInteger);
+                return $"{cmd} {formatted}";
+            };
+
+            string firstCrosshair = null;
+
+            for (int i = 0; i < count; i++)
+            {
+                string crosshairPath = $@"{GetTargetFolder()}\{prefix}_ch{i + 1}.cfg";
+                if (firstCrosshair == null) firstCrosshair = crosshairPath;
+
+                string[] lines = new string[]
+                {
+                    GenerateRandomCmd("cl_crosshair_drawoutline", 0, 1, true),
+                    GenerateRandomCmd("cl_crosshair_outlinethickness", 1, 2, true),
+                    GenerateRandomCmd("cl_crosshair_sniper_width", 1, 5, true),
+                    GenerateRandomCmd("cl_crosshairalpha", 200, 255, true),
+                    GenerateRandomCmd("cl_crosshairdot", 0, 1, true),
+                    GenerateRandomCmd("cl_crosshairgap", 0, 1, true),
+                    GenerateRandomCmd("cl_crosshair_t", 0, 1, true),
+                    GenerateRandomCmd("cl_crosshairsize", -5, 5, true),
+                    GenerateRandomCmd("cl_crosshairstyle", 0, 5, true),
+                    GenerateRandomCmd("cl_crosshairthickness", 1, 3, true)
+                };
+
+                if (File.Exists(crosshairPath)) File.Delete(crosshairPath);
+                File.WriteAllLines(crosshairPath, lines);
+            }
+            System.Diagnostics.Process.Start("explorer.exe", $"/select,\"{firstCrosshair}\"");
+        }
+
         void AddAliasButton(string name, List<Entry> attachedEntries)
         {
             if (aliasPanel.Children.OfType<ButtonBase>().Any(b => b.Content.ToString() == name))
@@ -2846,5 +2834,7 @@ namespace ConfigMaker
             MessageBox.Show(builder.ToString());
         }
         #endregion
+
+        
     }
 }
