@@ -71,9 +71,6 @@ namespace ConfigMaker
         string cfgPath = $"{nameof(AppConfig)}.xml";
         const string extraAliasSetEntryKey = "ExtraAliasSet";
         
-        //ObservableCollection<object> actionTabColl = new ObservableCollection<object>();
-
-        //Dictionary<string, EntryController> entryControllers = new Dictionary<string, EntryController>();
         ObservableCollection<EntryControllerV2> entryV2Controllers = new ObservableCollection<EntryControllerV2>();
 
         public EntryStateBinding StateBinding
@@ -93,18 +90,6 @@ namespace ConfigMaker
             get => (string)GetValue(CfgNameProperty);
             set => SetValue(CfgNameProperty, value);
         }
-
-        //public ICommand AddCmdCommand
-        //{
-        //    get => (ICommand)GetValue(AddCmdCommandProperty);
-        //    set => SetValue(AddCmdCommandProperty, value);
-        //}
-
-        //public ICommand HandleCmdNameCommand
-        //{
-        //    get => (ICommand)GetValue(HandleCmdNameCommandProperty);
-        //    set => SetValue(HandleCmdNameCommandProperty, value);
-        //}
 
         public static readonly DependencyProperty StateBindingProperty;
         public static readonly DependencyProperty CfgNameProperty;
@@ -510,20 +495,6 @@ namespace ConfigMaker
                     ToolTip = isMeta ? $"+{cmd.ToLower()}" : $"{cmd.ToLower()}"
                 };
                 
-                //actionVM.Click += (sender, arg) => HandleEntryClick(cmd);
-
-                // переводим команду в нижний регистр для удобства восприятия
-                //cmd = cmd.ToLower();
-
-                //string tooltip = isMeta ? $"+{cmd}" : $"{cmd}";
-                //TextBlock tooltipBlock = new TextBlock();
-                //tooltipBlock.Inlines.Add(tooltip);
-                //checkbox.ToolTip = tooltipBlock;
-
-                //checkbox.Click += HandleEntryClick;
-                //actionsPanel.Children.Add(checkbox);
-                //return checkbox;
-
                 actionTabItems.Add(actionVM);
                 return actionVM;
             }
@@ -573,17 +544,7 @@ namespace ConfigMaker
                     HorizontalAlignment = HorizontalAlignment.Center,
                     VerticalAlignment = VerticalAlignment.Center
                 };
-                //TextBlock block = new TextBlock();
-                //Inline bold = new Bold(new Run(text));
-                //block.Inlines.Add(bold);
 
-                //Border border = new Border
-                //{
-                //    Child = block,
-                //    HorizontalAlignment = HorizontalAlignment.Center
-                //};
-
-                //actionsPanel.Children.Add(border);
                 actionTabItems.Add(headerVM);
             };
 
@@ -786,22 +747,6 @@ namespace ConfigMaker
             // Зададим контент в лице самой модели представления из которой будет формироваться интерфейс закупки
             buyTabContentControl.Content = buyVM;
 
-            //buyVM.Click += (sender, arg) => HandleEntryClick(buyScenarioEntryKey);
-                
-            //buyTabStackPanel.Children.Add(buyVM);
-
-            // Панель на которой будут располагаться все элементы для закупки
-            //WrapPanel buyPanel = new WrapPanel();
-            //buyTabStackPanel.Children.Add(buyPanel);
-
-            // Свяжем свойство активности с чекбоксом
-            //Binding enabledBinding = new Binding("IsChecked")
-            //{
-            //    Source = buyVM
-            //};
-            //buyPanel.SetBinding(WrapPanel.IsEnabledProperty, enabledBinding);
-
-
             // Локальный метод для получения всего оружия
             List<EntryViewModel> GetWeaponViewModels()
             {
@@ -876,13 +821,11 @@ namespace ConfigMaker
                     Key = weaponId
                 };
 
-                // При нажатии на чекбокс оружия искусственно вызовем событие обработки нажатия на главный чекбокс
-                //weaponVM.Click += (sender, arg) => this.AddEntry(buyScenarioEntryKey, false);
-
-                //weaponVM.Click += (_, __) =>
-                //{
-                //    this.AddEntry(buyScenarioEntryKey, false);
-                //};
+                weaponVM.PropertyChanged += (_, arg) =>
+                {
+                    if (arg.PropertyName == nameof(EntryViewModel.IsChecked))
+                        this.AddEntry(buyScenarioEntryKey, true);
+                };
 
                 currentCategory.Weapons.Add(weaponVM);
             };
@@ -892,18 +835,6 @@ namespace ConfigMaker
             {
                 currentCategory = new WeaponCategoryViewModel() { Name = text };
                 buyVM.Categories.Add(currentCategory);
-
-                //TextBlock block = new TextBlock();
-                //Inline bold = new Bold(new Run(text));
-                //block.Inlines.Add(bold);
-
-                //Border border = new Border
-                //{
-                //    Child = block,
-                //    HorizontalAlignment = HorizontalAlignment.Center
-                //};
-
-                //currentPanel.Children.Add(border);
             };
 
             AddGroupSeparator(Res.Pistols);
@@ -947,89 +878,12 @@ namespace ConfigMaker
             AddWeapon("flashbang", Res.Grenade3);
             AddWeapon("hegrenade", Res.Grenade4);
             AddWeapon("smokegrenade", Res.Grenade5);
-
-            
         }
         
         void InitGameSettingsTab()
         {
             ObservableCollection<BindableBase> gameSettingsVMColl = new ObservableCollection<BindableBase>();
             gameSettingsItemsControl.ItemsSource = gameSettingsVMColl;
-
-            double rowHeight = 30;
-
-            Tuple<TextBlock, Grid, Button, CheckBox> PrepareNewRow(string cmd, bool needToggle)
-            {
-                Grid rowGrid = new Grid
-                {
-                    Height = rowHeight
-                };
-
-                rowGrid.ColumnDefinitions.Add(new ColumnDefinition() { Width = new GridLength(30, GridUnitType.Star) });
-                rowGrid.ColumnDefinitions.Add(new ColumnDefinition() { Width = new GridLength(60, GridUnitType.Star) });
-                rowGrid.ColumnDefinitions.Add(new ColumnDefinition() { Width = new GridLength(10, GridUnitType.Star) });
-                rowGrid.Tag = cmd;
-
-                // Текст с результирующей командой
-                TextBlock resultCmd = new TextBlock
-                {
-                    HorizontalAlignment = HorizontalAlignment.Center,
-                    VerticalAlignment = VerticalAlignment.Center
-                };
-                rowGrid.Children.Add(resultCmd);
-                Grid.SetColumn(resultCmd, 0);
-
-                // Сетка с управляющими элементами
-                Grid controlsAndToggleButtonGrid = new Grid();
-                rowGrid.Children.Add(controlsAndToggleButtonGrid);
-                Grid.SetColumn(controlsAndToggleButtonGrid, 1);
-
-                Grid controlsGrid = new Grid();
-                controlsAndToggleButtonGrid.Children.Add(controlsGrid);
-
-                // Определяем нужна ли кнопка для циклических аргументов
-                Button toggleButton = null;
-
-                if (needToggle)
-                {
-                    controlsAndToggleButtonGrid.ColumnDefinitions.Add(
-                        new ColumnDefinition() { Width = new GridLength(1, GridUnitType.Star) });
-                    controlsAndToggleButtonGrid.ColumnDefinitions.Add(
-                        new ColumnDefinition() { Width = new GridLength(-1, GridUnitType.Auto) });
-
-                    toggleButton = new Button
-                    {
-                        Style = (Style)this.FindResource("MaterialDesignFlatButton"),
-                        Content = "⇄"
-                    };
-
-                    controlsAndToggleButtonGrid.Children.Add(toggleButton);
-                    Grid.SetColumn(toggleButton, 1);
-                }
-
-                // Колонка с чекбоксом
-                CheckBox checkbox = new CheckBox
-                {
-                    Tag = cmd,
-                    HorizontalAlignment = HorizontalAlignment.Center,
-                    VerticalAlignment = VerticalAlignment.Center
-                };
-                rowGrid.Children.Add(checkbox);
-                Grid.SetColumn(checkbox, 2);
-                checkbox.Click += HandleEntryClick;
-
-                // Привяжем доступность регулирующих элементов к значению чекбокса
-                Binding checkedBinding = new Binding("IsChecked")
-                {
-                    Source = checkbox
-                };
-                controlsAndToggleButtonGrid.SetBinding(Grid.IsEnabledProperty, checkedBinding);
-                // А так же привяжем отдельно наш ToggleTool, т.к. он находится в общем гриде
-
-                //settingsTabPanel.Children.Add(rowGrid); 
-
-                return new Tuple<TextBlock, Grid, Button, CheckBox>(resultCmd, controlsGrid, toggleButton, checkbox);
-            };
 
             DynamicEntryViewModel RegisterEntry(string cmd, BindableBase controllerViewModel, bool needToggle)
             {
@@ -1058,87 +912,6 @@ namespace ConfigMaker
                 // Получим базовую модель представления
                 DynamicEntryViewModel entryVM = RegisterEntry(cmd, sliderVM, true);
                 
-
-                //var tuple = PrepareNewRow(cmd, true);
-                //TextBlock resultCmdBlock = tuple.Item1;
-                //Grid sliderGrid = tuple.Item2;
-                //Button toggleButton = tuple.Item3;
-                //CheckBox checkbox = tuple.Item4;
-
-                //bool isInteger = from % 1 == 0 && to % 1 == 0 && step % 1 == 0;
-
-                // Колонка с ползунком
-                //sliderGrid.ColumnDefinitions.Add(new ColumnDefinition());
-                //sliderGrid.ColumnDefinitions.Add(new ColumnDefinition());
-                //sliderGrid.ColumnDefinitions.Add(new ColumnDefinition());
-                //sliderGrid.ColumnDefinitions[0].Width = new GridLength(-1, GridUnitType.Auto);
-                //sliderGrid.ColumnDefinitions[1].Width = new GridLength(1, GridUnitType.Star);
-                //sliderGrid.ColumnDefinitions[2].Width = new GridLength(-1, GridUnitType.Auto);
-
-                //sliderGrid.MaxHeight = rowHeight;
-                //Slider slider = new Slider
-                //{
-                //    Margin = new Thickness(3, 0, 3, 0),
-                //    VerticalAlignment = VerticalAlignment.Center,
-                //    Minimum = from,
-                //    Maximum = to
-                //};
-
-                //sliderGrid.Children.Add(slider);
-                //Grid.SetColumn(slider, 1);
-
-                //Border minBorder = new Border();
-                ////minBorder.Width = 20;
-                //TextBlock minText = new TextBlock
-                //{
-                //    HorizontalAlignment = HorizontalAlignment.Center,
-                //    VerticalAlignment = VerticalAlignment.Center
-                //};
-                ////minText.FontSize = 12;
-                //minText.Inlines.Add(Executable.FormatNumber(from, from % 1 == 0));
-                //minBorder.Child = minText;
-                //sliderGrid.Children.Add(minBorder);
-
-                //Border maxBorder = new Border();
-                ////maxBorder.Width = 20;
-                //TextBlock maxText = new TextBlock
-                //{
-                //    HorizontalAlignment = HorizontalAlignment.Center,
-                //    VerticalAlignment = VerticalAlignment.Center
-                //};
-                ////maxText.FontSize = 11;
-                //maxText.Inlines.Add(Executable.FormatNumber(to, to % 1 == 0));
-                //maxBorder.Child = maxText;
-                //sliderGrid.Children.Add(maxBorder);
-                //Grid.SetColumn(maxBorder, 2);
-
-                //toggleButton.Click += (_, __) =>
-                //{
-                //    ToggleWindow toggleWindow = new ToggleWindow(isInteger, from, to);
-                //    if ((bool)toggleWindow.ShowDialog())
-                //    {
-                //        double[] values = toggleWindow.GeneratedArg.Split(' ').Select(value =>
-                //        {
-                //            Executable.TryParseDouble(value, out double parsedValue);
-                //            return parsedValue;
-                //        }).ToArray();
-
-                //        resultCmdBlock.Text = Executable.GenerateToggleCmd(cmd, values, isInteger).ToString();
-                //        // Сохраним аргумент в теге
-                //        resultCmdBlock.Tag = values;
-
-                //        //if ((bool)checkbox.IsChecked) // Добавляем в конфиг только если это сделал сам пользователь
-                //        this.AddEntry(cmd, true);
-                //    }
-                //    else
-                //    {
-
-                //    }
-                //};
-
-                //slider.IsSnapToTickEnabled = true;
-                //slider.TickFrequency = step;
-
                 void HandleSliderValue(double value)
                 {
                     string formatted = Executable.FormatNumber(value, isInteger);
@@ -1158,20 +931,6 @@ namespace ConfigMaker
                     if (arg.PropertyName == nameof(IntervalControllerViewModel.Value))
                         HandleSliderValue(sliderVM.Value);
                 };
-                //slider.ValueChanged += (obj, args) =>
-                //{
-                //    HandleSliderValue(args.NewValue);
-                //    //double value = args.NewValue;
-                //    //string formatted = Executable.FormatNumber(args.NewValue, isInteger);
-                //    //Executable.TryParseDouble(formatted, out double fixedValue);
-                //    //fixedValue = isInteger ? ((int)fixedValue) : fixedValue;
-
-                //    //resultCmdBlock.Text = new SingleCmd($"{cmd} {formatted}").ToString();
-                //    //resultCmdBlock.Tag = fixedValue;
-
-                //    ////if ((bool)checkbox.IsChecked) // Добавляем в конфиг только если это сделал сам пользователь
-                //    //this.AddEntry(cmd, true);
-                //};
                 
                 // обработчик интерфейса
                 this.entryV2Controllers.Add(new EntryControllerV2()
@@ -1233,10 +992,8 @@ namespace ConfigMaker
                     },
                     HandleState = (state) => entryVM.IsEnabled = state != EntryStateBinding.InvalidState
                 });
-                //this.entryControllers.Add(cmd, entryBinding);
 
                 // Задаем начальное значение и тут же подключаем обработчика интерфейса
-                //slider.Value = defaultValue;
                 sliderVM.Value = defaultValue;
                 // Вручную вызовем метод для обновления выводимой команды, если стандартное значение равно 0
                 if (defaultValue == 0)
@@ -1245,26 +1002,9 @@ namespace ConfigMaker
             
             void AddComboboxCmdController(string cmd, string[] names, int defaultIndex, bool isIntegerArg, int baseIndex = 0)
             {
-                //var tuple = PrepareNewRow(cmd, true);
-                //TextBlock resultCmdBlock = tuple.Item1;
-                //Grid comboboxGrid = tuple.Item2;
-                //Button toggleButton = tuple.Item3;
-                //CheckBox checkbox = tuple.Item4;
-
-                //// Если аргумент - число, то создадим сетку с 2-мя кнопками
-                ////Grid comboboxGrid = new Grid();
-                //comboboxGrid.ColumnDefinitions.Add(new ColumnDefinition());
-
-                //ComboBox combobox = new ComboBox
-                //{
-                //    MaxHeight = rowHeight
-
                 ComboBoxControllerViewModel comboboxVM = new ComboBoxControllerViewModel();
                 DynamicEntryViewModel entryVM = RegisterEntry(cmd, comboboxVM, isIntegerArg);
-                //};
-                //comboboxGrid.Children.Add(combobox);
-                //ComboBoxAssist.SetClassicMode(combobox, true);
-
+                
                 // Если надо предусмотреть функцию toggle, то расширяем сетку и добавляем кнопку
                 if (isIntegerArg)
                 {
@@ -1374,21 +1114,6 @@ namespace ConfigMaker
                         this.AddEntry(cmd, true);
                     }
                 };
-                //combobox.SelectionChanged += (obj, args) =>
-                //{
-                //    if (combobox.SelectedIndex == -1) return;
-
-                //    string resultCmdStr;
-                //    if (isIntegerArg)
-                //        resultCmdStr = $"{cmd} {combobox.SelectedIndex + baseIndex}";
-                //    else
-                //        resultCmdStr = $"{cmd} {combobox.SelectedItem}";
-
-                //    resultCmdBlock.Text = new SingleCmd(resultCmdStr).ToString();
-                //    resultCmdBlock.Tag = combobox.SelectedIndex;
-                //    //if ((bool)checkbox.IsChecked) // Добавляем в конфиг только если это сделал сам пользователь
-                //    this.AddEntry(cmd, true);
-                //};
                 
                 // Команда по умолчанию обновится, т.к. уже есть обработчик
                 comboboxVM.SelectedIndex = defaultIndex;                
@@ -1396,25 +1121,11 @@ namespace ConfigMaker
 
             void AddTextboxNumberCmdController(string cmd, double defaultValue, bool asInteger)
             {
-                //var tuple = PrepareNewRow(cmd, true);
-                //TextBlock resultCmdBlock = tuple.Item1;
-                //Grid textboxGrid = tuple.Item2;
-                //Button toggleButton = tuple.Item3;
-                //CheckBox checkbox = tuple.Item4;
-
                 string formattedDefaultStrValue = Executable.FormatNumber(defaultValue, asInteger);
                 double coercedDefaultValue = Executable.CoerceNumber(defaultValue, asInteger);
 
                 TextboxControllerViewModel textboxVM = new TextboxControllerViewModel();
                 DynamicEntryViewModel entryVM = RegisterEntry(cmd, textboxVM, true);
-
-                //Grid textboxGrid = new Grid();
-
-                //TextBox textbox = new TextBox
-                //{
-                //    MaxHeight = rowHeight
-                //};
-                //textboxGrid.Children.Add(textbox);
 
                 //toggleButton.Click += (_, __) =>
                 //{
@@ -1529,18 +1240,6 @@ namespace ConfigMaker
 
             void AddTextboxStringCmdController(string cmd, string defaultValue)
             {
-                //var tuple = PrepareNewRow(cmd, false);
-                //TextBlock resultCmdBlock = tuple.Item1;
-                //Grid textBoxGrid = tuple.Item2;
-                //CheckBox checkbox = tuple.Item4;
-
-                //TextBox textbox = new TextBox
-                //{
-                //    MaxHeight = rowHeight
-                //};
-
-                //textBoxGrid.Children.Add(textbox);
-
                 TextboxControllerViewModel textboxVM = new TextboxControllerViewModel();
                 DynamicEntryViewModel entryVM = RegisterEntry(cmd, textboxVM, false);
 
@@ -1549,7 +1248,7 @@ namespace ConfigMaker
                     // Обернем в команду только название команды, т.к. аргументы в нижнем регистре не нужны
                     entryVM.Content = $"{new SingleCmd(cmd)} {textboxVM.Text}";
 
-                    //if ((bool)checkbox.IsChecked) // Добавляем в конфиг только если это сделал сам пользователь
+                    // Добавляем в конфиг только если это сделал сам пользователь
                     AddEntry(cmd, true);
                 };
 
@@ -1600,10 +1299,6 @@ namespace ConfigMaker
                     HorizontalAlignment = HorizontalAlignment.Center,
                     VerticalAlignment = VerticalAlignment.Center
                 };
-                //TextBlock block = new TextBlock();
-                //block.Inlines.Add(new Bold(new Run(text)));
-                //block.HorizontalAlignment = HorizontalAlignment.Center;
-                //block.VerticalAlignment = VerticalAlignment.Center;
 
                 if (gameSettingsVMColl.Count != 0)
                     headerVM.Margin = new Thickness(0, 5, 0, 0);
@@ -1752,38 +1447,12 @@ namespace ConfigMaker
                 // И разрешаем её добавить только если длина больше 0
                 customCmdVM.AddButtonEnabled = cmdName.Length > 0;
             });
-            /*
-             * TODO: Доделать DataTemplate для CustomCmdControllerViewModel
-             * Создать команды, обработать клик на BubbleViewModel
-             * 
-             */
-
-            //this.customCmdHeaderCheckbox.Click += HandleEntryClick;
-            //this.customCmdHeaderCheckbox.Tag = execCustomCmdsEntryKey;
 
             // Зададим действия по клику на кнопки в этом методе, чтобы ключ нигде кроме как здесь не упоминался
             // Повесим действие по добавлению новой команды на кнопку
             this.AddCmdCommand = new DelegateCommand(() =>
             {
                 customCmdVM.Bubbles.Add(new BubbleViewModel() { Text = customCmdVM.CmdName });
-                //ButtonBase cmdElement = new Chip
-                //{
-                //    Style = (Style)this.Resources["BubbleButton"],
-                //    Content = cmdTextbox.Text.Trim()
-                //};
-                //customCmdPanel.Children.Add(cmdElement);
-                //customCmdPanel.Tag = cmdElement;
-
-                //cmdElement.Click += (_, __) => customCmdPanel.Tag = cmdElement;
-
-                //Binding tagBinding = new Binding("Tag")
-                //{
-                //    Source = customCmdPanel,
-                //    Converter = new TagToFontWeightConverter(),
-                //    ConverterParameter = cmdElement
-                //};
-                //cmdElement.SetBinding(ButtonBase.FontWeightProperty, tagBinding);
-
                 AddEntry(execCustomCmdsEntryKey, false);
             });
             // Обработчик нажатия на кнопку добавления неизвестной программе команды
@@ -1806,10 +1475,6 @@ namespace ConfigMaker
                 //customCmdHeaderCheckbox.IsChecked = true;
                 //HandleEntryClick(customCmdHeaderCheckbox, new RoutedEventArgs(CheckBox.ClickEvent));
                 customCmdVM.IsChecked = true;
-                
-                //cmdTextbox.Text = cmd;
-                //addCmdButton.RaiseEvent(new RoutedEventArgs(ButtonBase.ClickEvent));
-                //cmdTextbox.Text = string.Empty;
             };
 
             // А так же повесим действие на кнопку удаления команды
@@ -1819,19 +1484,6 @@ namespace ConfigMaker
                     .IndexOf(customCmdVM.Bubbles.First(b => b.IsSelected));
 
                 customCmdVM.Bubbles.RemoveAt(firstSelectedIndex);
-                //ButtonBase targetButton = customCmdPanel.Tag as ButtonBase;
-                //BindingOperations.ClearAllBindings(targetButton);
-                //customCmdPanel.Children.Remove(targetButton);
-
-                //if (customCmdPanel.Children.Count > 0)
-                //{
-                //    customCmdPanel.Tag = customCmdPanel.Children[0];
-                //    this.AddEntry(execCustomCmdsEntryKey, false);
-                //}
-                //else
-                //{
-                //    customCmdPanel.Tag = null;
-                //}
                 AddEntry(execCustomCmdsEntryKey, false);
             });
 
@@ -1913,8 +1565,6 @@ namespace ConfigMaker
                 GenerateRandomCrosshairs(cycleChVM.CrosshairCount);
             });
 
-            //this.cycleChHeaderCheckbox.Click += HandleEntryClick;
-            //this.cycleChHeaderCheckbox.Tag = cycleCrosshairEntryKey;
             this.entryV2Controllers.Add(new EntryControllerV2()
             {
                 AttachedViewModel = cycleChVM,
@@ -2027,53 +1677,8 @@ namespace ConfigMaker
                 volumeVM.StepMaximum = delta;
 
                 // Обновим регулировщик в конфиге, если изменение было сделано пользователем
-                //if ((bool)volumeRegulatorCheckbox.IsChecked)
                 this.AddEntry(volumeRegulatorEntryKey, true);
             };
-
-
-            //this.volumeRegulatorCheckbox.Click += HandleEntryClick;
-            //this.volumeRegulatorCheckbox.Tag = volumeRegulatorEntryKey;
-
-            //void volumeSliderValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
-            //{
-            //    if (volumeStepSlider == null || maxVolumeSlider == null || minVolumeSlider == null)
-            //        return;
-
-            //    Slider slider = (Slider)sender;
-
-            //    // Нижняя граница изменилась
-            //    if (slider.Name == minVolumeSlider.Name)
-            //    {
-            //        maxVolumeSlider.Minimum = slider.Value + 0.01;
-            //    }
-            //    else if (slider.Name == maxVolumeSlider.Name)
-            //    {
-            //        // Иначе верхняя граница изменилась
-            //        minVolumeSlider.Maximum = slider.Value - 0.01;
-            //    }
-            //    else
-            //    {
-            //        // Иначе изменился шаг
-            //    }
-
-            //    // Определим дельту
-            //    double delta = maxVolumeSlider.Value - minVolumeSlider.Value;
-            //    volumeStepSlider.Maximum = delta;
-
-            //    // Обновим регулировщик в конфиге, если изменение было сделано пользователем
-            //    //if ((bool)volumeRegulatorCheckbox.IsChecked)
-            //    this.AddEntry(volumeRegulatorEntryKey, true);
-            //}
-            //minVolumeSlider.ValueChanged += volumeSliderValueChanged;
-            //maxVolumeSlider.ValueChanged += volumeSliderValueChanged;
-            //volumeStepSlider.ValueChanged += volumeSliderValueChanged;
-            //volumeDirectionCombobox.SelectionChanged += (_, __) =>
-            //{
-            //    // Обновим регулировщик в конфиге, если изменение было сделано пользователем
-            //    //if ((bool)volumeRegulatorCheckbox.IsChecked)
-            //    this.AddEntry(volumeRegulatorEntryKey, true);
-            //};
 
             this.entryV2Controllers.Add(new EntryControllerV2()
             {
@@ -2379,9 +1984,6 @@ namespace ConfigMaker
 
         void HandleEntryClick(string entryKey)
         {
-            //CheckBox checkbox = (CheckBox)sender;
-            //string entryKey = (string)checkbox.Tag;
-
             // Получим обработчика и 
             EntryControllerV2 entryController = this.GetController(entryKey);
             EntryViewModel entryVM = entryController.AttachedViewModel;
@@ -2691,7 +2293,7 @@ namespace ConfigMaker
                 return false;
         }
 
-        private void GenerateRandomCrosshairs(int count)
+        void GenerateRandomCrosshairs(int count)
         {
             string prefix = GeneratePrefix();
             Random rnd = new Random();
