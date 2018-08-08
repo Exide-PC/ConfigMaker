@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Windows.Input;
 
 namespace ConfigMaker.Utils.ViewModels
 {
@@ -10,6 +11,7 @@ namespace ConfigMaker.Utils.ViewModels
     {
         bool _isEnabled = true;
         bool _isChecked = false;
+        bool _isSelectable = true;
         string _content = string.Empty;
         string _key = null;
         bool _isFocused = false;
@@ -20,12 +22,19 @@ namespace ConfigMaker.Utils.ViewModels
 
         public EntryViewModel()
         {
-            this.PropertyChanged += (_, arg) =>
+            this.SelectCommand = new DelegateCommand(() =>
             {
-                if (this._isEnabled && !this.isRestoreMode && arg.PropertyName == nameof(EntryViewModel.IsChecked))
-                    this.Click?.Invoke(this, null);
-            };
+                this.Click?.Invoke(this, null);
+            });
+
+            //this.PropertyChanged += (_, arg) =>
+            //{
+            //    if (this._isEnabled && !this.isRestoreMode && arg.PropertyName == nameof(EntryViewModel.IsChecked))
+            //        this.Click?.Invoke(this, null);
+            //};
         }
+
+        public ICommand SelectCommand { get; }
 
         /// <summary>
         /// Необходимый метод, т.к. без моделей представления можно свободно управлять
@@ -57,6 +66,12 @@ namespace ConfigMaker.Utils.ViewModels
         {
             get => _isChecked;
             set => this.SetProperty(ref _isChecked, value);
+        }
+
+        public bool IsSelectable
+        {
+            get => _isSelectable;
+            set => this.SetProperty(ref _isSelectable, value);
         }
 
         public string Content

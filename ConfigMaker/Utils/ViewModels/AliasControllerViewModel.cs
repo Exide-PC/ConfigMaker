@@ -8,9 +8,9 @@ using System.Threading.Tasks;
 
 namespace ConfigMaker.Utils.ViewModels
 {
-    public class CustomCmdControllerViewModel : InputItemsControllerViewModel
+    public class AliasControllerViewModel: InputItemsControllerViewModel
     {
-        public CustomCmdControllerViewModel(Predicate<string> inputValidator): base(inputValidator)
+        public AliasControllerViewModel(Predicate<string> inputValidator): base(inputValidator)
         {
 
         }

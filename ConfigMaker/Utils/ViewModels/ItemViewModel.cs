@@ -8,13 +8,14 @@ using System.Windows.Input;
 
 namespace ConfigMaker.Utils.ViewModels
 {
-    public class BubbleViewModel: BindableBase
+    public class ItemViewModel: BindableBase
     {
         string _text = string.Empty;
         bool _isSelected = false;
         double _fontSize = 12;
+        object _tag = null;
 
-        public BubbleViewModel()
+        public ItemViewModel()
         {
             this.SelectCommand = new DelegateCommand(() =>
             {
@@ -41,6 +42,12 @@ namespace ConfigMaker.Utils.ViewModels
         {
             get => this._fontSize;
             set => this.SetProperty(ref _fontSize, value);
+        }
+
+        public object Tag
+        {
+            get => this._tag;
+            set => this.SetProperty(ref _tag, value);
         }
     }
 }

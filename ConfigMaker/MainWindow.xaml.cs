@@ -69,9 +69,14 @@ namespace ConfigMaker
         KeySequence currentKeySequence = null;
         AppConfig cfg = null;
         string cfgPath = $"{nameof(AppConfig)}.xml";
-        const string extraAliasSetEntryKey = "ExtraAliasSet";
+        //const string extraAliasSetEntryKey = "ExtraAliasSet";
         
         ObservableCollection<EntryControllerV2> entryV2Controllers = new ObservableCollection<EntryControllerV2>();
+
+        AliasControllerViewModel aliasSetVM = null;
+        AttachmentsViewModel keyDownAttachmentsVM = null;
+        AttachmentsViewModel keyUpAttachmentsVM = null;
+        AttachmentsViewModel solidAttachmentsVM = null;
 
         public EntryStateBinding StateBinding
         {
@@ -171,7 +176,20 @@ namespace ConfigMaker
                     EntryViewModel entryVM = controller.AttachedViewModel;
                     entryVM.Click += (__, ___) => HandleEntryClick(entryVM.Key);
                 }
-            }; 
+            };
+
+            keyDownAttachmentsVM = new AttachmentsViewModel();
+            keyUpAttachmentsVM = new AttachmentsViewModel();
+            solidAttachmentsVM = new AttachmentsViewModel()
+            {
+                Hint = Localize(Res.CommandsByDefault_Hint)
+            };
+
+            // Инициализируем панели
+            this.keyDownAttachmentsContentControl.Content = keyDownAttachmentsVM;
+            this.keyUpAttachmentsContentControl.Content = keyUpAttachmentsVM;
+            this.solidAttachmentsContentControl.Content = solidAttachmentsVM;
+
 
             // Инициализируем интерфейс
             InitActionTab();
@@ -222,8 +240,8 @@ namespace ConfigMaker
                 this.SetStateAndUpdateUI(EntryStateBinding.KeyDown);
 
                 // Отредактируем текст у панелей
-                this.keyDownPanelLabel.Text = string.Format(Res.KeyDown1_Format, currentKeySequence[0].ToUpper());
-                this.keyReleasePanelLabel.Text = string.Format(Res.KeyUp1_Format, currentKeySequence[0].ToUpper());
+                this.keyDownAttachmentsVM.Hint = string.Format(Res.KeyDown1_Format, currentKeySequence[0].ToUpper());
+                this.keyUpAttachmentsVM.Hint = string.Format(Res.KeyUp1_Format, currentKeySequence[0].ToUpper());
             }
             else if (currentKeySequence.Keys.Length == 1)
             {
@@ -237,8 +255,8 @@ namespace ConfigMaker
                 string key1Upper = currentKeySequence[0].ToUpper();
                 string key2Upper = currentKeySequence[1].ToUpper();
 
-                this.keyDownPanelLabel.Text = string.Format(Res.KeyDown2_Format, key2Upper, key1Upper);
-                this.keyReleasePanelLabel.Text = string.Format(Res.KeyUp2_Format, key2Upper, key1Upper);
+                this.keyDownAttachmentsVM.Hint = string.Format(Res.KeyDown2_Format, key2Upper, key1Upper);
+                this.keyUpAttachmentsVM.Hint = string.Format(Res.KeyUp2_Format, key2Upper, key1Upper);
             }
 
             ColorizeKeyboard();
@@ -253,9 +271,7 @@ namespace ConfigMaker
             if (this.currentKeySequence == null)
                 return;
 
-            Border border = (Border)sender;
-            bool isKeyDownBinding = ((FrameworkElement)sender).Tag as string == EntryStateBinding.KeyDown.ToString();
-
+            bool isKeyDownBinding = ((FrameworkElement)sender).DataContext == this.keyDownAttachmentsVM;
             this.SetStateAndUpdateUI(isKeyDownBinding ? EntryStateBinding.KeyDown : EntryStateBinding.KeyUp);
 
             UpdateAttachmentPanels();
@@ -273,11 +289,13 @@ namespace ConfigMaker
             }
             else
             {
+                if (solidAttachmentsVM == null) return;
+
                 EntryStateBinding selectedState = selectedItem.Name == iDefault.Name ?
                     EntryStateBinding.Default :
                     EntryStateBinding.Alias;
 
-                solidAttachmentPanelLabel.Text = selectedState == EntryStateBinding.Default ?
+                solidAttachmentsVM.Hint = selectedState == EntryStateBinding.Default ?
                     Res.CommandsByDefault_Hint :
                     Res.CommandsInAlias_Hint;
 
@@ -288,7 +306,7 @@ namespace ConfigMaker
                 {
                     // И при этом если ни одной команды не создано, то задаем неверное состояние
                     selectedState =
-                        aliasPanel.Tag == null ?
+                        this.aliasSetVM.Items.Count == 0 ?
                         EntryStateBinding.InvalidState :
                         EntryStateBinding.Alias;
                 }
@@ -301,51 +319,14 @@ namespace ConfigMaker
 
         private void AddAliasButton_Click(object sender, RoutedEventArgs e)
         {
-            string aliasName = this.newAliasNameTextbox.Text;
-            AddAliasButton(aliasName, new List<Entry>());
-            // Пусть в конфиге всё равно будет объявлен алиас, хоть он и пустой
-            this.AddEntry(extraAliasSetEntryKey, false);
+            this.AddAliasCommand.Execute(null);
         }
 
         private void DeleteAliasButton_Click(object sender, RoutedEventArgs e)
         {
-            this.ResetAttachmentPanels();
-
-            FrameworkElement targetElement = aliasPanel.Tag as FrameworkElement;
-            // Отвяжем настройки, привязанные к текущей кнопке
-            targetElement.Tag = null;
-            // Уберем привязку к тегу панели алиасов
-            BindingOperations.ClearAllBindings(targetElement);
-            aliasPanel.Children.Remove(targetElement);
-
-            if (aliasPanel.Children.Count > 0)
-            {
-                // Если в панели еще есть элементы, то задаем новый тег
-                // и обновляем панели под новый алиас
-                aliasPanel.Tag = aliasPanel.Children[0];
-                UpdateAttachmentPanels();
-
-                // Так же для удобства сделаем фокус на первом элементе панели, если такой есть
-                if (this.solidAttachmentsPanel.Children.Count > 0)
-                {
-                    string firstEntry =
-                    (string)(this.solidAttachmentsPanel.Children[0] as FrameworkElement).Tag;
-
-                    this.GetController(firstEntry).Focus();
-                }
-
-                // Если в панели еще остались алиасы, то обновим конфиг
-                this.AddEntry(extraAliasSetEntryKey, false);
-            }
-            else
-            {
-                // Если удалили последнюю кнопку, то удалим 
-                this.RemoveEntry(extraAliasSetEntryKey);
-                aliasPanel.Tag = null;
-                this.SetStateAndUpdateUI(EntryStateBinding.InvalidState);
-            }
+            this.DeleteAliasCommand.Execute(null);
         }
-        
+
         private void OpenCfgButton_Click(object sender, RoutedEventArgs e)
         {
             OpenFileDialog openFileDialog = new OpenFileDialog
@@ -393,15 +374,6 @@ namespace ConfigMaker
             System.Diagnostics.Process.Start("explorer.exe", $"/select,\"{cfgManagerPath}\"");
         }
         
-        private void ResetSequenceButton_Click(object sender, RoutedEventArgs e)
-        {
-            this.currentKeySequence = null;
-            this.SetStateAndUpdateUI(EntryStateBinding.Default);
-
-            this.ColorizeKeyboard();
-            this.UpdateAttachmentPanels();
-        }
-
         private void SearchCmdTextbox(object sender, TextChangedEventArgs e)
         {
             TextBox textbox = (TextBox)sender;
@@ -457,9 +429,9 @@ namespace ConfigMaker
         }
 
         #region Proxy methods
-        private void TextBox_TextChanged(object sender, TextChangedEventArgs e)
+        private void CmdInputTextbox_TextChanged(object sender, TextChangedEventArgs e)
         {
-            this.HandleCmdNameCommand.Execute(null);
+            //this.HandleCmdNameCommand.Execute(null);
         }
 
         private void AddCmdButton_Click(object sender, RoutedEventArgs e)
@@ -1424,7 +1396,6 @@ namespace ConfigMaker
         }
 
         public ICommand AddCmdCommand { get; private set; }
-        public ICommand HandleCmdNameCommand { get; private set; }
         public ICommand DeleteCmdCommand { get; private set; }
         public ICommand GenerateCrosshairsCommand { get; private set; }
 
@@ -1433,27 +1404,19 @@ namespace ConfigMaker
             // --- custom command execution ---
             const string execCustomCmdsEntryKey = "ExecCustomCmds";
 
-            CustomCmdControllerViewModel customCmdVM = new CustomCmdControllerViewModel()
+            CustomCmdControllerViewModel customCmdVM = new CustomCmdControllerViewModel((cmd) => cmd.Trim().Length > 0)
             {
                 Content = this.Localize(execCustomCmdsEntryKey),
                 Key = execCustomCmdsEntryKey
             };
             extraItemsControl.Items.Add(customCmdVM);
 
-            this.HandleCmdNameCommand = new DelegateCommand(() =>
-            {
-                // Получим команду
-                string cmdName = customCmdVM.CmdName.Trim();
-                // И разрешаем её добавить только если длина больше 0
-                customCmdVM.AddButtonEnabled = cmdName.Length > 0;
-            });
-
             // Зададим действия по клику на кнопки в этом методе, чтобы ключ нигде кроме как здесь не упоминался
             // Повесим действие по добавлению новой команды на кнопку
             this.AddCmdCommand = new DelegateCommand(() =>
             {
-                customCmdVM.Bubbles.Add(new BubbleViewModel() { Text = customCmdVM.CmdName });
-                AddEntry(execCustomCmdsEntryKey, false);
+                customCmdVM.Items.Add(new ItemViewModel() { Text = customCmdVM.Input });
+                this.AddEntry(execCustomCmdsEntryKey, false);
             });
             // Обработчик нажатия на кнопку добавления неизвестной программе команды
             addUnknownCmdButton.Click += (sender, args) =>
@@ -1461,29 +1424,24 @@ namespace ConfigMaker
                 // Перейдем в клатке с соответствующим контроллером
                 this.GetController(execCustomCmdsEntryKey).Focus();
                 //this.entryControllers[execCustomCmdsEntryKey].
+                customCmdVM.IsChecked = true;
 
                 // Добавим указанную пользователем команду в контроллер ExecCustomCmds
                 string cmd = searchCmdBox.Text.Trim();
-                customCmdVM.CmdName = cmd;
+                customCmdVM.Input = cmd;
 
                 // И выполним команду по добавлению
                 this.AddCmdCommand.Execute(null);
-
-                // Сделаем контроллер активным, искусственно нажав кнопку, если он не активен.
-                // Т.к. искусственный вызов ClickEvent не чекбоксе не меняет его состояния,
-                // переключим его вручную и вызовем нужный метод для добавления в конфиг элемента
-                //customCmdHeaderCheckbox.IsChecked = true;
-                //HandleEntryClick(customCmdHeaderCheckbox, new RoutedEventArgs(CheckBox.ClickEvent));
-                customCmdVM.IsChecked = true;
+                
             };
 
             // А так же повесим действие на кнопку удаления команды
             this.DeleteCmdCommand = new DelegateCommand(() =>
             {
-                int firstSelectedIndex = customCmdVM.Bubbles
-                    .IndexOf(customCmdVM.Bubbles.First(b => b.IsSelected));
+                int firstSelectedIndex = customCmdVM.Items
+                    .IndexOf(customCmdVM.Items.First(b => b.IsSelected));
 
-                customCmdVM.Bubbles.RemoveAt(firstSelectedIndex);
+                customCmdVM.Items.RemoveAt(firstSelectedIndex);
                 AddEntry(execCustomCmdsEntryKey, false);
             });
 
@@ -1494,15 +1452,15 @@ namespace ConfigMaker
                 HandleState = (state) => customCmdVM.IsEnabled = state != EntryStateBinding.InvalidState,
                 Restore = () =>
                 {
-                    customCmdVM.Bubbles.Clear();
+                    customCmdVM.Items.Clear();
 
-                    customCmdVM.CmdName = string.Empty;
+                    customCmdVM.Input = string.Empty;
                     customCmdVM.UpdateIsChecked(false);
                 },
                 Generate = () =>
                 {
                     // Получим все указанные пользователем команды
-                    string[] cmds = customCmdVM.Bubbles.Select(b => b.Text).ToArray();
+                    string[] cmds = customCmdVM.Items.Select(b => b.Text).ToArray();
 
                     SingleCmd cmd = null;
                     CommandCollection dependencies = null;
@@ -1540,11 +1498,11 @@ namespace ConfigMaker
                     IParametrizedEntry<string[]> extendedEntry = (IParametrizedEntry<string[]>)entry;
                     string[] cmds = extendedEntry.Arg;
 
-                    customCmdVM.Bubbles.Clear();
+                    customCmdVM.Items.Clear();
 
                     foreach (string cmd in cmds)
                     {
-                        customCmdVM.CmdName = cmd;
+                        customCmdVM.Input = cmd;
                         this.AddCmdCommand.Execute(null);
                     }
                 }
@@ -1795,76 +1753,140 @@ namespace ConfigMaker
             });
         }
 
+        public ICommand AddAliasCommand { get; private set; }
+        public ICommand DeleteAliasCommand { get; private set; }
+
         void InitAliasController()
         {
-            const string extraAliasEntryKey = "ExtraAlias";
+            // Предикат для проверки валидности ввода
+            Predicate<string> aliasValidator = (alias) => Executable.IsValidAliasName(alias) 
+                && aliasSetVM.Items.All(i => i.Text.Trim().ToLower() != alias.Trim().ToLower());
+            // Скармливаем предикат в конструктор
+            aliasSetVM = new AliasControllerViewModel(aliasValidator)
+            {
+                Key = "ExtraAliasSet",
+                IsSelectable = false
+            };
+            aliasContentControl.Content = aliasSetVM;
 
-            //this.entryControllers.Add(extraAliasSetEntryKey, new EntryController()
-            //{
-            //    Generate = () =>
-            //    {
-            //        List<ParametrizedEntry<Entry[]>> aliases =
-            //        new List<ParametrizedEntry<Entry[]>>();
+            this.AddAliasCommand = new DelegateCommand(() =>
+            {
+                AddAlias(aliasSetVM.Input, new List<Entry>());
+            });
 
-            //        CommandCollection dependencies = new CommandCollection();
+            this.DeleteAliasCommand = new DelegateCommand(() =>
+            {
+                this.ResetAttachmentPanels();
 
-            //        foreach (ContentControl aliaselement in aliasPanel.Children.OfType<ContentControl>())
-            //        {
-            //            string aliasName = aliaselement.Content.ToString();
-            //            List<Entry> attachedEntries = (List<Entry>)aliaselement.Tag;
+                int selectedIndex = aliasSetVM.GetFirstSelectedIndex();
+                aliasSetVM.Items.RemoveAt(selectedIndex);
 
-            //            // Выпишем все зависимости, которые есть для текущего элемента
-            //            foreach (Entry entry in attachedEntries)
-            //                foreach (Executable dependency in entry.Dependencies)
-            //                    dependencies.Add(dependency);
+                if (aliasSetVM.Items.Count > 0)
+                {
+                    UpdateAttachmentPanels();
 
-            //            ParametrizedEntry<Entry[]> aliasEntry = new ParametrizedEntry<Entry[]>()
-            //            {
-            //                PrimaryKey = extraAliasEntryKey,
-            //                Cmd = new SingleCmd(aliasName),
-            //                IsMetaScript = false,
-            //                Type = EntryType.Dynamic,
-            //                Arg = attachedEntries.ToArray()
-            //            };
+                    // Так же для удобства сделаем фокус на первом элементе панели, если такой есть
+                    if (this.solidAttachmentsVM.Items.Count > 0)
+                    {
+                        string firstEntry = (string)(this.solidAttachmentsVM.Items[0].Tag);
 
-            //            AliasCmd alias = new AliasCmd(
-            //                aliaselement.Content.ToString(),
-            //                attachedEntries.Select(e => e.Cmd));
+                        this.GetController(firstEntry).Focus();
+                    }
 
-            //            aliases.Add(aliasEntry);
-            //            dependencies.Add(alias);
-            //        }
+                    // Если в панели еще остались алиасы, то обновим конфиг
+                    this.AddEntry(aliasSetVM.Key, false);
+                }
+                else
+                {
+                    // Если удалили последнюю кнопку, то удалим 
+                    this.RemoveEntry(aliasSetVM.Key);
+                    this.SetStateAndUpdateUI(EntryStateBinding.InvalidState);
+                }
+            });
 
-            //        // сформируем итоговый элемент конфига
-            //        return new ParametrizedEntry<Entry[]>()
-            //        {
-            //            PrimaryKey = extraAliasSetEntryKey,
-            //            Cmd = null,
-            //            IsMetaScript = false,
-            //            Type = EntryType.Dynamic,
-            //            Arg = aliases.ToArray(),
-            //            Dependencies = dependencies
-            //        };
-            //    },
-            //    UpdateUI = (entry) =>
-            //    {
-            //        ParametrizedEntry<Entry[]> extendedEntry = (ParametrizedEntry<Entry[]>)entry;
+            void AddAlias(string name, List<Entry> attachedEntries)
+            {
+                ItemViewModel item = new ItemViewModel()
+                {
+                    Text = name.Trim(),
+                    Tag = new List<Entry>()
+                };
 
-            //        Entry[] aliases = extendedEntry.Arg;
+                aliasSetVM.Items.Add(item);
 
-            //        foreach (Entry alias in aliases)
-            //        {
-            //            AddAliasButton(
-            //                alias.Cmd.ToString(),
-            //                (alias as ParametrizedEntry<Entry[]>).Arg.ToList());
-            //        }
-            //    },
-            //    Restore = () =>
-            //    {
-            //        this.ResetAttachmentPanels();
-            //        this.ClearPanel_s(aliasPanel);
-            //    }
-            //});
+                if (this.StateBinding == EntryStateBinding.InvalidState)
+                    this.SetStateAndUpdateUI(EntryStateBinding.Alias);
+
+                this.AddEntry(aliasSetVM.Key, false);
+                UpdateAttachmentPanels();
+            }
+
+            this.entryV2Controllers.Add(new EntryControllerV2()
+            {
+                AttachedViewModel = aliasSetVM,
+                Generate = () =>
+                {
+                    List<ParametrizedEntry<Entry[]>> aliases =
+                    new List<ParametrizedEntry<Entry[]>>();
+
+                    CommandCollection dependencies = new CommandCollection();
+
+                    foreach (ItemViewModel aliaselement in aliasSetVM.Items)
+                    {
+                        string aliasName = aliaselement.Text.ToString();
+                        List<Entry> attachedEntries = (List<Entry>)aliaselement.Tag;
+
+                        // Выпишем все зависимости, которые есть для текущего элемента
+                        foreach (Entry entry in attachedEntries)
+                            foreach (Executable dependency in entry.Dependencies)
+                                dependencies.Add(dependency);
+
+                        ParametrizedEntry<Entry[]> aliasEntry = new ParametrizedEntry<Entry[]>()
+                        {
+                            PrimaryKey = "ExtraAlias",
+                            Cmd = new SingleCmd(aliasName),
+                            IsMetaScript = false,
+                            Type = EntryType.Dynamic,
+                            Arg = attachedEntries.ToArray()
+                        };
+
+                        AliasCmd alias = new AliasCmd(
+                            aliaselement.Text,
+                            attachedEntries.Select(e => e.Cmd));
+
+                        aliases.Add(aliasEntry);
+                        dependencies.Add(alias);
+                    }
+
+                    // сформируем итоговый элемент конфига
+                    return new ParametrizedEntry<Entry[]>()
+                    {
+                        PrimaryKey = aliasSetVM.Key,
+                        Cmd = null,
+                        IsMetaScript = false,
+                        Type = EntryType.Dynamic,
+                        Arg = aliases.ToArray(),
+                        Dependencies = dependencies
+                    };
+                },
+                UpdateUI = (entry) =>
+                {
+                    ParametrizedEntry<Entry[]> extendedEntry = (ParametrizedEntry<Entry[]>)entry;
+
+                    Entry[] aliases = extendedEntry.Arg;
+
+                    foreach (Entry alias in aliases)
+                    {
+                        AddAlias(alias.Cmd.ToString(), (alias as ParametrizedEntry<Entry[]>).Arg.ToList());
+                    }
+                },
+                Restore = () =>
+                {
+                    this.ResetAttachmentPanels();
+                    aliasSetVM.Items.Clear();
+                },
+                HandleState = (state) => { }
+            });
         }
         #endregion
 
@@ -1958,7 +1980,7 @@ namespace ConfigMaker
                     }
                 case EntryStateBinding.Alias:
                     {
-                        string aliasName = (aliasPanel.Tag as ContentControl).Content.ToString();
+                        string aliasName = (aliasSetVM.GetSelectedItem().Text.ToString());
                         prefixBuilder.Append($"{aliasName}");
                         break;
                     }
@@ -2004,6 +2026,10 @@ namespace ConfigMaker
 
             foreach (var controller in this.entryV2Controllers)
                 controller.HandleState(this.StateBinding);
+
+            keyDownAttachmentsVM.IsSelected = newState == EntryStateBinding.KeyDown;
+            keyUpAttachmentsVM.IsSelected = newState == EntryStateBinding.KeyUp;
+            solidAttachmentsVM.IsSelected = newState != EntryStateBinding.InvalidState;
         }
 
         BindEntry ConvertToBindEntry(Entry entry)
@@ -2068,17 +2094,17 @@ namespace ConfigMaker
                 case EntryStateBinding.Alias:
                     {
                         // Проверяем, что добавляется не основной узел со всеми алиасами
-                        if (entry.PrimaryKey != extraAliasSetEntryKey)
+                        if (entry.PrimaryKey != aliasSetVM.Key)
                         {
                             // Добавляем текущий элемент к коллекции, привязанной к выбранной кнопке
-                            FrameworkElement targetElement = aliasPanel.Tag as FrameworkElement;
-                            List<Entry> attachedToAlias = targetElement.Tag as List<Entry>;
-                            targetElement.Tag = attachedToAlias
-                                .Where(attachedEntry => attachedEntry.PrimaryKey != entry.PrimaryKey)
-                                .Concat(new Entry[] { entry }).ToList();
+                            ItemViewModel selectedItem = aliasSetVM.GetSelectedItem();
+                            List<Entry> attachedToAlias = (List<Entry>)(selectedItem.Tag);
+
+                            attachedToAlias.Add(entry);
+                            selectedItem.Tag = attachedToAlias;
 
                             // И вызываем обработчика пользовательских алиасов
-                            Entry aliasSetEntry = (Entry)this.GetController(extraAliasSetEntryKey).Generate();
+                            Entry aliasSetEntry = (Entry)this.GetController(aliasSetVM.Key).Generate();
                             this.cfgManager.AddEntry(aliasSetEntry);
                         }
                         else
@@ -2110,17 +2136,17 @@ namespace ConfigMaker
                     }
                 case EntryStateBinding.Alias:
                     {
-                        if (entry.PrimaryKey != extraAliasSetEntryKey)
+                        if (entry.PrimaryKey != aliasSetVM.Key)
                         {
                             // Добавляем текущий элемент к коллекции, привязанной к выбранной кнопке
-                            FrameworkElement targetElement = aliasPanel.Tag as FrameworkElement;
-                            List<Entry> attachedToAlias = targetElement.Tag as List<Entry>;
-                            targetElement.Tag = attachedToAlias
-                                .Where(attachedEntry => attachedEntry.PrimaryKey != entry.PrimaryKey)
-                                .ToList();
+                            ItemViewModel selectedItem = aliasSetVM.GetSelectedItem();
+                            List<Entry> attachedToAlias = ((List<Entry>)selectedItem.Tag)
+                                .Where(e => e.PrimaryKey != entry.PrimaryKey).ToList();
+                            
+                            selectedItem.Tag = attachedToAlias;
 
                             // Напрямую обновим узел в менеджере
-                            Entry aliasSetEntry = (Entry)this.GetController(extraAliasSetEntryKey).Generate();
+                            Entry aliasSetEntry = (Entry)this.GetController(aliasSetVM.Key).Generate();
                             this.cfgManager.AddEntry(aliasSetEntry);
                         }
                         else
@@ -2144,25 +2170,24 @@ namespace ConfigMaker
         {
             // Получим предыдущие элементы и сбросим связанные с ними элементы интерфейса
             // Для этого объединим коллекции элементов из всех панелей
-            List<WrapPanel> attachmentPanels = new List<WrapPanel>()
+            List<AttachmentsViewModel> attachmentVMs = new List<AttachmentsViewModel>()
             {
-                onKeyDownAttachmentsPanel,
-                onKeyReleaseAttachmentsPanel,
-                solidAttachmentsPanel
+                this.keyDownAttachmentsVM,
+                this.keyUpAttachmentsVM,
+                this.solidAttachmentsVM
             };
 
-            IEnumerable<FrameworkElement> mergedElements = attachmentPanels.SelectMany(p => p.Children.Cast<FrameworkElement>());
-            int count = mergedElements.Count();
+            IEnumerable<string> shownEntryKeys = attachmentVMs.SelectMany(vm => vm.Items.Select(i => i.Tag)).Cast<string>();
 
-            foreach (FrameworkElement element in mergedElements)
+            foreach (string entryKey in shownEntryKeys)
             {
-                EntryControllerV2 controller = this.GetController((string)element.Tag);
+                EntryControllerV2 controller = this.GetController(entryKey);
                 // Метод, отвечающий непосредственно за сброс состояния интерфейса
                 controller.Restore();
             }
 
             // Очистим панели
-            attachmentPanels.ForEach(p => p.Children.Clear());
+            attachmentVMs.ForEach(vm => vm.Items.Clear());
         }
 
         /// <summary>
@@ -2172,24 +2197,17 @@ namespace ConfigMaker
         {
             // Очистим панели и сбросим настройки интерфейса
             ResetAttachmentPanels();
-
-            void AddAttachment(string entryKey, WrapPanel panel)
+            
+            // Локальный метод для добавления нового элемента в заданную панель
+            void AddAttachment(string entryKey, AttachmentsViewModel attachmentsVM)
             {
-                // Создадим новую кнопку и зададим нужный стиль
-
-                ButtonBase chip = new Chip
+                ItemViewModel item = new ItemViewModel()
                 {
-                    Content = Localize(entryKey) //CurrentLocale[cfgEntry]
+                    Text = Localize(entryKey),
+                    Tag = entryKey
                 };
-                chip.Click += HandleAttachedEntryClick;
-                chip.Style = (Style)this.Resources["BubbleButton"];
-                chip.Tag = entryKey;
-                chip.FontSize = 13;
-                chip.Height = 17;
-                
-                // Добавим в нужную панель
-                panel.Children.Add(chip);
-            };
+                attachmentsVM.Items.Add(item);
+            }
 
             // Согласно текущему состоянию выберем элементы
             if (this.StateBinding == EntryStateBinding.KeyDown || this.StateBinding == EntryStateBinding.KeyUp)
@@ -2206,9 +2224,9 @@ namespace ConfigMaker
                 {
                     // Добавим в нужную панель
                     if (entry.OnKeyDown != null)
-                        AddAttachment(entry.PrimaryKey, onKeyDownAttachmentsPanel);
+                        AddAttachment(entry.PrimaryKey, keyDownAttachmentsVM);
                     else
-                        AddAttachment(entry.PrimaryKey, onKeyReleaseAttachmentsPanel);
+                        AddAttachment(entry.PrimaryKey, keyUpAttachmentsVM);
 
                     // Обновим интерфейс согласно элементам, привязанным к текущему состоянию
                     attachedEntries.Where(e => this.IsEntryAttachedToCurrentState(e))
@@ -2219,26 +2237,28 @@ namespace ConfigMaker
             {
                 // Получаем все элементы по умолчанию, которые должны быть отображены в панели
                 List<Entry> attachedEntries = this.cfgManager.DefaultEntries
-                    .Where(e => this.GetController(e.PrimaryKey).AttachedViewModel != null).ToList();
+                    .Where(e => this.GetController(e.PrimaryKey).AttachedViewModel.IsSelectable).ToList();
 
                 // Теперь заполним панели новыми элементами
                 attachedEntries.ForEach(entry =>
                 {
-                    AddAttachment(entry.PrimaryKey, solidAttachmentsPanel);
+                    AddAttachment(entry.PrimaryKey, solidAttachmentsVM);
                     // Обновим интерфейс согласно элементам, привязанным к текущему состоянию
                     this.GetController(entry.PrimaryKey).UpdateUI(entry);
                 });
             }
             else if (this.StateBinding == EntryStateBinding.Alias)
             {
-                if (this.aliasPanel.Tag == null) return;
+                int selectedIndex = this.aliasSetVM.GetFirstSelectedIndex();
+
+                if (selectedIndex == -1) return;
 
                 // Узнаем какие элементы привязаны к текущей команде
-                List<Entry> attachedEntries = (List<Entry>)(this.aliasPanel.Tag as FrameworkElement).Tag;
+                List<Entry> attachedEntries = (List<Entry>)(this.aliasSetVM.Items[selectedIndex].Tag);
 
                 attachedEntries.ForEach(entry =>
                 {
-                    AddAttachment(entry.PrimaryKey, solidAttachmentsPanel);
+                    AddAttachment(entry.PrimaryKey, solidAttachmentsVM);
                     // Обновим интерфейс согласно элементам, привязанным к текущему состоянию
                     this.GetController(entry.PrimaryKey).UpdateUI(entry);
                 });
@@ -2338,56 +2358,6 @@ namespace ConfigMaker
             System.Diagnostics.Process.Start("explorer.exe", $"/select,\"{firstCrosshair}\"");
         }
 
-        void AddAliasButton(string name, List<Entry> attachedEntries)
-        {
-            if (aliasPanel.Children.OfType<ButtonBase>().Any(b => b.Content.ToString() == name))
-                return;
-
-            Chip chip = new Chip
-            {
-                Content = name,
-                Tag = attachedEntries,
-                Style = (Style)this.Resources["BubbleButton"]
-            };
-
-            chip.Click += (_, __) =>
-            {
-                // При нажатии на кнопку задаем в теге 
-                // панели какая выбрана в данный момент
-                aliasPanel.Tag = chip;
-
-                // Очистим панели и заполним их согласно выбранному алиасу
-                UpdateAttachmentPanels();
-            };
-
-            aliasPanel.Children.Add(chip);
-            aliasPanel.Tag = chip;
-
-            if (this.StateBinding == EntryStateBinding.InvalidState)
-                this.SetStateAndUpdateUI(EntryStateBinding.Alias);
-
-            // Программно настроим привязку 
-            Binding binding = new Binding("Tag")
-            {
-                Source = aliasPanel,
-                Converter = new TagToFontWeightConverter(),
-                ConverterParameter = chip
-            };
-            chip.SetBinding(ButtonBase.FontWeightProperty, binding);
-
-            // Искусственно генерируем клик на новую кнопку, чтобы перестроить интерфейс
-            chip.RaiseEvent(new RoutedEventArgs(ButtonBase.ClickEvent));
-        }
-
-        void ClearPanel_s(WrapPanel panel)
-        {
-            foreach (FrameworkElement element in panel.Children)
-                BindingOperations.ClearAllBindings(element);
-
-            panel.Children.Clear();
-            panel.Tag = null;
-        }
-
         void UpdateCfgManager()
         {
             // Сбросим все настройки от прошлого конфига
@@ -2436,7 +2406,5 @@ namespace ConfigMaker
             MessageBox.Show(builder.ToString());
         }
         #endregion
-
-        
     }
 }

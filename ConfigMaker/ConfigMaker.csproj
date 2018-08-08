@@ -107,7 +107,9 @@
       <DependentUpon>ToggleWindow.xaml</DependentUpon>
     </Compile>
     <Compile Include="Utils\ViewModels\ActionViewModel.cs" />
-    <Compile Include="Utils\ViewModels\BubbleViewModel.cs" />
+    <Compile Include="Utils\ViewModels\AliasControllerViewModel.cs" />
+    <Compile Include="Utils\ViewModels\AttachmentsViewModel.cs" />
+    <Compile Include="Utils\ViewModels\ItemViewModel.cs" />
     <Compile Include="Utils\ViewModels\BuyViewModel.cs" />
     <Compile Include="Utils\ViewModels\ComboBoxControllerViewModel.cs" />
     <Compile Include="Utils\ViewModels\CustomCmdControllerViewModel.cs" />
@@ -115,6 +117,8 @@
     <Compile Include="Utils\ViewModels\DynamicEntryViewModel.cs" />
     <Compile Include="Utils\ViewModels\EntryViewModel.cs" />
     <Compile Include="Utils\ViewModels\IntervalControllerViewModel.cs" />
+    <Compile Include="Utils\ViewModels\InputItemsControllerViewModel.cs" />
+    <Compile Include="Utils\ViewModels\LeakAwareItemsViewModel.cs" />
     <Compile Include="Utils\ViewModels\TextboxControllerViewModel.cs" />
     <Compile Include="Utils\ViewModels\TextViewModel.cs" />
     <Compile Include="Utils\ViewModels\VolumeRegulatorControllerViewModel.cs" />

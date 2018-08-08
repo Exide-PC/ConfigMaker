@@ -21,8 +21,6 @@
         mc:Ignorable="d"
         Title="" Height="500" Width="1120" MinHeight="500" MinWidth="1120" Loaded="Window_Loaded" Closing="Window_Closing" Name="mainWindow" WindowState="Maximized">
     <Window.Resources>
-        <converters:AliasNameVerifier x:Key="nameToEnableConverter"/>
-        <converters:IsNullConverter x:Key="isNullConverter"/>
         <converters:BoolToFontWeightConverter x:Key="boolToFontweightConverter"/>
         <converters:BoolToVisibilityConverter x:Key="boolToVisibilityConverter"/>
         <Style x:Key="BubbleButton" TargetType="materialDesign:Chip">
@@ -131,8 +129,9 @@
         </DataTemplate>
         
         <DataTemplate DataType="{x:Type viewmodels:EntryViewModel}">
-            <CheckBox 
-                utils:FocusExtension.IsFocused="{Binding IsFocused, Mode=TwoWay}"
+            <CheckBox
+                Command="{Binding SelectCommand}"
+                utils:FocusExtension.IsFocused="{Binding IsFocused}"
                 IsEnabled="{Binding IsEnabled}" 
                 IsChecked="{Binding IsChecked}" 
                 Content="{Binding Content}" />
@@ -140,6 +139,7 @@
         
         <DataTemplate DataType="{x:Type viewmodels:ActionViewModel}">
             <CheckBox 
+                Command="{Binding SelectCommand}"
                 utils:FocusExtension.IsFocused="{Binding IsFocused}"
                 IsEnabled="{Binding IsEnabled}" 
                 IsChecked="{Binding IsChecked}" 
@@ -150,6 +150,7 @@
         <DataTemplate DataType="{x:Type viewmodels:BuyViewModel}">
             <StackPanel Orientation="Vertical">
                 <CheckBox
+                    Command="{Binding SelectCommand}"
                     utils:FocusExtension.IsFocused="{Binding IsFocused}"
                     IsEnabled="{Binding IsEnabled}" 
                     IsChecked="{Binding IsChecked}" 
@@ -198,7 +199,9 @@
                         Style="{StaticResource MaterialDesignFlatButton}" 
                         Content="⇄"/>
                 </Grid>
-                <CheckBox Grid.Column="2"
+                <CheckBox 
+                    Command="{Binding SelectCommand}"
+                    Grid.Column="2"
                     utils:FocusExtension.IsFocused="{Binding IsFocused}"
                     IsEnabled="{Binding IsEnabled}" 
                     IsChecked="{Binding IsChecked}"
@@ -243,7 +246,7 @@
             <TextBox Text="{Binding Text, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" VerticalAlignment="Center"/>
         </DataTemplate>
 
-        <DataTemplate DataType="{x:Type viewmodels:BubbleViewModel}">
+        <DataTemplate DataType="{x:Type viewmodels:ItemViewModel}">
             <materialDesign:Chip 
                 Style="{StaticResource BubbleButton}"
                 Content="{Binding Text}"
@@ -257,6 +260,7 @@
             <GroupBox>
                 <GroupBox.Header>
                     <CheckBox
+                        Command="{Binding SelectCommand}"
                         Content="{Binding Content}"
                         utils:FocusExtension.IsFocused="{Binding IsFocused}"
                         IsEnabled="{Binding IsEnabled}" 
@@ -265,9 +269,8 @@
                 <StackPanel Orientation="Vertical" IsEnabled="{Binding IsChecked}">
                     <StackPanel Orientation="Horizontal">
                         <TextBox 
-                            Text="{Binding CmdName, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" 
-                            Width="250" 
-                            TextChanged="TextBox_TextChanged"/>
+                            Text="{Binding Input, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" 
+                            Width="250"/>
                         <Button 
                             IsEnabled="{Binding AddButtonEnabled}" 
                             Content="{x:Static res:Resources.Add_Button}"
@@ -278,14 +281,13 @@
                             Click="DeleteCmdButton_Click"/>
                     </StackPanel>
                     <Border Style="{StaticResource CustomBorder}" Margin="0,2,0,0">
-                        <ItemsControl ItemsSource="{Binding Bubbles}">
+                        <ItemsControl ItemsSource="{Binding Items}">
                             <ItemsControl.ItemsPanel>
                                 <ItemsPanelTemplate>
                                     <WrapPanel Orientation="Horizontal" Height="70"/>
                                 </ItemsPanelTemplate>
                             </ItemsControl.ItemsPanel>
                         </ItemsControl>
-                        <!--<WrapPanel Name="customCmdPanel" Height="70"/>-->
                     </Border>
                 </StackPanel>
             </GroupBox>
@@ -295,6 +297,7 @@
             <GroupBox>
                 <GroupBox.Header>
                     <CheckBox
+                        Command="{Binding SelectCommand}"
                         Content="{Binding Content}"
                         utils:FocusExtension.IsFocused="{Binding IsFocused}"
                         IsEnabled="{Binding IsEnabled}" 
@@ -325,6 +328,7 @@
             <GroupBox>
                 <GroupBox.Header>
                     <CheckBox
+                        Command="{Binding SelectCommand}"
                         Content="{Binding Content}"
                         utils:FocusExtension.IsFocused="{Binding IsFocused}"
                         IsEnabled="{Binding IsEnabled}" 
@@ -361,6 +365,67 @@
                     </StackPanel>
                 </StackPanel>
             </GroupBox>
+        </DataTemplate>
+
+        <DataTemplate DataType="{x:Type viewmodels:AliasControllerViewModel}">
+            <Grid IsEnabled="{Binding IsEnabled}">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="30"/>
+                    <RowDefinition Height="1*"/>
+                </Grid.RowDefinitions>
+                <StackPanel Orientation="Horizontal">
+                    <TextBox 
+                            Text="{Binding Input, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" 
+                            Width="250"/>
+                    <Button 
+                            IsEnabled="{Binding AddButtonEnabled}" 
+                            Content="{x:Static res:Resources.Add_Button}"
+                            Click="AddAliasButton_Click"/>
+                    <Button 
+                            IsEnabled="{Binding DeleteButtonEnabled}" 
+                            Content="{x:Static res:Resources.Remove_Button}"
+                            Click="DeleteAliasButton_Click"/>
+                </StackPanel>
+                <Border Grid.Row="1" Style="{StaticResource CustomBorder}" Margin="0,2,0,0">
+                    <ItemsControl ItemsSource="{Binding Items}">
+                        <ItemsControl.ItemsPanel>
+                            <ItemsPanelTemplate>
+                                <WrapPanel Orientation="Horizontal"/>
+                            </ItemsPanelTemplate>
+                        </ItemsControl.ItemsPanel>
+                    </ItemsControl>
+                </Border>
+            </Grid>
+        </DataTemplate>
+
+        <DataTemplate DataType="{x:Type viewmodels:AttachmentsViewModel}">
+            <Border MouseLeftButtonUp="AttachmentsBorder_Click">
+                <Border.Style>
+                    <Style TargetType="Border" BasedOn="{StaticResource AttachmentBorder}">
+                        <Setter Property="BorderBrush" Value="{StaticResource MaterialDesignCheckBoxDisabled}"/>
+                        <Setter Property="BorderThickness" Value="2"/>
+                        <Setter Property="Background" Value="Transparent"/>
+                        <Setter Property="Margin" Value="1"/>
+                        <Style.Triggers>
+                            <DataTrigger Binding="{Binding Path=IsSelected}" Value="True">
+                                <Setter Property="BorderBrush" Value="{StaticResource SecondaryAccentBrush}"/>
+                            </DataTrigger>
+                        </Style.Triggers>
+                    </Style>
+                </Border.Style>
+                <Grid>
+                    <ScrollViewer>
+                        <ItemsControl ItemsSource="{Binding Items}">
+                            <ItemsControl.ItemsPanel>
+                                <ItemsPanelTemplate>
+                                    <WrapPanel Orientation="Horizontal"/>
+                                </ItemsPanelTemplate>
+                            </ItemsControl.ItemsPanel>
+                        </ItemsControl>
+                    </ScrollViewer>
+                    <TextBlock VerticalAlignment="Bottom" HorizontalAlignment="Right" Margin="0,0,18,0" Text="{Binding Hint}" FontStyle="Italic" FontSize="10"/>
+                </Grid>
+            </Border>
         </DataTemplate>
     </Window.Resources>
     <Grid>
@@ -446,7 +511,6 @@
                                         </ItemsPanelTemplate>
                                     </ItemsControl.ItemsPanel>
                                 </ItemsControl>
-                                <!--<WrapPanel Name="actionsPanel" Orientation="Vertical"/>-->
                             </ScrollViewer>
                         </Grid>
                         <!--buy tab grid-->
@@ -463,7 +527,6 @@
                             </Grid.Style>
                             <Grid>
                                 <ContentControl Name="buyTabContentControl"/>
-                                <!--<StackPanel Name="buyTabStackPanel"/>-->
                             </Grid>
                         </Grid>
                         <!--game settings tab grid-->
@@ -495,7 +558,6 @@
                                                 </ItemsPanelTemplate>
                                             </ItemsControl.ItemsPanel>
                                         </ItemsControl>
-                                        <!--<StackPanel Name="settingsTabPanel"/>-->
                                     </ScrollViewer>
                                 </DockPanel>
                             </Grid>
@@ -527,115 +589,6 @@
                                                     <StackPanel Orientation="Vertical"/>
                                                 </ItemsPanelTemplate>
                                             </ItemsControl.ItemsPanel>
-                                            <!--Exec custom cmd-->
-                                            <!--<GroupBox>
-                                                <GroupBox.Header>
-                                                    <CheckBox Content="{x:Static res:Resources.ExecCustomCmds}" Name="customCmdHeaderCheckbox"/>
-                                                </GroupBox.Header>
-                                                <Grid Margin="3">
-                                                    <Grid.Style>
-                                                        <Style TargetType="Grid">
-                                                            <Setter Property="IsEnabled" Value="False"/>
-                                                            <Style.Triggers>
-                                                                <DataTrigger Binding="{Binding ElementName=customCmdHeaderCheckbox, Path=IsChecked}" Value="True">
-                                                                    <Setter Property="IsEnabled" Value="True"/>
-                                                                </DataTrigger>
-                                                            </Style.Triggers>
-                                                        </Style>
-                                                    </Grid.Style>
-                                                    <StackPanel Orientation="Vertical">
-                                                        <StackPanel Orientation="Horizontal">
-                                                            <TextBox Name="cmdTextbox" Width="250" TextChanged="CommandNameTextbox_TextChanged"/>
-                                                            <Button Name="addCmdButton" IsEnabled="False" Content="{x:Static res:Resources.Add_Button}"/>
-                                                            <Button Name="deleteCmdButton" Content="{x:Static res:Resources.Remove_Button}">
-                                                                <Button.Style>
-                                                                    <Style TargetType="Button" BasedOn="{StaticResource {x:Type Button}}">
-                                                                        <Style.Triggers>
-                                                                            <DataTrigger Binding="{Binding ElementName=customCmdPanel, Path=Tag, Converter={StaticResource isNullConverter}}" Value="True">
-                                                                                <Setter Property="IsEnabled" Value="False"/>
-                                                                            </DataTrigger>
-                                                                            <DataTrigger Binding="{Binding ElementName=customCmdPanel, Path=Tag, Converter={StaticResource isNullConverter}}" Value="False">
-                                                                                <Setter Property="IsEnabled" Value="True"/>
-                                                                            </DataTrigger>
-                                                                        </Style.Triggers>
-                                                                    </Style>
-                                                                </Button.Style>
-                                                            </Button>
-                                                        </StackPanel>
-                                                        <Border Style="{StaticResource CustomBorder}" Margin="0,2,0,0">
-                                                            <WrapPanel Name="customCmdPanel" Height="70"/>
-                                                        </Border>
-                                                    </StackPanel>
-                                                </Grid>
-                                            </GroupBox>-->
-                                            <!--Cycle crosshair groupbox-->
-                                            <!--<GroupBox>
-                                                <GroupBox.Header>
-                                                    <CheckBox Content="{x:Static res:Resources.CycleCrosshair}" Name="cycleChHeaderCheckbox"/>
-                                                </GroupBox.Header>
-                                                <Grid Margin="3">
-                                                    <Grid.Style>
-                                                        <Style TargetType="Grid">
-                                                            <Setter Property="IsEnabled" Value="False"/>
-                                                            <Style.Triggers>
-                                                                <DataTrigger Binding="{Binding ElementName=cycleChHeaderCheckbox, Path=IsChecked}" Value="True">
-                                                                    <Setter Property="IsEnabled" Value="True"/>
-                                                                </DataTrigger>
-                                                            </Style.Triggers>
-                                                        </Style>
-                                                    </Grid.Style>
-                                                    <StackPanel Margin="0,3,0,3" Orientation="Horizontal">
-                                                        <Slider VerticalAlignment="Center" Name="cycleChSlider" Minimum="2" Maximum="10" TickFrequency="1" Value="2" Width="100" IsSnapToTickEnabled="True" />
-                                                        <TextBlock VerticalAlignment="Center" Margin="5,0,5,0" Text="{Binding ElementName=cycleChSlider, Path=Value}"/>
-                                                        <Button Content="{x:Static res:Resources.GenerateCrosshairs_Button}" Click="GenerateRandomCrosshairsButton_Click"/>
-                                                    </StackPanel>
-                                                </Grid>
-                                            </GroupBox>
-                                            --><!--Volume regulator groupbox--><!--
-                                            <GroupBox>
-                                                <GroupBox.Header>
-                                                    <CheckBox Content="{x:Static res:Resources.VolumeRegulator}" Name="volumeRegulatorCheckbox"/>
-                                                </GroupBox.Header>
-                                                <Grid Margin="3">
-                                                    <Grid.Style>
-                                                        <Style TargetType="Grid">
-                                                            <Setter Property="IsEnabled" Value="False"/>
-                                                            <Style.Triggers>
-                                                                <DataTrigger Binding="{Binding ElementName=volumeRegulatorCheckbox, Path=IsChecked}" Value="True">
-                                                                    <Setter Property="IsEnabled" Value="True"/>
-                                                                </DataTrigger>
-                                                            </Style.Triggers>
-                                                        </Style>
-                                                    </Grid.Style>
-                                                    <StackPanel>
-                                                        <StackPanel Orientation="Horizontal" Height="28">
-                                                            <TextBlock Width="30" Text="{x:Static res:Resources.From_Label}" />
-                                                            <Slider Width="150" Name="minVolumeSlider" Minimum="0" Maximum="0.99" IsSnapToTickEnabled="True" TickFrequency="0.01" Value="0"/>
-                                                            <Border Width="30">
-                                                                <TextBlock HorizontalAlignment="Center" Text="{Binding Path=Value, ElementName=minVolumeSlider}"/>
-                                                            </Border>
-                                                            <ComboBox Margin="25,0,0,0" Width="170" Name="volumeDirectionCombobox" SelectedIndex="1">
-                                                                <ComboBoxItem Content="{x:Static res:Resources.VolumeReduce_ComboboxItem}"/>
-                                                                <ComboBoxItem Content="{x:Static res:Resources.VolumeIncrease_ComboboxItem}"/>
-                                                            </ComboBox>
-                                                        </StackPanel>
-                                                        <StackPanel Orientation="Horizontal" Height="28">
-                                                            <TextBlock Width="30" Text="{x:Static res:Resources.To_Label}"/>
-                                                            <Slider Width="150" Name="maxVolumeSlider" Minimum="0.01" Maximum="1" IsSnapToTickEnabled="True" TickFrequency="0.01" Value="1"/>
-                                                            <Border Width="30">
-                                                                <TextBlock HorizontalAlignment="Center" Text="{Binding Path=Value, ElementName=maxVolumeSlider}"/>
-                                                            </Border>
-                                                        </StackPanel>
-                                                        <StackPanel Orientation="Horizontal" Height="28">
-                                                            <TextBlock Width="30" Text="{x:Static res:Resources.Step_Label}"/>
-                                                            <Slider Width="150" Name="volumeStepSlider" Minimum="0.01" Maximum="0.5" IsSnapToTickEnabled="True" TickFrequency="0.01" Value="0.01"/>
-                                                            <Border Width="30">
-                                                                <TextBlock HorizontalAlignment="Center" Text="{Binding Path=Value, ElementName=volumeStepSlider}"/>
-                                                            </Border>
-                                                        </StackPanel>
-                                                    </StackPanel>
-                                                </Grid>
-                                            </GroupBox>-->
                                         </ItemsControl>
                                     </Grid>
                                 </ScrollViewer>
@@ -670,40 +623,8 @@
                         <ColumnDefinition/>
                         <ColumnDefinition/>
                     </Grid.ColumnDefinitions>
-                    <Border Tag="KeyDown" Grid.Column="0" MouseLeftButtonUp="AttachmentsBorder_Click">
-                        <Border.Style>
-                            <Style TargetType="Border" BasedOn="{StaticResource AttachmentBorder}">
-                                <Style.Triggers>
-                                    <DataTrigger Binding="{Binding ElementName=mainWindow, Path=StateBinding}" Value="KeyDown">
-                                        <Setter Property="utils:SelectionAssistant.IsSelected" Value="True"/>
-                                    </DataTrigger>
-                                </Style.Triggers>
-                            </Style>
-                        </Border.Style>
-                        <Grid>
-                            <ScrollViewer>
-                                <WrapPanel Name="onKeyDownAttachmentsPanel"/>
-                            </ScrollViewer>
-                            <TextBlock Name="keyDownPanelLabel" VerticalAlignment="Bottom" HorizontalAlignment="Right" Margin="0,0,18,0" Text="{x:Static res:Resources.KeyPressure_Label}" FontStyle="Italic" FontSize="10"/>
-                        </Grid>
-                    </Border>
-                    <Border Tag="KeyUp" Grid.Column="1" MouseLeftButtonUp="AttachmentsBorder_Click">
-                        <Border.Style>
-                            <Style TargetType="Border" BasedOn="{StaticResource AttachmentBorder}">
-                                <Style.Triggers>
-                                    <DataTrigger Binding="{Binding ElementName=mainWindow, Path=StateBinding}" Value="KeyUp">
-                                        <Setter Property="utils:SelectionAssistant.IsSelected" Value="True"/>
-                                    </DataTrigger>
-                                </Style.Triggers>
-                            </Style>
-                        </Border.Style>
-                        <Grid>
-                            <ScrollViewer>
-                                <WrapPanel Name="onKeyReleaseAttachmentsPanel"/>
-                            </ScrollViewer>
-                            <TextBlock Name="keyReleasePanelLabel" VerticalAlignment="Bottom" HorizontalAlignment="Right" Margin="0,0,18,0" Text="{x:Static res:Resources.KeyRelease_Label}" FontStyle="Italic" FontSize="10"/>
-                        </Grid>
-                    </Border>
+                    <ContentControl Name="keyDownAttachmentsContentControl"/>
+                    <ContentControl Name="keyUpAttachmentsContentControl" Grid.Column="1"/>
                 </Grid>
                 <Grid Grid.Row="1" Grid.ColumnSpan="4">
                     <Grid.Style>
@@ -728,24 +649,7 @@
                             </Style.Triggers>
                         </Style>
                     </Grid.Style>
-                    <Border Grid.Row="2" Grid.Column="0" Grid.ColumnSpan="4">
-                        <Border.Style>
-                            <Style TargetType="Border" BasedOn="{StaticResource AttachmentBorder}">
-                                <Setter Property="utils:SelectionAssistant.IsSelected" Value="True"/>
-                                <Style.Triggers>
-                                    <DataTrigger Binding="{Binding ElementName=mainWindow, Path=StateBinding}" Value="InvalidState">
-                                        <Setter Property="utils:SelectionAssistant.IsSelected" Value="False"/>
-                                    </DataTrigger>
-                                </Style.Triggers>
-                            </Style>
-                        </Border.Style>
-                        <Grid>
-                            <ScrollViewer>
-                                <WrapPanel Name="solidAttachmentsPanel"/>
-                            </ScrollViewer>
-                            <TextBlock Name="solidAttachmentPanelLabel" VerticalAlignment="Bottom" HorizontalAlignment="Right" Margin="0,0,17,0" Text="{x:Static res:Resources.CommandsByDefault_Hint}" FontStyle="Italic" FontSize="10"/>
-                        </Grid>
-                    </Border>
+                    <ContentControl Name="solidAttachmentsContentControl"/>
                 </Grid>
                 <Grid x:Name="keyboardGrid" Grid.Row="3" Grid.ColumnSpan="4" Margin="1">
                     <Grid.ColumnDefinitions>
@@ -777,11 +681,12 @@
                         </Style>
                     </Grid.Style>
                     <Grid>
-                        <Grid.RowDefinitions>
+                        <!--<Grid.RowDefinitions>
                             <RowDefinition Height="30"/>
                             <RowDefinition Height="1*"/>
-                        </Grid.RowDefinitions>
-                        <StackPanel HorizontalAlignment="Left" VerticalAlignment="Bottom" Orientation="Horizontal">
+                        </Grid.RowDefinitions>-->
+                        <ContentControl Name="aliasContentControl"/>
+                        <!--<StackPanel HorizontalAlignment="Left" VerticalAlignment="Bottom" Orientation="Horizontal">
                             <TextBlock VerticalAlignment="Center" Text="{x:Static res:Resources.CommandName}"/>
                             <TextBox x:Name="newAliasNameTextbox" Width="80" Margin="5,0,0,0"/>
                             <Button Content="{x:Static res:Resources.Add_Button}" IsEnabled="{Binding ElementName=newAliasNameTextbox, Path=Text, Converter={StaticResource nameToEnableConverter}}" Click="AddAliasButton_Click"/>
@@ -803,7 +708,7 @@
                         </StackPanel>
                         <Border Grid.Row="1" Style="{StaticResource CustomBorder}" Margin="0,2,0,0">
                             <WrapPanel Name="aliasPanel"/>
-                        </Border>
+                        </Border>-->
                     </Grid>
                 </Grid>
                 <StackPanel Orientation="Horizontal" Grid.Row="2" Grid.ColumnSpan="4">
