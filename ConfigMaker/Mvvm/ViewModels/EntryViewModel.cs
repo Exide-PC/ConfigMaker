@@ -5,7 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Input;
 
-namespace ConfigMaker.Utils.ViewModels
+namespace ConfigMaker.Mvvm.ViewModels
 {
     public class EntryViewModel: BindableBase
     {
@@ -26,12 +26,6 @@ namespace ConfigMaker.Utils.ViewModels
             {
                 this.Click?.Invoke(this, null);
             });
-
-            //this.PropertyChanged += (_, arg) =>
-            //{
-            //    if (this._isEnabled && !this.isRestoreMode && arg.PropertyName == nameof(EntryViewModel.IsChecked))
-            //        this.Click?.Invoke(this, null);
-            //};
         }
 
         public ICommand SelectCommand { get; }

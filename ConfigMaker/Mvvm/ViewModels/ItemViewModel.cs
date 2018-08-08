@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Input;
 
-namespace ConfigMaker.Utils.ViewModels
+namespace ConfigMaker.Mvvm.ViewModels
 {
     public class ItemViewModel: BindableBase
     {

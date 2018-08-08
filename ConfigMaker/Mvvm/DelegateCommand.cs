@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Windows.Input;
 
-namespace ConfigMaker.Utils
+namespace ConfigMaker.Mvvm
 {
     public class DelegateCommand: ICommand
     {

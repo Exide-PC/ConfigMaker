@@ -5,7 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
 
-namespace ConfigMaker.Utils.ViewModels
+namespace ConfigMaker.Mvvm.ViewModels
 {
     public class DynamicEntryViewModel: EntryViewModel
     {

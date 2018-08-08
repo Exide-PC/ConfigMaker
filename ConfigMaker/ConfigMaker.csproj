@@ -13,6 +13,21 @@
     <ProjectTypeGuids>{60dc8134-eba5-43b8-bcc9-bb4bc16c2548};{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}</ProjectTypeGuids>
     <WarningLevel>4</WarningLevel>
     <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
+    <PublishUrl>publish\</PublishUrl>
+    <Install>true</Install>
+    <InstallFrom>Disk</InstallFrom>
+    <UpdateEnabled>false</UpdateEnabled>
+    <UpdateMode>Foreground</UpdateMode>
+    <UpdateInterval>7</UpdateInterval>
+    <UpdateIntervalUnits>Days</UpdateIntervalUnits>
+    <UpdatePeriodically>false</UpdatePeriodically>
+    <UpdateRequired>false</UpdateRequired>
+    <MapFileExtensions>true</MapFileExtensions>
+    <ApplicationRevision>0</ApplicationRevision>
+    <ApplicationVersion>1.0.0.%2a</ApplicationVersion>
+    <IsWebBootstrapper>false</IsWebBootstrapper>
+    <UseApplicationTrust>false</UseApplicationTrust>
+    <BootstrapperEnabled>true</BootstrapperEnabled>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <PlatformTarget>AnyCPU</PlatformTarget>
@@ -74,12 +89,11 @@
       <DesignTime>True</DesignTime>
       <DependentUpon>Resources.resx</DependentUpon>
     </Compile>
-    <Compile Include="Utils\BindableBase.cs" />
+    <Compile Include="Mvvm\BindableBase.cs" />
     <Compile Include="Utils\Converters\BoolToFontWeightConverter.cs" />
     <Compile Include="Utils\Converters\BoolToVisibilityConverter.cs" />
     <Compile Include="Utils\Converters\CfgDirValidationRule.cs" />
     <Compile Include="Utils\Converters\NameValidationRule.cs" />
-    <Compile Include="Utils\Converters\TagToFontWeightConverter.cs" />
     <Compile Include="Csgo\Config\Entries\Entry.cs" />
     <Compile Include="Csgo\Config\Entries\ParametrizedEntry.cs" />
     <Compile Include="Csgo\Config\Enums\EntryType.cs" />
@@ -96,33 +110,30 @@
     <Compile Include="Csgo\Config\ConfigManager.cs" />
     <Compile Include="Csgo\Config\Entries\BindEntry.cs" />
     <Compile Include="Csgo\Config\KeySequence.cs" />
-    <Compile Include="Utils\DelegateCommand.cs" />
+    <Compile Include="Mvvm\DelegateCommand.cs" />
     <Compile Include="Utils\EntryController.cs" />
-    <Compile Include="Utils\Converters\IsNullConverter.cs" />
-    <Compile Include="Utils\Converters\AliasNameVerifier.cs" />
-    <Compile Include="Utils\EntryControllerV2.cs" />
     <Compile Include="Utils\FocusExtension.cs" />
     <Compile Include="Utils\SelectionAssistant.cs" />
     <Compile Include="ToggleWindow.xaml.cs">
       <DependentUpon>ToggleWindow.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Utils\ViewModels\ActionViewModel.cs" />
-    <Compile Include="Utils\ViewModels\AliasControllerViewModel.cs" />
-    <Compile Include="Utils\ViewModels\AttachmentsViewModel.cs" />
-    <Compile Include="Utils\ViewModels\ItemViewModel.cs" />
-    <Compile Include="Utils\ViewModels\BuyViewModel.cs" />
-    <Compile Include="Utils\ViewModels\ComboBoxControllerViewModel.cs" />
-    <Compile Include="Utils\ViewModels\CustomCmdControllerViewModel.cs" />
-    <Compile Include="Utils\ViewModels\CycleCrosshairViewModel.cs" />
-    <Compile Include="Utils\ViewModels\DynamicEntryViewModel.cs" />
-    <Compile Include="Utils\ViewModels\EntryViewModel.cs" />
-    <Compile Include="Utils\ViewModels\IntervalControllerViewModel.cs" />
-    <Compile Include="Utils\ViewModels\InputItemsControllerViewModel.cs" />
-    <Compile Include="Utils\ViewModels\LeakAwareItemsViewModel.cs" />
-    <Compile Include="Utils\ViewModels\TextboxControllerViewModel.cs" />
-    <Compile Include="Utils\ViewModels\TextViewModel.cs" />
-    <Compile Include="Utils\ViewModels\VolumeRegulatorControllerViewModel.cs" />
-    <Compile Include="Utils\ViewModels\WeaponCategoryViewModel.cs" />
+    <Compile Include="Mvvm\ViewModels\ActionViewModel.cs" />
+    <Compile Include="Mvvm\ViewModels\AliasControllerViewModel.cs" />
+    <Compile Include="Mvvm\ViewModels\AttachmentsViewModel.cs" />
+    <Compile Include="Mvvm\ViewModels\ItemViewModel.cs" />
+    <Compile Include="Mvvm\ViewModels\BuyViewModel.cs" />
+    <Compile Include="Mvvm\ViewModels\ComboBoxControllerViewModel.cs" />
+    <Compile Include="Mvvm\ViewModels\CustomCmdControllerViewModel.cs" />
+    <Compile Include="Mvvm\ViewModels\CycleCrosshairViewModel.cs" />
+    <Compile Include="Mvvm\ViewModels\DynamicEntryViewModel.cs" />
+    <Compile Include="Mvvm\ViewModels\EntryViewModel.cs" />
+    <Compile Include="Mvvm\ViewModels\IntervalControllerViewModel.cs" />
+    <Compile Include="Mvvm\ViewModels\InputItemsControllerViewModel.cs" />
+    <Compile Include="Mvvm\ViewModels\LeakAwareItemsViewModel.cs" />
+    <Compile Include="Mvvm\ViewModels\TextboxControllerViewModel.cs" />
+    <Compile Include="Mvvm\ViewModels\TextViewModel.cs" />
+    <Compile Include="Mvvm\ViewModels\VolumeRegulatorControllerViewModel.cs" />
+    <Compile Include="Mvvm\ViewModels\WeaponCategoryViewModel.cs" />
     <Compile Include="VirtualKeyboard.xaml.cs">
       <DependentUpon>VirtualKeyboard.xaml</DependentUpon>
     </Compile>
@@ -179,6 +190,18 @@
   </ItemGroup>
   <ItemGroup>
     <Resource Include="Resources\icon.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <BootstrapperPackage Include=".NETFramework,Version=v4.6.1">
+      <Visible>False</Visible>
+      <ProductName>Microsoft .NET Framework 4.6.1 %28x86 and x64%29</ProductName>
+      <Install>true</Install>
+    </BootstrapperPackage>
+    <BootstrapperPackage Include="Microsoft.Net.Framework.3.5.SP1">
+      <Visible>False</Visible>
+      <ProductName>.NET Framework 3.5 SP1</ProductName>
+      <Install>false</Install>
+    </BootstrapperPackage>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

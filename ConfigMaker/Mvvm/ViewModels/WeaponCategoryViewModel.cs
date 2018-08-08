@@ -5,7 +5,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace ConfigMaker.Utils.ViewModels
+namespace ConfigMaker.Mvvm.ViewModels
 {
     // Класс для поддержания строгой типизации, иначе в BuyViewModel было бы ObservableCollection<ObservableCollection<object>>
     public class WeaponCategoryViewModel: BindableBase

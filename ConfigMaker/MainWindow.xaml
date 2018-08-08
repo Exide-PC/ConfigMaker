@@ -6,7 +6,7 @@
         xmlns:system="clr-namespace:System;assembly=mscorlib"
         xmlns:converters="clr-namespace:ConfigMaker.Utils.Converters"
         xmlns:utils="clr-namespace:ConfigMaker.Utils"
-        xmlns:viewmodels="clr-namespace:ConfigMaker.Utils.ViewModels"
+        xmlns:viewmodels="clr-namespace:ConfigMaker.Mvvm.ViewModels"
         xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
         xmlns:res="clr-namespace:ConfigMaker.Properties"
         xmlns:local="clr-namespace:ConfigMaker"

@@ -6,7 +6,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace ConfigMaker.Utils.ViewModels
+namespace ConfigMaker.Mvvm.ViewModels
 {
     public class LeakAwareItemsViewModel: BindableBase
     {

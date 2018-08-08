@@ -45,8 +45,9 @@ using ConfigMaker.Csgo.Config.Enums;
 using ConfigMaker.Csgo.Config.Entries.interfaces;
 using ConfigMaker.Utils;
 using System.Collections.ObjectModel;
-using ConfigMaker.Utils.ViewModels;
 using System.Windows.Input;
+using ConfigMaker.Mvvm.ViewModels;
+using ConfigMaker.Mvvm;
 
 namespace ConfigMaker
 {
@@ -71,7 +72,7 @@ namespace ConfigMaker
         string cfgPath = $"{nameof(AppConfig)}.xml";
         //const string extraAliasSetEntryKey = "ExtraAliasSet";
         
-        ObservableCollection<EntryControllerV2> entryV2Controllers = new ObservableCollection<EntryControllerV2>();
+        ObservableCollection<EntryController> entryV2Controllers = new ObservableCollection<EntryController>();
 
         AliasControllerViewModel aliasSetVM = null;
         AttachmentsViewModel keyDownAttachmentsVM = null;
@@ -172,7 +173,7 @@ namespace ConfigMaker
             {
                 if (arg.Action == System.Collections.Specialized.NotifyCollectionChangedAction.Add)
                 {
-                    EntryControllerV2 controller = (EntryControllerV2)arg.NewItems[0];
+                    EntryController controller = (EntryController)arg.NewItems[0];
                     EntryViewModel entryVM = controller.AttachedViewModel;
                     entryVM.Click += (__, ___) => HandleEntryClick(entryVM.Key);
                 }
@@ -476,7 +477,7 @@ namespace ConfigMaker
             {
                 ActionViewModel actionVM = PrepareAction(cmd, isMeta);
 
-                EntryControllerV2 entryController = new EntryControllerV2
+                EntryController entryController = new EntryController
                 {
                     AttachedViewModel = actionVM,
                     // генерируем каждый раз новый элемент во избежание замыкания
@@ -602,7 +603,7 @@ namespace ConfigMaker
             const string jumpthrowEntryKey = "Jumpthrow";
             ActionViewModel jumpthrowVM = PrepareAction(jumpthrowEntryKey, true);
 
-            this.entryV2Controllers.Add(new EntryControllerV2()
+            this.entryV2Controllers.Add(new EntryController()
             {
                 AttachedViewModel = jumpthrowVM,
                 Focus = () =>
@@ -635,7 +636,7 @@ namespace ConfigMaker
             const string displayDamageOnEntryKey = "DisplayDamage_On";
             ActionViewModel displayDamageOnVM = PrepareAction(displayDamageOnEntryKey, false);
 
-            this.entryV2Controllers.Add(new EntryControllerV2()
+            this.entryV2Controllers.Add(new EntryController()
                 {
                     AttachedViewModel = displayDamageOnVM,
                     Focus = () =>
@@ -673,7 +674,7 @@ namespace ConfigMaker
             const string displayDamageOffEntryKey = "DisplayDamage_Off";
             ActionViewModel displayDamageOffVM = PrepareAction(displayDamageOffEntryKey, false);
 
-            this.entryV2Controllers.Add(new EntryControllerV2()
+            this.entryV2Controllers.Add(new EntryController()
                 {
                     AttachedViewModel = displayDamageOffVM,
                     Focus = () =>
@@ -726,7 +727,7 @@ namespace ConfigMaker
             };
 
             // Обработчик интерфейса настроек закупки
-            this.entryV2Controllers.Add(new EntryControllerV2()
+            this.entryV2Controllers.Add(new EntryController()
             {
                 AttachedViewModel = buyVM,
                 Focus = () => buyTabButton.IsChecked = true,
@@ -905,7 +906,7 @@ namespace ConfigMaker
                 };
                 
                 // обработчик интерфейса
-                this.entryV2Controllers.Add(new EntryControllerV2()
+                this.entryV2Controllers.Add(new EntryController()
                 {
                     AttachedViewModel = entryVM,
                     Focus = () =>
@@ -1004,7 +1005,7 @@ namespace ConfigMaker
                 names.ToList().ForEach(name => comboboxVM.Items.Add(name));
 
                 // Создадим обработчика пораньше, т.к. он понадобится уже при задании начального индекса комбобокса
-                entryV2Controllers.Add(new EntryControllerV2()
+                entryV2Controllers.Add(new EntryController()
                 {
                     AttachedViewModel = entryVM,
                     Focus = () =>
@@ -1143,7 +1144,7 @@ namespace ConfigMaker
                     }
                 };
 
-                this.entryV2Controllers.Add(new EntryControllerV2()
+                this.entryV2Controllers.Add(new EntryController()
                 {
                     AttachedViewModel = entryVM,
                     Focus = () =>
@@ -1224,7 +1225,7 @@ namespace ConfigMaker
                     AddEntry(cmd, true);
                 };
 
-                this.entryV2Controllers.Add(new EntryControllerV2()
+                this.entryV2Controllers.Add(new EntryController()
                 {
                     AttachedViewModel = entryVM,
                     Focus = () =>
@@ -1445,7 +1446,7 @@ namespace ConfigMaker
                 AddEntry(execCustomCmdsEntryKey, false);
             });
 
-            this.entryV2Controllers.Add(new EntryControllerV2()
+            this.entryV2Controllers.Add(new EntryController()
             {
                 AttachedViewModel = customCmdVM,
                 Focus = () => extraTabButton.IsChecked = true,
@@ -1523,7 +1524,7 @@ namespace ConfigMaker
                 GenerateRandomCrosshairs(cycleChVM.CrosshairCount);
             });
 
-            this.entryV2Controllers.Add(new EntryControllerV2()
+            this.entryV2Controllers.Add(new EntryController()
             {
                 AttachedViewModel = cycleChVM,
                 Focus = () =>
@@ -1638,7 +1639,7 @@ namespace ConfigMaker
                 this.AddEntry(volumeRegulatorEntryKey, true);
             };
 
-            this.entryV2Controllers.Add(new EntryControllerV2()
+            this.entryV2Controllers.Add(new EntryController()
             {
                 AttachedViewModel = volumeVM,
                 Focus = () =>
@@ -1821,7 +1822,7 @@ namespace ConfigMaker
                 UpdateAttachmentPanels();
             }
 
-            this.entryV2Controllers.Add(new EntryControllerV2()
+            this.entryV2Controllers.Add(new EntryController()
             {
                 AttachedViewModel = aliasSetVM,
                 Generate = () =>
@@ -2007,7 +2008,7 @@ namespace ConfigMaker
         void HandleEntryClick(string entryKey)
         {
             // Получим обработчика и 
-            EntryControllerV2 entryController = this.GetController(entryKey);
+            EntryController entryController = this.GetController(entryKey);
             EntryViewModel entryVM = entryController.AttachedViewModel;
             Entry entry = (Entry)entryController.Generate();
 
@@ -2059,7 +2060,7 @@ namespace ConfigMaker
 
         void AddEntry(string cfgEntryKey, bool abortIfNotUser)
         {
-            EntryControllerV2 controller = this.GetController(cfgEntryKey);
+            EntryController controller = this.GetController(cfgEntryKey);
 
             // Если сказано, что отмена, если добавление идет не из-за действий пользователя
             // То значит гарантированно AttachedCheckbox не может быть равен null
@@ -2161,7 +2162,7 @@ namespace ConfigMaker
             }
         }
 
-        EntryControllerV2 GetController(string cmd)
+        EntryController GetController(string cmd)
         {
             return this.entryV2Controllers.FirstOrDefault(c => c.AttachedViewModel.Key == cmd);
         }
@@ -2181,7 +2182,7 @@ namespace ConfigMaker
 
             foreach (string entryKey in shownEntryKeys)
             {
-                EntryControllerV2 controller = this.GetController(entryKey);
+                EntryController controller = this.GetController(entryKey);
                 // Метод, отвечающий непосредственно за сброс состояния интерфейса
                 controller.Restore();
             }
@@ -2361,7 +2362,7 @@ namespace ConfigMaker
         void UpdateCfgManager()
         {
             // Сбросим все настройки от прошлого конфига
-            foreach (EntryControllerV2 controller in this.entryV2Controllers)
+            foreach (EntryController controller in this.entryV2Controllers)
                 controller.Restore();
 
             // Зададим привязку к дефолтному состоянию
