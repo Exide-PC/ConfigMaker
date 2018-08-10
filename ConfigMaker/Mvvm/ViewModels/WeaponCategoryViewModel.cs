@@ -1,4 +1,5 @@
-﻿using System;
+﻿using ConfigMaker.Mvvm.Models;
+using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
@@ -7,19 +8,22 @@ using System.Threading.Tasks;
 
 namespace ConfigMaker.Mvvm.ViewModels
 {
-    // Класс для поддержания строгой типизации, иначе в BuyViewModel было бы ObservableCollection<ObservableCollection<object>>
-    public class WeaponCategoryViewModel: BindableBase
+    public class WeaponCategoryViewModel: ViewModelBase<WeaponCategoryModel>
     {
-        public ObservableCollection<EntryViewModel> Weapons { get; } = new ObservableCollection<EntryViewModel>();
-
-        string _categoryName = string.Empty;
-        
-        public string Name
+        public WeaponCategoryViewModel(WeaponCategoryModel model): base(model)
         {
-            get => this._categoryName;
-            set => this.SetProperty(ref _categoryName, value);
+            foreach (EntryModel entry in model.Weapons)
+            {
+                this.Weapons.Add(new EntryViewModel(entry)
+                {
+                    Content = entry.Content
+                });
+            }
         }
 
-        
+        public ObservableCollection<EntryViewModel> Weapons { get; } =
+            new ObservableCollection<EntryViewModel>();
+
+        public string Name => this.Model.Name;
     }
 }

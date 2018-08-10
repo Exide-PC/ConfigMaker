@@ -1,4 +1,5 @@
-﻿using System;
+﻿using ConfigMaker.Mvvm.Models;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -8,46 +9,36 @@ using System.Windows.Input;
 
 namespace ConfigMaker.Mvvm.ViewModels
 {
-    public class ItemViewModel: BindableBase
+    public class ItemViewModel: ViewModelBase<ItemModel>
     {
-        string _text = string.Empty;
-        bool _isSelected = false;
-        double _fontSize = 12;
-        object _tag = null;
+        double _fontSize = 14;
 
-        public ItemViewModel()
+        public ItemViewModel(ItemModel model): base(model)
         {
             this.SelectCommand = new DelegateCommand(() =>
             {
-                this.Click?.Invoke(this, null);
+                model.SelectCommand.Execute(null);
             });
         }
 
-        public event EventHandler Click;
-
         public ICommand SelectCommand { get; }
+
         public string Text
         {
-            get => this._text;
-            set => this.SetProperty(ref _text, value);
+            get => this.Model.Text;
+            set => this.Model.Text = value;
         }
 
         public bool IsSelected
         {
-            get => this._isSelected;
-            set => this.SetProperty(ref _isSelected, value);
+            get => this.Model.IsSelected;
+            set => this.Model.IsSelected = value;
         }
 
         public double FontSize
         {
             get => this._fontSize;
             set => this.SetProperty(ref _fontSize, value);
-        }
-
-        public object Tag
-        {
-            get => this._tag;
-            set => this.SetProperty(ref _tag, value);
         }
     }
 }

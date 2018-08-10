@@ -17,9 +17,8 @@
          TextOptions.TextRenderingMode="Auto"
          Background="{DynamicResource MaterialDesignPaper}"
          FontFamily="{DynamicResource MaterialDesignFont}"
-        xmlns:i="http://schemas.microsoft.com/expression/2010/interactivity"
         mc:Ignorable="d"
-        Title="" Height="500" Width="1120" MinHeight="500" MinWidth="1120" Loaded="Window_Loaded" Closing="Window_Closing" Name="mainWindow" WindowState="Maximized">
+        Title="" Height="500" Width="1120" MinHeight="500" MinWidth="1120" Name="mainWindow" WindowState="Maximized">
     <Window.Resources>
         <converters:BoolToFontWeightConverter x:Key="boolToFontweightConverter"/>
         <converters:BoolToVisibilityConverter x:Key="boolToVisibilityConverter"/>
@@ -30,7 +29,7 @@
             <Setter Property="FontSize" Value="15"/>
         </Style>
         <Style x:Key="CustomBorder" TargetType="Border">
-            <!--<Setter Property="Background" Value="{StaticResource MaterialDesignBackground}"/>-->
+            <Setter Property="Background" Value="{StaticResource MaterialDesignBackground}"/>
             <Setter Property="BorderBrush" Value="{StaticResource PrimaryHueMidBrush}"/>
             <Setter Property="BorderThickness" Value="2"/>
             <Style.Triggers>
@@ -147,7 +146,7 @@
                 ToolTip="{Binding ToolTip}"/>
         </DataTemplate>
         
-        <DataTemplate DataType="{x:Type viewmodels:BuyViewModel}">
+        <DataTemplate DataType="{x:Type viewmodels:BuyMenuViewModel}">
             <StackPanel Orientation="Vertical">
                 <CheckBox
                     Command="{Binding SelectCommand}"
@@ -428,6 +427,9 @@
             </Border>
         </DataTemplate>
     </Window.Resources>
+    <Window.DataContext>
+        <viewmodels:MainViewModel/>
+    </Window.DataContext>
     <Grid>
         <DockPanel LastChildFill="True">
             <!--upper panel-->
@@ -504,7 +506,7 @@
                                 </Style>
                             </Grid.Style>
                             <ScrollViewer VerticalScrollBarVisibility="Disabled" HorizontalScrollBarVisibility="Auto">
-                                <ItemsControl Name="actionItemsControl">
+                                <ItemsControl ItemsSource="{Binding ActionTabItemViewModels}">
                                     <ItemsControl.ItemsPanel>
                                         <ItemsPanelTemplate>
                                             <WrapPanel Orientation="Vertical"/>
@@ -526,7 +528,7 @@
                                 </Style>
                             </Grid.Style>
                             <Grid>
-                                <ContentControl Name="buyTabContentControl"/>
+                                <ContentControl Content="{Binding BuyMenuViewModel}"/>
                             </Grid>
                         </Grid>
                         <!--game settings tab grid-->
@@ -603,17 +605,17 @@
                             <Style.Triggers>
                                 <MultiDataTrigger>
                                     <MultiDataTrigger.Conditions>
-                                        <Condition Binding="{Binding ElementName=mainWindow, Path=StateBinding}" Value="InvalidState"/>
+                                        <Condition Binding="{Binding Path=StateBinding}" Value="InvalidState"/>
                                         <Condition Binding="{Binding ElementName=iKeyboard, Path=IsSelected}" Value="True"/>
                                     </MultiDataTrigger.Conditions>
                                     <MultiDataTrigger.Setters>
                                         <Setter Property="Visibility" Value="Visible"/>
                                     </MultiDataTrigger.Setters>
                                 </MultiDataTrigger>
-                                <DataTrigger Binding="{Binding ElementName=mainWindow, Path=StateBinding}" Value="KeyDown">
+                                <DataTrigger Binding="{Binding Path=StateBinding}" Value="KeyDown">
                                     <Setter Property="Visibility" Value="Visible"/>
                                 </DataTrigger>
-                                <DataTrigger Binding="{Binding ElementName=mainWindow, Path=StateBinding}" Value="KeyUp">
+                                <DataTrigger Binding="{Binding Path=StateBinding}" Value="KeyUp">
                                     <Setter Property="Visibility" Value="Visible"/>
                                 </DataTrigger>
                             </Style.Triggers>
@@ -623,8 +625,8 @@
                         <ColumnDefinition/>
                         <ColumnDefinition/>
                     </Grid.ColumnDefinitions>
-                    <ContentControl Name="keyDownAttachmentsContentControl"/>
-                    <ContentControl Name="keyUpAttachmentsContentControl" Grid.Column="1"/>
+                    <ContentControl Content="{Binding KeyDownAttachmentsVM}"/>
+                    <ContentControl Content="{Binding KeyUpAttachmentsVM}" Grid.Column="1"/>
                 </Grid>
                 <Grid Grid.Row="1" Grid.ColumnSpan="4">
                     <Grid.Style>
@@ -633,23 +635,23 @@
                             <Style.Triggers>
                                 <MultiDataTrigger>
                                     <MultiDataTrigger.Conditions>
-                                        <Condition Binding="{Binding ElementName=mainWindow, Path=StateBinding}" Value="InvalidState"/>
+                                        <Condition Binding="{Binding Path=StateBinding}" Value="InvalidState"/>
                                         <Condition Binding="{Binding ElementName=iKeyboard, Path=IsSelected}" Value="True"/>
                                     </MultiDataTrigger.Conditions>
                                     <MultiDataTrigger.Setters>
                                         <Setter Property="Visibility" Value="Collapsed"/>
                                     </MultiDataTrigger.Setters>
                                 </MultiDataTrigger>
-                                <DataTrigger Binding="{Binding ElementName=mainWindow, Path=StateBinding}" Value="KeyDown">
+                                <DataTrigger Binding="{Binding Path=StateBinding}" Value="KeyDown">
                                     <Setter Property="Visibility" Value="Collapsed"/>
                                 </DataTrigger>
-                                <DataTrigger Binding="{Binding ElementName=mainWindow, Path=StateBinding}" Value="KeyUp">
+                                <DataTrigger Binding="{Binding Path=StateBinding}" Value="KeyUp">
                                     <Setter Property="Visibility" Value="Collapsed"/>
                                 </DataTrigger>
                             </Style.Triggers>
                         </Style>
                     </Grid.Style>
-                    <ContentControl Name="solidAttachmentsContentControl"/>
+                    <ContentControl Content="{Binding SolidAttachmentsVM}"/>
                 </Grid>
                 <Grid x:Name="keyboardGrid" Grid.Row="3" Grid.ColumnSpan="4" Margin="1">
                     <Grid.ColumnDefinitions>
@@ -661,7 +663,7 @@
                             <Setter Property="Visibility" Value="Visible" />
                             <Style.Triggers>
                                 <!--Удобнее привязаться к элементу, не спрашивай почему-->
-                                <DataTrigger Binding="{Binding ElementName=iAlias, Path=IsSelected}" Value="True">
+                                <DataTrigger Binding="{Binding ElementName=stateCombobox, Path=SelectedIndex}" Value="2">
                                     <Setter Property="Visibility" Value="Collapsed"/>
                                 </DataTrigger>
                             </Style.Triggers>
@@ -674,49 +676,27 @@
                         <Style TargetType="Grid">
                             <Setter Property="Visibility" Value="Collapsed" />
                             <Style.Triggers>
-                                <DataTrigger Binding="{Binding ElementName=iAlias, Path=IsSelected}" Value="True">
+                                <DataTrigger Binding="{Binding ElementName=stateCombobox, Path=SelectedIndex}" Value="2">
                                     <Setter Property="Visibility" Value="Visible"/>
                                 </DataTrigger>
                             </Style.Triggers>
                         </Style>
                     </Grid.Style>
                     <Grid>
-                        <!--<Grid.RowDefinitions>
+                        <Grid.RowDefinitions>
                             <RowDefinition Height="30"/>
                             <RowDefinition Height="1*"/>
-                        </Grid.RowDefinitions>-->
+                        </Grid.RowDefinitions>
                         <ContentControl Name="aliasContentControl"/>
-                        <!--<StackPanel HorizontalAlignment="Left" VerticalAlignment="Bottom" Orientation="Horizontal">
-                            <TextBlock VerticalAlignment="Center" Text="{x:Static res:Resources.CommandName}"/>
-                            <TextBox x:Name="newAliasNameTextbox" Width="80" Margin="5,0,0,0"/>
-                            <Button Content="{x:Static res:Resources.Add_Button}" IsEnabled="{Binding ElementName=newAliasNameTextbox, Path=Text, Converter={StaticResource nameToEnableConverter}}" Click="AddAliasButton_Click"/>
-                            <Button Content="{x:Static res:Resources.Remove_Button}" Click="DeleteAliasButton_Click">
-                                <Button.Style>
-                                    <Style TargetType="Button" BasedOn="{StaticResource {x:Type Button}}">
-                                        <Setter Property="IsEnabled" Value="False"/>
-                                        <Style.Triggers>
-                                            <DataTrigger Binding="{Binding ElementName=aliasPanel, Path=Tag, Converter={StaticResource isNullConverter}}" Value="True">
-                                                <Setter Property="IsEnabled" Value="False"/>
-                                            </DataTrigger>
-                                            <DataTrigger Binding="{Binding ElementName=aliasPanel, Path=Tag, Converter={StaticResource isNullConverter}}" Value="False">
-                                                <Setter Property="IsEnabled" Value="True"/>
-                                            </DataTrigger>
-                                        </Style.Triggers>
-                                    </Style>
-                                </Button.Style>
-                            </Button>
-                        </StackPanel>
-                        <Border Grid.Row="1" Style="{StaticResource CustomBorder}" Margin="0,2,0,0">
-                            <WrapPanel Name="aliasPanel"/>
-                        </Border>-->
+                        <StackPanel HorizontalAlignment="Left" VerticalAlignment="Bottom" Orientation="Horizontal"/>
                     </Grid>
                 </Grid>
                 <StackPanel Orientation="Horizontal" Grid.Row="2" Grid.ColumnSpan="4">
-                    <ComboBox Name="keyboardAliasCombobox" SelectedIndex="0" Width="190" SelectionChanged="ComboBox_SelectionChanged">
-                        <ComboBoxItem x:Name="iDefault" Content="{x:Static res:Resources.Default_Binding}"/>
-                        <ComboBoxItem x:Name="iKeyboard" Content="{x:Static res:Resources.Keyboard_Binding}"/>
-                        <ComboBoxItem x:Name="iAlias" Content="{x:Static res:Resources.Alias_Binding}"/>
-                    </ComboBox>
+                    <ComboBox 
+                        x:Name="stateCombobox"
+                        ItemsSource="{Binding StateBindingItemsVM.Items}" 
+                        Width="190" 
+                        SelectedIndex="{Binding StateBindingItemsVM.SelectedIndex, Mode=TwoWay}"/>
                     <TextBlock VerticalAlignment="Center" Margin="5,3,0,0" TextWrapping="Wrap" Text="{x:Static res:Resources.PressShift_Hint}">
                         <TextBlock.Style>
                             <Style TargetType="TextBlock">

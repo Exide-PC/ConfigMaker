@@ -12,6 +12,11 @@ namespace ConfigMaker.Mvvm.ViewModels
         int _maximumCount = 10;
         int _crosshairCount = 2;
 
+        public CycleCrosshairViewModel(): base(null) // TODO:
+        {
+
+        }
+
         public int CrosshairCount
         {
             get => this._crosshairCount;

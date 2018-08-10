@@ -61,9 +61,6 @@
     <Reference Include="System" />
     <Reference Include="System.Data" />
     <Reference Include="System.Drawing" />
-    <Reference Include="System.Windows.Interactivity, Version=4.5.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
-      <HintPath>..\packages\Expression.Blend.Sdk.1.0.2\lib\net45\System.Windows.Interactivity.dll</HintPath>
-    </Reference>
     <Reference Include="System.Xaml" />
     <Reference Include="System.Xml" />
     <Reference Include="Microsoft.CSharp" />
@@ -84,6 +81,17 @@
       <DependentUpon>AboutWindow.xaml</DependentUpon>
     </Compile>
     <Compile Include="AppConfig.cs" />
+    <Compile Include="Mvvm\Models\ActionModel.cs" />
+    <Compile Include="Mvvm\Models\AttachmentsModel.cs" />
+    <Compile Include="Mvvm\Models\BuyMenuModel.cs" />
+    <Compile Include="Mvvm\Models\EntryModel.cs" />
+    <Compile Include="Mvvm\Models\ItemModel.cs" />
+    <Compile Include="Mvvm\Models\MainModel.cs" />
+    <Compile Include="Mvvm\Models\TextModel.cs" />
+    <Compile Include="Mvvm\Models\WeaponCategoryModel.cs" />
+    <Compile Include="Mvvm\ViewModelBase.cs" />
+    <Compile Include="Mvvm\ViewModels\ComboBoxItemsViewModel.cs" />
+    <Compile Include="Mvvm\ViewModels\MainViewModel.cs" />
     <Compile Include="Properties\Resources.Designer.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
@@ -121,7 +129,7 @@
     <Compile Include="Mvvm\ViewModels\AliasControllerViewModel.cs" />
     <Compile Include="Mvvm\ViewModels\AttachmentsViewModel.cs" />
     <Compile Include="Mvvm\ViewModels\ItemViewModel.cs" />
-    <Compile Include="Mvvm\ViewModels\BuyViewModel.cs" />
+    <Compile Include="Mvvm\ViewModels\BuyMenuViewModel.cs" />
     <Compile Include="Mvvm\ViewModels\ComboBoxControllerViewModel.cs" />
     <Compile Include="Mvvm\ViewModels\CustomCmdControllerViewModel.cs" />
     <Compile Include="Mvvm\ViewModels\CycleCrosshairViewModel.cs" />
@@ -203,5 +211,6 @@
       <Install>false</Install>
     </BootstrapperPackage>
   </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

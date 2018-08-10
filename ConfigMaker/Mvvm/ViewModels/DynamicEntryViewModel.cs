@@ -13,7 +13,7 @@ namespace ConfigMaker.Mvvm.ViewModels
         bool _needToggle = false;
         BindableBase _controllerViewModel;
 
-        public DynamicEntryViewModel(BindableBase controllerViewModel)
+        public DynamicEntryViewModel(BindableBase controllerViewModel): base(null) // TODO
         {
             this._controllerViewModel = controllerViewModel;
         }

@@ -1,4 +1,5 @@
-﻿using System;
+﻿using ConfigMaker.Mvvm.Models;
+using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Collections.Specialized;
@@ -8,14 +9,14 @@ using System.Threading.Tasks;
 
 namespace ConfigMaker.Mvvm.ViewModels
 {
-    public class LeakAwareItemsViewModel: BindableBase
+    public class LeakAwareItemCollection
     {
-        public ObservableCollection<ItemViewModel> Items { get; } =
-            new ObservableCollection<ItemViewModel>();
+        public ObservableCollection<ItemModel> Items { get; } =
+            new ObservableCollection<ItemModel>();
 
-        private IEnumerable<ItemViewModel> itemsCopy = null;
+        private IEnumerable<ItemModel> itemsCopy = null;
 
-        public LeakAwareItemsViewModel(EventHandler clickHandler)
+        public LeakAwareItemCollection(EventHandler clickHandler)
         {
             this.Items.CollectionChanged += (_, arg) =>
             {
@@ -29,12 +30,12 @@ namespace ConfigMaker.Mvvm.ViewModels
                                 b.IsSelected = false;
                             });
                             // И выделим первый добавленный
-                            ((ItemViewModel)arg.NewItems[0]).IsSelected = true;
+                            ((ItemModel)arg.NewItems[0]).IsSelected = true;
                             //this.DeleteButtonEnabled = true;
 
                             foreach (object item in arg.NewItems)
                             {
-                                ItemViewModel castedItem = (ItemViewModel)item;
+                                ItemModel castedItem = (ItemModel)item;
                                 castedItem.Click += ItemClickHandler;
                                 if (clickHandler != null) castedItem.Click += clickHandler;
                             }
@@ -53,7 +54,7 @@ namespace ConfigMaker.Mvvm.ViewModels
                             if (this.Items.Count > 0)
                                 this.Items[0].IsSelected = true;
 
-                            ItemViewModel item = (ItemViewModel)arg.OldItems[0];
+                            ItemModel item = (ItemModel)arg.OldItems[0];
                             item.Click -= ItemClickHandler;
                             if (clickHandler != null) item.Click -= clickHandler;
 
@@ -66,7 +67,7 @@ namespace ConfigMaker.Mvvm.ViewModels
 
                             this.itemsCopy.ToList().ForEach(i => 
                             {
-                                ItemViewModel item = (ItemViewModel)i;
+                                ItemModel item = (ItemModel)i;
                                 item.Click -= ItemClickHandler;
                                 if (clickHandler != null) item.Click -= clickHandler;
                             });
@@ -78,10 +79,10 @@ namespace ConfigMaker.Mvvm.ViewModels
 
         void ItemClickHandler(object sender, EventArgs args)
         {
-            foreach (ItemViewModel item in this.Items)
+            foreach (ItemModel item in this.Items)
                 item.IsSelected = false;
 
-            ((ItemViewModel)sender).IsSelected = true;
+            ((ItemModel)sender).IsSelected = true;
         }
     }
 }

@@ -8,6 +8,11 @@ namespace ConfigMaker.Mvvm.ViewModels
 {
     public class VolumeRegulatorControllerViewModel: EntryViewModel
     {
+        public VolumeRegulatorControllerViewModel(): base(null) // TODO
+        {
+
+        }
+
         double _from = 0;
         double _fromMinimum = 0;
         double _fromMaximum = 0.99;

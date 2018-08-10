@@ -14,18 +14,18 @@ namespace ConfigMaker.Mvvm.ViewModels
         bool _addButtonEnabled = false;
         bool _deleteButtonEnabled = false;
         Predicate<string> _inputValidator = (input) => true;
-        LeakAwareItemsViewModel itemsHolder;
+        LeakAwareItemCollection itemsHolder;
 
-        public ObservableCollection<ItemViewModel> Items => this.itemsHolder.Items;
+        public ObservableCollection<ItemViewModel> Items => null; //this.itemsHolder.Items; TODO:
 
         public InputItemsControllerViewModel(Predicate<string> inputValidator): this(inputValidator, null)
         {
 
         }
 
-        public InputItemsControllerViewModel(Predicate<string> inputValidator, EventHandler clickHandler)
+        public InputItemsControllerViewModel(Predicate<string> inputValidator, EventHandler clickHandler): base(null) // TODO
         {
-            this.itemsHolder = new LeakAwareItemsViewModel(clickHandler);
+            this.itemsHolder = new LeakAwareItemCollection(clickHandler);
             this._inputValidator = inputValidator;
 
             this.PropertyChanged += (_, arg) =>
