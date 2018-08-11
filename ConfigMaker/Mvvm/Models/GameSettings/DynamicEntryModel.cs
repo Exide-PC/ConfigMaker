@@ -3,19 +3,17 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using System.Windows;
 
-namespace ConfigMaker.Mvvm.ViewModels
+namespace ConfigMaker.Mvvm.Models
 {
-    public class DynamicEntryViewModel: EntryViewModel
+    public class DynamicEntryModel: EntryModel
     {
         bool _isVisible = true;
         bool _needToggle = false;
-        BindableBase _controllerViewModel;
 
-        public DynamicEntryViewModel(BindableBase controllerViewModel): base(null) // TODO
+        public DynamicEntryModel(BindableBase controllerViewModel)
         {
-            this._controllerViewModel = controllerViewModel;
+            this.ControllerModel = controllerViewModel;
         }
 
         public bool IsVisible
@@ -30,9 +28,6 @@ namespace ConfigMaker.Mvvm.ViewModels
             set => this.SetProperty(ref _needToggle, value);
         }
 
-        public BindableBase ControllerViewModel
-        {
-            get => this._controllerViewModel;
-        }
+        public BindableBase ControllerModel { get; }
     }
 }

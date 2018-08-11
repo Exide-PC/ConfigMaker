@@ -10,8 +10,6 @@ namespace ConfigMaker.Mvvm.ViewModels
 {
     public class EntryViewModel: ViewModelBase<EntryModel>
     {
-        public event EventHandler Click;
-
         public EntryViewModel(EntryModel entryModel): base(entryModel)
         {
             this.SelectCommand = new DelegateCommand(() =>

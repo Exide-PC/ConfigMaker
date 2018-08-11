@@ -4,9 +4,9 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace ConfigMaker.Mvvm.ViewModels
+namespace ConfigMaker.Mvvm.Models
 {
-    public class TextboxControllerViewModel: BindableBase
+    public class TextboxControllerModel: BindableBase
     {
         string _text;
 

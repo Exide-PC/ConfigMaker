@@ -209,6 +209,21 @@
             </Grid>
         </DataTemplate>
 
+        <DataTemplate DataType="{x:Type viewmodels:SettingsCategoryViewModel}">
+            <StackPanel>
+                <Border>
+                    <TextBlock Text="{Binding Name}" HorizontalAlignment="Center" FontWeight="Bold"/>
+                </Border>
+                <ItemsControl ItemsSource="{Binding Path=Items}">
+                    <ItemsControl.ItemsPanel>
+                        <ItemsPanelTemplate>
+                            <StackPanel/>
+                        </ItemsPanelTemplate>
+                    </ItemsControl.ItemsPanel>
+                </ItemsControl>
+            </StackPanel>
+        </DataTemplate>
+
         <DataTemplate DataType="{x:Type viewmodels:IntervalControllerViewModel}">
             <Grid>
                 <Grid.ColumnDefinitions>
@@ -466,7 +481,7 @@
                             <StackPanel Orientation="Horizontal" DockPanel.Dock="Right">
                                 <TextBox Width="115" Style="{StaticResource MaterialDesignFloatingHintTextBox}" materialDesign:HintAssist.Hint="{x:Static res:Resources.ConfigName_Hint}">
                                     <TextBox.Text>
-                                        <Binding ElementName="mainWindow" Path="CfgName">
+                                        <Binding Path="CustomCfgName">
                                             <Binding.ValidationRules>
                                                 <converters:NameValidationRule ValidatesOnTargetUpdated="True"/>
                                             </Binding.ValidationRules>
@@ -475,9 +490,9 @@
                                 </TextBox>
                                 <TextBox Width="465" Margin="10 0 0 0" Style="{StaticResource MaterialDesignFloatingHintTextBox}" materialDesign:HintAssist.Hint="{x:Static res:Resources.CsgoCfgPath_Hint}">
                                     <TextBox.Text>
-                                        <Binding ElementName="mainWindow" Path="CsgoCfgPath">
+                                        <Binding Path="CustomCfgPath">
                                             <Binding.ValidationRules>
-                                                <converters:CfgDirValidationRule/>
+                                                <converters:CfgDirValidationRule ValidatesOnTargetUpdated="True"/>
                                             </Binding.ValidationRules>
                                         </Binding>
                                     </TextBox.Text>
@@ -553,7 +568,7 @@
                                         </StackPanel>
                                     </materialDesign:ColorZone>
                                     <ScrollViewer Margin="0,2,0,0">
-                                        <ItemsControl Name="gameSettingsItemsControl">
+                                        <ItemsControl ItemsSource="{Binding GameSettingsCategoryViewModels}">
                                             <ItemsControl.ItemsPanel>
                                                 <ItemsPanelTemplate>
                                                     <StackPanel Orientation="Vertical"/>
@@ -606,7 +621,7 @@
                                 <MultiDataTrigger>
                                     <MultiDataTrigger.Conditions>
                                         <Condition Binding="{Binding Path=StateBinding}" Value="InvalidState"/>
-                                        <Condition Binding="{Binding ElementName=iKeyboard, Path=IsSelected}" Value="True"/>
+                                        <Condition Binding="{Binding ElementName=stateCombobox, Path=SelectedIndex}" Value="1"/>
                                     </MultiDataTrigger.Conditions>
                                     <MultiDataTrigger.Setters>
                                         <Setter Property="Visibility" Value="Visible"/>

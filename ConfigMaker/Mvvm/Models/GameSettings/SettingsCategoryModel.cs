@@ -7,9 +7,10 @@ using System.Threading.Tasks;
 
 namespace ConfigMaker.Mvvm.Models
 {
-    public class WeaponCategoryModel: EntryModel
+    public class SettingsCategoryModel: BindableBase
     {
-        public List<EntryModel> Weapons { get; } = new List<EntryModel>();
         public string Name { get; set; }
+        public ObservableCollection<DynamicEntryModel> Items { get; set; } =
+            new ObservableCollection<DynamicEntryModel>();
     }
 }

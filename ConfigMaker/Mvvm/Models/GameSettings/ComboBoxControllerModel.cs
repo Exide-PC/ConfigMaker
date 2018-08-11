@@ -5,15 +5,15 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace ConfigMaker.Mvvm.ViewModels
+namespace ConfigMaker.Mvvm.Models
 {
-    public class ComboBoxControllerViewModel: BindableBase
+    public class ComboBoxControllerModel: BindableBase
     {
         public ObservableCollection<string> Items { get; } = new ObservableCollection<string>();
 
         int _selectedIndex = -1;
         object _selectedItem = null;
-        
+
         public int SelectedIndex
         {
             get => this._selectedIndex;

@@ -4,15 +4,15 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace ConfigMaker.Mvvm.ViewModels
+namespace ConfigMaker.Mvvm.Models
 {
-    public class IntervalControllerViewModel: BindableBase
+    public class IntervalControllerModel: BindableBase
     {
         public double _from;
         public double _to;
         public double _step;
         public double _value;
-        
+
         public double From
         {
             get => this._from;

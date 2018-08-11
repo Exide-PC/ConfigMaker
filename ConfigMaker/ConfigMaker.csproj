@@ -81,16 +81,22 @@
       <DependentUpon>AboutWindow.xaml</DependentUpon>
     </Compile>
     <Compile Include="AppConfig.cs" />
-    <Compile Include="Mvvm\Models\ActionModel.cs" />
+    <Compile Include="Mvvm\Models\Actions\ActionModel.cs" />
     <Compile Include="Mvvm\Models\AttachmentsModel.cs" />
-    <Compile Include="Mvvm\Models\BuyMenuModel.cs" />
+    <Compile Include="Mvvm\Models\BuyMenu\BuyMenuModel.cs" />
+    <Compile Include="Mvvm\Models\GameSettings\DynamicEntryModel.cs" />
     <Compile Include="Mvvm\Models\EntryModel.cs" />
+    <Compile Include="Mvvm\Models\GameSettings\ComboBoxControllerModel.cs" />
+    <Compile Include="Mvvm\Models\GameSettings\SettingsCategoryModel.cs" />
+    <Compile Include="Mvvm\Models\GameSettings\IntervalControllerModel.cs" />
+    <Compile Include="Mvvm\Models\GameSettings\TextboxControllerModel.cs" />
     <Compile Include="Mvvm\Models\ItemModel.cs" />
     <Compile Include="Mvvm\Models\MainModel.cs" />
     <Compile Include="Mvvm\Models\TextModel.cs" />
-    <Compile Include="Mvvm\Models\WeaponCategoryModel.cs" />
+    <Compile Include="Mvvm\Models\BuyMenu\WeaponCategoryModel.cs" />
     <Compile Include="Mvvm\ViewModelBase.cs" />
     <Compile Include="Mvvm\ViewModels\ComboBoxItemsViewModel.cs" />
+    <Compile Include="Mvvm\ViewModels\GameSettings\GameSettingsCategoryViewModel.cs" />
     <Compile Include="Mvvm\ViewModels\MainViewModel.cs" />
     <Compile Include="Properties\Resources.Designer.cs">
       <AutoGen>True</AutoGen>
@@ -125,23 +131,23 @@
     <Compile Include="ToggleWindow.xaml.cs">
       <DependentUpon>ToggleWindow.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Mvvm\ViewModels\ActionViewModel.cs" />
+    <Compile Include="Mvvm\ViewModels\Actions\ActionViewModel.cs" />
     <Compile Include="Mvvm\ViewModels\AliasControllerViewModel.cs" />
     <Compile Include="Mvvm\ViewModels\AttachmentsViewModel.cs" />
     <Compile Include="Mvvm\ViewModels\ItemViewModel.cs" />
-    <Compile Include="Mvvm\ViewModels\BuyMenuViewModel.cs" />
-    <Compile Include="Mvvm\ViewModels\ComboBoxControllerViewModel.cs" />
-    <Compile Include="Mvvm\ViewModels\CustomCmdControllerViewModel.cs" />
-    <Compile Include="Mvvm\ViewModels\CycleCrosshairViewModel.cs" />
-    <Compile Include="Mvvm\ViewModels\DynamicEntryViewModel.cs" />
+    <Compile Include="Mvvm\ViewModels\BuyMenu\BuyMenuViewModel.cs" />
+    <Compile Include="Mvvm\ViewModels\GameSettings\ComboBoxControllerViewModel.cs" />
+    <Compile Include="Mvvm\ViewModels\Extra\CustomCmdControllerViewModel.cs" />
+    <Compile Include="Mvvm\ViewModels\Extra\CycleCrosshairViewModel.cs" />
+    <Compile Include="Mvvm\ViewModels\GameSettings\DynamicEntryViewModel.cs" />
     <Compile Include="Mvvm\ViewModels\EntryViewModel.cs" />
-    <Compile Include="Mvvm\ViewModels\IntervalControllerViewModel.cs" />
+    <Compile Include="Mvvm\ViewModels\GameSettings\IntervalControllerViewModel.cs" />
     <Compile Include="Mvvm\ViewModels\InputItemsControllerViewModel.cs" />
     <Compile Include="Mvvm\ViewModels\LeakAwareItemsViewModel.cs" />
-    <Compile Include="Mvvm\ViewModels\TextboxControllerViewModel.cs" />
+    <Compile Include="Mvvm\ViewModels\GameSettings\TextboxControllerViewModel.cs" />
     <Compile Include="Mvvm\ViewModels\TextViewModel.cs" />
-    <Compile Include="Mvvm\ViewModels\VolumeRegulatorControllerViewModel.cs" />
-    <Compile Include="Mvvm\ViewModels\WeaponCategoryViewModel.cs" />
+    <Compile Include="Mvvm\ViewModels\Extra\VolumeRegulatorControllerViewModel.cs" />
+    <Compile Include="Mvvm\ViewModels\BuyMenu\WeaponCategoryViewModel.cs" />
     <Compile Include="VirtualKeyboard.xaml.cs">
       <DependentUpon>VirtualKeyboard.xaml</DependentUpon>
     </Compile>
@@ -211,6 +217,8 @@
       <Install>false</Install>
     </BootstrapperPackage>
   </ItemGroup>
-  <ItemGroup />
+  <ItemGroup>
+    <Folder Include="Mvvm\Models\Extra\" />
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

@@ -16,6 +16,11 @@ namespace ConfigMaker.Mvvm.ViewModels
     {
         public ObservableCollection<BindableBase> ActionTabItemViewModels { get; } =
             new ObservableCollection<BindableBase>();
+        
+        public BuyMenuViewModel BuyMenuViewModel { get; }
+
+        public ObservableCollection<SettingsCategoryViewModel> GameSettingsCategoryViewModels { get; } =
+            new ObservableCollection<SettingsCategoryViewModel>();
 
         public EntryStateBinding StateBinding
         {
@@ -23,8 +28,18 @@ namespace ConfigMaker.Mvvm.ViewModels
             set => this.Model.StateBinding = value;
         }
 
-        public BuyMenuViewModel BuyMenuViewModel { get; }
+        public string CustomCfgPath
+        {
+            get => this.Model.CustomCfgPath;
+            set => this.Model.CustomCfgPath = value;
+        }
 
+        public string CustomCfgName
+        {
+            get => this.Model.CustomCfgName;
+            set => this.Model.CustomCfgName = value.Trim();
+        }
+        
         public AttachmentsViewModel KeyDownAttachmentsVM { get; }
         public AttachmentsViewModel KeyUpAttachmentsVM { get; }
         public AttachmentsViewModel SolidAttachmentsVM { get; }
@@ -35,6 +50,32 @@ namespace ConfigMaker.Mvvm.ViewModels
 
         public MainViewModel(): base(new MainModel())
         {
+            this.Model.PropertyChanged += (_, arg) =>
+            {
+                if (arg.PropertyName == nameof(MainModel.StateBinding))
+                {
+                    switch (this.Model.StateBinding)
+                    {
+                        case EntryStateBinding.Default:
+                            {
+                                this.StateBindingItemsVM.SelectedIndex = 0;
+                                break;
+                            }
+                        case EntryStateBinding.KeyDown:
+                        case EntryStateBinding.KeyUp:
+                            {
+                                this.StateBindingItemsVM.SelectedIndex = 1;
+                                break;
+                            }
+                        case EntryStateBinding.Alias:
+                            {
+                                this.StateBindingItemsVM.SelectedIndex = 2;
+                                break;
+                            }
+                    }
+                }
+            };
+
             foreach (BindableBase item in this.Model.ActionTabItems)
             { 
                 if (item is TextModel)
@@ -56,6 +97,11 @@ namespace ConfigMaker.Mvvm.ViewModels
             }
 
             this.BuyMenuViewModel = new BuyMenuViewModel(this.Model.BuyMenuModel);
+
+            foreach (SettingsCategoryModel category in this.Model.SettingsCategoryModels)
+            {
+                this.GameSettingsCategoryViewModels.Add(new SettingsCategoryViewModel(category));
+            }
 
             this.KeyDownAttachmentsVM = new AttachmentsViewModel(this.Model.KeyDownAttachments);
             this.KeyUpAttachmentsVM = new AttachmentsViewModel(this.Model.KeyUpAttachments);

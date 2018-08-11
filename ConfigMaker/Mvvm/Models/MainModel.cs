@@ -29,6 +29,8 @@ namespace ConfigMaker.Mvvm.Models
         public ObservableCollection<BindableBase> ActionTabItems { get; } = 
             new ObservableCollection<BindableBase>();
         public BuyMenuModel BuyMenuModel { get; private set; }
+        public ObservableCollection<SettingsCategoryModel> SettingsCategoryModels { get; } =
+            new ObservableCollection<SettingsCategoryModel>();
 
         public EntryStateBinding StateBinding
         {
@@ -43,16 +45,16 @@ namespace ConfigMaker.Mvvm.Models
             }   
         }
 
-        public string CsgoCfgPath
+        public string CustomCfgPath
         {
             get => _customCfgPath;
             set => SetProperty(ref _customCfgPath, value);
         }
 
-        public string CfgName
+        public string CustomCfgName
         {
             get => _customCfgName;
-            set => SetProperty(ref _customCfgName, value);
+            set => SetProperty(ref _customCfgName, value.Trim());
         }
 
 
@@ -69,6 +71,7 @@ namespace ConfigMaker.Mvvm.Models
 
             InitActionTab();
             InitBuyTab();
+            InitGameSettingsTab();
         }
 
         ConfigManager cfgManager = new ConfigManager();
@@ -481,6 +484,542 @@ namespace ConfigMaker.Mvvm.Models
             this.BuyMenuModel = buyMenuModel;
         }
 
+        void InitGameSettingsTab()
+        {
+            SettingsCategoryModel currentCategory = null;
+            
+            void AddGroupHeader(string header)
+            {
+                currentCategory = new SettingsCategoryModel()
+                {
+                    Name = header
+                };
+                this.SettingsCategoryModels.Add(currentCategory);
+            }
+
+            DynamicEntryModel RegisterEntry(string cmd, BindableBase controllerModel, bool needToggle)
+            {
+                DynamicEntryModel entryModel = new DynamicEntryModel(controllerModel)
+                {
+                    Key = cmd,
+                    NeedToggle = needToggle
+                };
+
+                currentCategory.Items.Add(entryModel);
+                return entryModel;
+            }
+
+            void AddIntervalCmdController(string cmd, double from, double to, double step, double defaultValue)
+            {
+                // Определим целочисленный должен быть слайдер или нет
+                bool isInteger = from % 1 == 0 && to % 1 == 0 && step % 1 == 0;
+                // И создадим модель представления
+                IntervalControllerModel sliderVM = new IntervalControllerModel()
+                {
+                    From = from,
+                    To = to,
+                    Step = step
+                };
+
+                // Получим базовую модель представления
+                DynamicEntryModel entryModel = RegisterEntry(cmd, sliderVM, true);
+
+                void HandleSliderValue(double value)
+                {
+                    string formatted = Executable.FormatNumber(value, isInteger);
+                    Executable.TryParseDouble(formatted, out double fixedValue);
+                    fixedValue = isInteger ? ((int)fixedValue) : fixedValue;
+
+                    entryModel.Content = new SingleCmd($"{cmd} {formatted}").ToString();
+                    entryModel.Arg = fixedValue;
+                    //resultCmdBlock.Tag = fixedValue;
+
+                    //if ((bool)checkbox.IsChecked) // Добавляем в конфиг только если это сделал сам пользователь
+                    this.AddEntry(cmd, true);
+                }
+
+                sliderVM.PropertyChanged += (sender, arg) =>
+                {
+                    if (arg.PropertyName == nameof(IntervalControllerModel.Value))
+                        HandleSliderValue(sliderVM.Value);
+                };
+
+                // обработчик интерфейса
+                this.entryControllers.Add(new EntryController()
+                {
+                    Model = entryModel,
+                    Focus = () =>
+                    {
+                        //gameSettingsTabButton.IsChecked = true;
+                        entryModel.IsFocused = true;
+                    },
+                    Restore = () =>
+                    {
+                        // Сперва сбрасываем чекбокс, это важно
+                        entryModel.IsChecked = false;
+                        sliderVM.Value = defaultValue;
+                        entryModel.Arg = defaultValue;
+                    },
+                    Generate = () =>
+                    {
+                        if (entryModel.Arg is double)
+                        {
+                            return new ParametrizedEntry<double>()
+                            {
+                                PrimaryKey = cmd,
+                                Cmd = new SingleCmd(entryModel.Content),
+                                IsMetaScript = false,
+                                Type = EntryType.Dynamic,
+                                Arg = (double)entryModel.Arg
+                            };
+                        }
+                        else
+                        {
+                            return new ParametrizedEntry<double[]>()
+                            {
+                                PrimaryKey = cmd,
+                                Cmd = new SingleCmd(entryModel.Content),
+                                IsMetaScript = false,
+                                Type = EntryType.Dynamic,
+                                Arg = (double[])entryModel.Arg
+                            };
+                        }
+                    },
+                    UpdateUI = (entry) =>
+                    {
+                        entryModel.IsChecked = true;
+                        if (entry is IParametrizedEntry<double>)
+                        {
+                            IParametrizedEntry<double> extendedEntry = (IParametrizedEntry<double>)entry;
+                            sliderVM.Value = extendedEntry.Arg;
+                            entryModel.Arg = extendedEntry.Arg;
+                        }
+                        else
+                        {
+                            IParametrizedEntry<double[]> extendedEntry = (IParametrizedEntry<double[]>)entry;
+                            entryModel.Content = Executable.GenerateToggleCmd(
+                                cmd, extendedEntry.Arg, isInteger).ToString();
+                            entryModel.Arg = extendedEntry.Arg;
+                        }
+                    },
+                    HandleState = (state) => entryModel.IsEnabled = state != EntryStateBinding.InvalidState
+                });
+
+                // Задаем начальное значение и тут же подключаем обработчика интерфейса
+                sliderVM.Value = defaultValue;
+                // Вручную вызовем метод для обновления выводимой команды, если стандартное значение равно 0
+                if (defaultValue == 0)
+                    HandleSliderValue(defaultValue);
+            };
+
+            void AddComboboxCmdController(string cmd, string[] names, int defaultIndex, bool isIntegerArg, int baseIndex = 0)
+            {
+                ComboBoxControllerModel comboboxController = new ComboBoxControllerModel();
+                DynamicEntryModel entryModel = RegisterEntry(cmd, comboboxController, isIntegerArg);
+
+                // Если надо предусмотреть функцию toggle, то расширяем сетку и добавляем кнопку
+                if (isIntegerArg)
+                {
+                    //toggleButton.Click += (_, __) =>
+                    //{
+                    //    ToggleWindow toggleWindow = new ToggleWindow(true, 0, names.Length - 1);
+                    //    if ((bool)toggleWindow.ShowDialog())
+                    //    {
+                    //        int[] values = toggleWindow.GeneratedArg.Split(' ').Select(n => int.Parse(n)).ToArray();
+                    //        resultCmdBlock.Text = Executable.GenerateToggleCmd(cmd, values).ToString();
+                    //        // Сохраним аргумент в теге
+                    //        resultCmdBlock.Tag = values;
+
+                    //        //if ((bool)checkbox.IsChecked) // Добавляем в конфиг только если это сделал сам пользователь
+                    //        this.AddEntry(cmd, true);
+                    //    }
+                    //    else
+                    //    {
+
+                    //    }
+                    //};
+                }
+
+                // Зададим элементы комбобокса
+                names.ToList().ForEach(name => comboboxController.Items.Add(name));
+
+                // Создадим обработчика пораньше, т.к. он понадобится уже при задании начального индекса комбобокса
+                entryControllers.Add(new EntryController()
+                {
+                    Model = entryModel,
+                    Focus = () =>
+                    {
+                        //gameSettingsTabButton.IsChecked = true;
+                        entryModel.IsFocused = true;
+                    },
+                    Restore = () =>
+                    {
+                        // Сначала сбрасываем чекбокс, ибо дальше мы с ним сверяемся
+                        entryModel.IsChecked  = false;
+                        // искусственно сбрасываем выделенный элемент
+                        comboboxController.SelectedIndex = -1;
+                        // и гарантированно вызываем обработчик SelectedIndexChanged
+                        comboboxController.SelectedIndex = defaultIndex;
+                    },
+                    Generate = () =>
+                    {
+                        SingleCmd resultCmd = new SingleCmd(entryModel.Content);
+
+                        if (entryModel.Arg is int)
+                        {
+                            return new ParametrizedEntry<int>()
+                            {
+                                PrimaryKey = cmd,
+                                Type = EntryType.Dynamic,
+                                IsMetaScript = false,
+                                Cmd = resultCmd,
+                                Arg = (int)entryModel.Arg
+                            };
+                        }
+                        else
+                        {
+                            return new ParametrizedEntry<int[]>()
+                            {
+                                PrimaryKey = cmd,
+                                Type = EntryType.Dynamic,
+                                IsMetaScript = false,
+                                Cmd = resultCmd,
+                                Arg = (int[])entryModel.Arg
+                            };
+                        }
+                    },
+                    UpdateUI = (entry) =>
+                    {
+                        entryModel.IsChecked = true;
+
+                        if (entry is IParametrizedEntry<int>)
+                        {
+                            IParametrizedEntry<int> extendedEntry = (IParametrizedEntry<int>)entry;
+                            comboboxController.SelectedIndex = extendedEntry.Arg;
+                            entryModel.Arg = extendedEntry.Arg;
+                        }
+                        else
+                        {
+                            IParametrizedEntry<int[]> extendedEntry = (IParametrizedEntry<int[]>)entry;
+                            entryModel.Content = Executable.GenerateToggleCmd(cmd, extendedEntry.Arg).ToString();
+                            entryModel.Arg = extendedEntry.Arg;
+                        }
+                    },
+                    HandleState = (state) => entryModel.IsEnabled = state != EntryStateBinding.InvalidState
+                });
+
+                comboboxController.PropertyChanged += (_, arg) =>
+                {
+                    if (arg.PropertyName == nameof(ComboBoxControllerModel.SelectedIndex))
+                    {
+                        if (comboboxController.SelectedIndex == -1) return;
+
+                        string resultCmdStr;
+                        if (isIntegerArg)
+                            resultCmdStr = $"{cmd} {comboboxController.SelectedIndex + baseIndex}";
+                        else
+                            resultCmdStr = $"{cmd} {comboboxController.SelectedItem}";
+
+                        entryModel.Content = new SingleCmd(resultCmdStr).ToString();
+                        entryModel.Arg = comboboxController.SelectedIndex;
+                        //if ((bool)checkbox.IsChecked) // Добавляем в конфиг только если это сделал сам пользователь
+                        this.AddEntry(cmd, true);
+                    }
+                };
+
+                // Команда по умолчанию обновится, т.к. уже есть обработчик
+                comboboxController.SelectedIndex = defaultIndex;
+            };
+
+            void AddTextboxNumberCmdController(string cmd, double defaultValue, bool asInteger)
+            {
+                string formattedDefaultStrValue = Executable.FormatNumber(defaultValue, asInteger);
+                double coercedDefaultValue = Executable.CoerceNumber(defaultValue, asInteger);
+
+                TextboxControllerModel textboxModel = new TextboxControllerModel();
+                DynamicEntryModel entryModel = RegisterEntry(cmd, textboxModel, true);
+
+                //toggleButton.Click += (_, __) =>
+                //{
+                //ToggleWindow toggleWindow = new ToggleWindow(asInteger, double.MinValue, double.MaxValue);
+                //if ((bool)toggleWindow.ShowDialog())
+                //{
+                //    double[] values = toggleWindow.GeneratedArg.Split(' ').Select(value =>
+                //    {
+                //        Executable.TryParseDouble(value, out double parsedValue);
+                //        return parsedValue;
+                //    }).ToArray();
+
+                //    resultCmdBlock.Text = Executable.GenerateToggleCmd(cmd, values, asInteger).ToString();
+                //    // Сохраним аргумент в теге
+                //    resultCmdBlock.Tag = values;
+
+                //    //if ((bool)checkbox.IsChecked) // Добавляем в конфиг только если это сделал сам пользователь
+                //    this.AddEntry(cmd, true);
+                //}
+                //else
+                //{
+
+                //}
+                //};
+
+                textboxModel.PropertyChanged += (_, arg) =>
+                {
+                    if (arg.PropertyName == nameof(TextboxControllerModel.Text))
+                    {
+                        if (!Executable.TryParseDouble(textboxModel.Text.Trim(), out double fixedValue))
+                            return;
+                        // Обрезаем дробную часть, если необходимо
+                        fixedValue = asInteger ? (int)fixedValue : fixedValue;
+
+                        // сохраним последнее верное значение в тег текстового блока
+                        entryModel.Arg = fixedValue;
+
+                        string formatted = Executable.FormatNumber(fixedValue, asInteger);
+                        entryModel.Content = new SingleCmd($"{cmd} {formatted}").ToString();
+
+                        //if ((bool)checkbox.IsChecked) // Добавляем в конфиг только если это сделал сам пользователь
+                        AddEntry(cmd, true);
+                    }
+                };
+
+                this.entryControllers.Add(new EntryController()
+                {
+                    Model = entryModel,
+                    Focus = () =>
+                    {
+                        //gameSettingsTabButton.IsChecked = true;
+                        entryModel.IsFocused = true;
+                    },
+                    Restore = () =>
+                    {
+                        entryModel.IsChecked = false;
+                        textboxModel.Text = formattedDefaultStrValue;
+                        entryModel.Arg = coercedDefaultValue;
+                    },
+                    Generate = () =>
+                    {
+                        SingleCmd generatedCmd = new SingleCmd(entryModel.Content);
+
+                        if (entryModel.Arg is double)
+                        {
+                            return new ParametrizedEntry<double>()
+                            {
+                                PrimaryKey = cmd,
+                                Cmd = generatedCmd,
+                                Type = EntryType.Dynamic,
+                                IsMetaScript = false,
+                                Arg = (double)entryModel.Arg // Подтягиваем аргумент из тега
+                            };
+                        }
+                        else
+                        {
+                            return new ParametrizedEntry<double[]>()
+                            {
+                                PrimaryKey = cmd,
+                                Cmd = generatedCmd,
+                                Type = EntryType.Dynamic,
+                                IsMetaScript = false,
+                                Arg = (double[])entryModel.Arg // Подтягиваем аргумент из тега
+                            };
+                        }
+                    },
+                    UpdateUI = (entry) =>
+                    {
+                        entryModel.IsChecked = true;
+
+                        if (entry is IParametrizedEntry<double>)
+                        {
+                            IParametrizedEntry<double> extendedEntry = (IParametrizedEntry<double>)entry;
+                            textboxModel.Text = Executable.FormatNumber(extendedEntry.Arg, asInteger);
+                            entryModel.Arg = extendedEntry.Arg;
+                        }
+                        else
+                        {
+                            IParametrizedEntry<double[]> extendedEntry = (IParametrizedEntry<double[]>)entry;
+                            double[] values = extendedEntry.Arg;
+
+                            entryModel.Content = Executable.GenerateToggleCmd(cmd, values, asInteger).ToString();
+                            entryModel.Arg = extendedEntry.Arg;
+                        }
+                    },
+                    HandleState = (state) => entryModel.IsEnabled = state != EntryStateBinding.InvalidState
+                });
+
+                // Начальное значение
+                textboxModel.Text = formattedDefaultStrValue;
+            };
+
+            void AddTextboxStringCmdController(string cmd, string defaultValue)
+            {
+                TextboxControllerModel textboxModel = new TextboxControllerModel();
+                DynamicEntryModel entryModel = RegisterEntry(cmd, textboxModel, false);
+
+                textboxModel.PropertyChanged += (_, arg) =>
+                {
+                    // Обернем в команду только название команды, т.к. аргументы в нижнем регистре не нужны
+                    entryModel.Content = $"{new SingleCmd(cmd)} {textboxModel.Text}";
+
+                    // Добавляем в конфиг только если это сделал сам пользователь
+                    AddEntry(cmd, true);
+                };
+
+                this.entryControllers.Add(new EntryController()
+                {
+                    Model = entryModel,
+                    Focus = () =>
+                    {
+                        //gameSettingsTabButton.IsChecked = true;
+                        entryModel.IsFocused = true;
+                    },
+                    Restore = () =>
+                    {
+                        entryModel.IsChecked = false;
+                        textboxModel.Text = defaultValue;
+                    },
+                    Generate = () =>
+                    {
+                        SingleCmd generatedCmd = new SingleCmd(entryModel.Content, false);
+
+                        return new ParametrizedEntry<string>()
+                        {
+                            PrimaryKey = cmd,
+                            Cmd = generatedCmd,
+                            Type = EntryType.Dynamic,
+                            IsMetaScript = false,
+                            Arg = (string)textboxModel.Text // Подтягиваем аргумент из тега
+                        };
+                    },
+                    UpdateUI = (entry) =>
+                    {
+                        entryModel.IsChecked = true;
+                        IParametrizedEntry<string> extendedEntry = (IParametrizedEntry<string>)entry;
+                        textboxModel.Text = extendedEntry.Arg;
+                    },
+                    HandleState = (state) => entryModel.IsEnabled = state != EntryStateBinding.InvalidState
+                });
+
+                // Начальное значение
+                textboxModel.Text = defaultValue;
+            };
+
+            string[] toggleStrings = new string[] { Res.Off, Res.On };
+            string[] primaryWeapons = new string[] { "weapon_m4a4", "weapon_ak47", "weapon_awp" };
+            string[] secondaryWeapons = new string[] { "weapon_hkp2000", "weapon_glock", "weapon_deagle" };
+
+            AddGroupHeader(Res.CategoryMouseSettings);
+            AddTextboxNumberCmdController("sensitivity", 2.5, false);
+            AddTextboxNumberCmdController("zoom_sensitivity_ratio_mouse", 1, false);
+            AddComboboxCmdController("m_rawinput", toggleStrings, 1, true);
+            AddComboboxCmdController("m_customaccel", toggleStrings, 0, true);
+            AddIntervalCmdController("m_customaccel_exponent", 0.05, 10, 0.05, 1.05);
+
+            AddGroupHeader(Res.CategoryClientCommands);
+            AddComboboxCmdController("cl_autowepswitch", toggleStrings, 1, true);
+            AddIntervalCmdController("cl_bob_lower_amt", 5, 30, 1, 21);
+            AddIntervalCmdController("cl_bobamt_lat", 0.1, 2, 0.1, 0.4);
+            AddIntervalCmdController("cl_bobamt_vert", 0.1, 2, 0.1, 0.25);
+            AddIntervalCmdController("cl_bobcycle", 0.1, 2, 0.01, 0.98);
+            AddTextboxNumberCmdController("cl_clanid", 0, true);
+            AddComboboxCmdController("cl_color", new string[] { Res.Yellow, Res.Purple, Res.Green, Res.Blue, Res.Orange }, 0, true);
+            AddComboboxCmdController("cl_dm_buyrandomweapons", toggleStrings, 1, true);
+            AddComboboxCmdController("cl_draw_only_deathnotices", toggleStrings, 1, true);
+            AddComboboxCmdController("cl_hud_color",
+                new string[] { Res.White, Res.LightBlue, Res.Blue, Res.Purple, Res.Red, Res.Orange, Res.Yellow, Res.Green, Res.Aqua, Res.Pink, Res.Default }, 0, true, baseIndex: 1);
+            AddComboboxCmdController("cl_hud_healthammo_style", new string[] { Res.Health_Style0, Res.Health_Style1 }, 0, true);
+            AddIntervalCmdController("cl_hud_radar_scale", 0.8, 1.3, 0.1, 1);
+            AddIntervalCmdController("cl_hud_background_alpha", 0, 1, 0.1, 1);
+            AddComboboxCmdController("cl_hud_playercount_pos", new string[] { Res.Top, Res.Bottom }, 0, true);
+            AddComboboxCmdController("cl_hud_playercount_showcount", new string[] { Res.ShowAvatars, Res.ShowCount }, 0, true);
+            AddComboboxCmdController("cl_mute_enemy_team", toggleStrings, 0, true);
+            AddTextboxNumberCmdController("cl_pdump", -1, true);
+            AddComboboxCmdController("cl_radar_always_centered", toggleStrings, 0, true);
+            AddIntervalCmdController("cl_radar_icon_scale_min", 0.4, 1, 0.01, 0.7);
+            AddIntervalCmdController("cl_radar_scale", 0.25, 1, 0.01, 0.7);
+            AddComboboxCmdController("cl_righthand", toggleStrings, 0, true);
+            AddComboboxCmdController("cl_showfps", toggleStrings, 0, true);
+            AddComboboxCmdController("cl_show_clan_in_death_notice", toggleStrings, 0, true);
+            AddComboboxCmdController("cl_showpos", toggleStrings, 0, true);
+            AddComboboxCmdController("cl_teammate_colors_show", toggleStrings, 0, true);
+            AddComboboxCmdController("cl_teamid_overhead_always", toggleStrings, 0, true);
+            AddIntervalCmdController("cl_timeout", 4, 30, 1, 30);
+            AddComboboxCmdController("cl_use_opens_buy_menu", toggleStrings, 1, true);
+            AddIntervalCmdController("cl_viewmodel_shift_left_amt", 0.5, 2, 0.05, 1.5);
+            AddIntervalCmdController("cl_viewmodel_shift_right_amt", 0.25, 2, 0.05, 0.75);
+            AddComboboxCmdController("cl_cmdrate", new string[] { "64", "128" }, 1, false);
+            AddComboboxCmdController("cl_updaterate", new string[] { "64", "128" }, 1, false);
+
+            AddGroupHeader(Res.CategoryCrosshair);
+            AddComboboxCmdController("cl_crosshair_drawoutline", toggleStrings, 0, true);
+            AddIntervalCmdController("cl_crosshair_dynamic_maxdist_splitratio", 0, 1, 0.1, 0.35);
+            AddIntervalCmdController("cl_crosshair_dynamic_splitalpha_innermod", 0, 1, 0.01, 1);
+            AddIntervalCmdController("cl_crosshair_dynamic_splitalpha_outermod", 0.3, 1, 0.01, 0.5);
+            AddTextboxNumberCmdController("cl_crosshair_dynamic_splitdist", 7, true);
+            AddIntervalCmdController("cl_crosshair_outlinethickness", 0.1, 3, 0.1, 1);
+            AddTextboxNumberCmdController("cl_crosshair_sniper_width", 1, false);
+            AddIntervalCmdController("cl_crosshairalpha", 0, 255, 1, 200);
+            AddComboboxCmdController("cl_crosshairdot", toggleStrings, 1, true);
+            AddComboboxCmdController("cl_crosshairgap", toggleStrings, 1, true);
+            AddComboboxCmdController("cl_crosshair_t", toggleStrings, 1, true);
+            AddComboboxCmdController("cl_crosshairgap_useweaponvalue", toggleStrings, 1, true);
+            AddTextboxNumberCmdController("cl_crosshairsize", 5, false);
+            AddIntervalCmdController("cl_crosshairstyle", 0, 5, 1, 2);
+            AddTextboxNumberCmdController("cl_crosshairthickness", 0.5, false);
+            AddComboboxCmdController("cl_crosshairusealpha", toggleStrings, 1, true);
+            AddTextboxNumberCmdController("cl_fixedcrosshairgap", 3, false);
+
+            AddGroupHeader(Res.CategoryOther);
+            AddTextboxStringCmdController("say", "vk.com/exideprod");
+            AddTextboxStringCmdController("say_team", "Hello world!");
+            AddTextboxStringCmdController("exec", "config");
+            AddTextboxNumberCmdController("rate", 786432, true);
+            AddTextboxStringCmdController("connect", "12.34.56.78:27015");
+            AddTextboxStringCmdController("map", "de_mirage");
+            AddTextboxStringCmdController("echo", "blog.exideprod.com");
+            AddTextboxStringCmdController("record", "demo_name");
+            AddComboboxCmdController("developer", toggleStrings, 0, true);
+            AddComboboxCmdController("gameinstructor_enable", toggleStrings, 0, true);
+            AddComboboxCmdController("r_drawothermodels", new string[] { "Off", "Normal", "Wireframe" }, 1, true);
+            AddTextboxStringCmdController("host_writeconfig", "config_name");
+            AddIntervalCmdController("mat_monitorgamma", 1.6, 2.6, 0.1, 2.2);
+            AddTextboxNumberCmdController("mm_dedicated_search_maxping", 150, true);
+            AddTextboxNumberCmdController("host_timescale", 1, false);
+            AddTextboxNumberCmdController("demo_timescale", 1, false);
+
+            AddGroupHeader(Res.CategoryServer);
+            AddTextboxNumberCmdController("sv_airaccelerate", 12, true);
+            AddTextboxNumberCmdController("sv_accelerate", 5.5, false);
+            AddComboboxCmdController("sv_showimpacts", new string[] { "Off", "Server/client", "Client only" }, 0, true);
+            AddTextboxNumberCmdController("mp_restartgame", 1, true);
+            AddComboboxCmdController("mp_solid_teammates", toggleStrings, 0, true);
+            AddComboboxCmdController("mp_ct_default_primary", primaryWeapons, 0, false);
+            AddComboboxCmdController("mp_t_default_primary", primaryWeapons, 1, false);
+            AddComboboxCmdController("mp_ct_default_secondary", secondaryWeapons, 0, false);
+            AddComboboxCmdController("mp_t_default_secondary", secondaryWeapons, 1, false);
+
+            AddGroupHeader(Res.CategoryVoiceAndSound);
+            AddIntervalCmdController("volume", 0, 1, 0.05, 1);
+            AddComboboxCmdController("voice_enable", toggleStrings, 1, true);
+            AddComboboxCmdController("voice_loopback", toggleStrings, 1, true);
+            AddIntervalCmdController("voice_scale", 0, 1, 0.05, 1);
+            AddIntervalCmdController("snd_roundstart_volume", 0, 1, 0.05, 1);
+            AddIntervalCmdController("snd_roundend_volume", 0, 1, 0.05, 1);
+            AddIntervalCmdController("snd_tensecondwarning_volume", 0, 1, 0.05, 1);
+            AddIntervalCmdController("snd_deathcamera_volume", 0, 1, 0.05, 1);
+
+            AddGroupHeader(Res.CategoryNetGraphSettings);
+            AddComboboxCmdController("net_graph", toggleStrings, 0, true);
+            AddTextboxNumberCmdController("net_graphheight", 64, true);
+            AddTextboxNumberCmdController("net_graphpos", 1, true);
+            AddComboboxCmdController("net_graphproportionalfont", toggleStrings, 0, true);
+
+            AddGroupHeader(Res.CategoryBots);
+            AddComboboxCmdController("bot_stop", toggleStrings, 0, true);
+            AddComboboxCmdController("bot_mimic", toggleStrings, 0, true);
+            AddComboboxCmdController("bot_crouch", toggleStrings, 0, true);
+            AddIntervalCmdController("bot_mimic_yaw_offset", 0, 180, 5, 0);
+        }
+
         void ReadConfig()
         {
             // Делаем поиск по ресурсам регистронезависимым
@@ -495,8 +1034,8 @@ namespace ConfigMaker.Mvvm.Models
                 {
                     AppConfig defaultCfg = new AppConfig()
                     {
-                        CfgName = this.CfgName,
-                        CsgoCfgPath = this.CsgoCfgPath
+                        CfgName = this.CustomCfgName,
+                        CsgoCfgPath = this.CustomCfgPath
                     };
                     ser.Serialize(fs, defaultCfg);
                 }
@@ -507,8 +1046,8 @@ namespace ConfigMaker.Mvvm.Models
 
                 this.cfg = (AppConfig)ser.Deserialize(fs);
 
-                this.CfgName = this.cfg.CfgName;
-                this.CsgoCfgPath = this.cfg.CsgoCfgPath;
+                this.CustomCfgName = this.cfg.CfgName;
+                this.CustomCfgPath = this.cfg.CsgoCfgPath;
             }
 
             // Добавляем слушателя на нажатие виртуальной клавиатуры
@@ -554,8 +1093,8 @@ namespace ConfigMaker.Mvvm.Models
             using (FileStream fs = File.OpenWrite(this.cfgPath))
             {
                 XmlSerializer ser = new XmlSerializer(typeof(AppConfig));
-                this.cfg.CfgName = this.CfgName;
-                this.cfg.CsgoCfgPath = this.CsgoCfgPath;
+                this.cfg.CfgName = this.CustomCfgName;
+                this.cfg.CsgoCfgPath = this.CustomCfgPath;
                 ser.Serialize(fs, this.cfg);
             }
         }
@@ -866,10 +1405,10 @@ namespace ConfigMaker.Mvvm.Models
 
         private void GenerateConfig(object sender, RoutedEventArgs e)
         {
-            if (this.CfgName.Length == 0)
-                this.CfgName = "Config";
+            if (this.CustomCfgName.Length == 0)
+                this.CustomCfgName = "Config";
 
-            string resultCfgPath = Path.Combine(GetTargetFolder(), $"{this.CfgName}.cfg");
+            string resultCfgPath = Path.Combine(GetTargetFolder(), $"{this.CustomCfgName}.cfg");
 
             this.cfgManager.GenerateCfg(resultCfgPath);
             System.Diagnostics.Process.Start("explorer.exe", $"/select,\"{resultCfgPath}\"");
@@ -956,7 +1495,7 @@ namespace ConfigMaker.Mvvm.Models
 
         string GetTargetFolder()
         {
-            string cfgPath = this.CsgoCfgPath;
+            string cfgPath = this.CustomCfgPath;
 
             if (cfgPath.Length > 0 && Directory.Exists(cfgPath))
                 return cfgPath;

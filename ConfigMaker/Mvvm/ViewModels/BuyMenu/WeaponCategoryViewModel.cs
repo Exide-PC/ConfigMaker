@@ -13,12 +13,7 @@ namespace ConfigMaker.Mvvm.ViewModels
         public WeaponCategoryViewModel(WeaponCategoryModel model): base(model)
         {
             foreach (EntryModel entry in model.Weapons)
-            {
-                this.Weapons.Add(new EntryViewModel(entry)
-                {
-                    Content = entry.Content
-                });
-            }
+                this.Weapons.Add(new EntryViewModel(entry));
         }
 
         public ObservableCollection<EntryViewModel> Weapons { get; } =
