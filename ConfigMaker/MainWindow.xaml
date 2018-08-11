@@ -651,7 +651,7 @@
                                 <MultiDataTrigger>
                                     <MultiDataTrigger.Conditions>
                                         <Condition Binding="{Binding Path=StateBinding}" Value="InvalidState"/>
-                                        <Condition Binding="{Binding ElementName=iKeyboard, Path=IsSelected}" Value="True"/>
+                                        <Condition Binding="{Binding ElementName=stateCombobox, Path=SelectedIndex}" Value="1"/>
                                     </MultiDataTrigger.Conditions>
                                     <MultiDataTrigger.Setters>
                                         <Setter Property="Visibility" Value="Collapsed"/>
@@ -684,7 +684,7 @@
                             </Style.Triggers>
                         </Style>
                     </Grid.Style>
-                    <local:VirtualKeyboard x:Name="kb" Grid.ColumnSpan="2" Margin="0,0,-0.4,0.8"/>
+                    <local:VirtualKeyboard x:Name="kb" Grid.ColumnSpan="2" Margin="0,0,-0.4,0.8" OnKeyboardKeyDown="kb_OnKeyboardKeyDown"/>
                 </Grid>
                 <Grid x:Name="aliasGrid" Grid.Row="3" Grid.ColumnSpan="4" Margin="1">
                     <Grid.Style>
@@ -717,7 +717,7 @@
                             <Style TargetType="TextBlock">
                                 <Setter Property="Visibility" Value="Collapsed"/>
                                 <Style.Triggers>
-                                    <DataTrigger Binding="{Binding ElementName=iKeyboard, Path=IsSelected}" Value="True">
+                                    <DataTrigger Binding="{Binding ElementName=stateCombobox, Path=SelectedIndex}" Value="1">
                                         <Setter Property="Visibility" Value="Visible"/>
                                     </DataTrigger>
                                 </Style.Triggers>

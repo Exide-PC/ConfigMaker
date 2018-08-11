@@ -45,5 +45,11 @@ namespace ConfigMaker.Mvvm.ViewModels
             get => this.Model.Hint;
             set => this.Model.Hint = value;
         }
+
+        public bool IsSelected
+        {
+            get => this.Model.IsSelected;
+            set => this.Model.IsSelected = value;
+        }   
     }
 }

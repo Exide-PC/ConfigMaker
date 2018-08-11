@@ -1,4 +1,5 @@
-﻿using ConfigMaker.Mvvm.Models;
+﻿using ConfigMaker.Csgo.Config;
+using ConfigMaker.Mvvm.Models;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -27,6 +28,11 @@ namespace ConfigMaker.Mvvm.ViewModels
             get => this.Model.StateBinding;
             set => this.Model.StateBinding = value;
         }
+
+        #region Directly exposed from model. TODO: REMOVE
+        public KeySequence KeySequence => this.Model.KeySequence;
+        public Dictionary<KeySequence, List<Csgo.Config.Entries.BindEntry>> BoundEntries => this.Model.BoundEntries;
+        #endregion
 
         public string CustomCfgPath
         {
@@ -140,6 +146,11 @@ namespace ConfigMaker.Mvvm.ViewModels
                     }
                 }
             };
+        }
+
+        public void ClickButton(string button, VirtualKeyboard.SpecialKey flags)
+        {
+            this.Model.ClickButton(button, flags);
         }
     }
 }

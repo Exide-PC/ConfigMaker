@@ -41,6 +41,10 @@ namespace ConfigMaker.Mvvm.Models
                 {
                     foreach (EntryController controller in this.entryControllers)
                         controller.HandleState(this.StateBinding);
+
+                    KeyDownAttachments.IsSelected = this.StateBinding == EntryStateBinding.KeyDown;
+                    KeyUpAttachments.IsSelected = this.StateBinding == EntryStateBinding.KeyUp;
+                    SolidAttachments.IsSelected = this.StateBinding != EntryStateBinding.InvalidState;
                 }
             }   
         }
@@ -56,6 +60,14 @@ namespace ConfigMaker.Mvvm.Models
             get => _customCfgName;
             set => SetProperty(ref _customCfgName, value.Trim());
         }
+
+        public KeySequence KeySequence
+        {
+            get => this.currentKeySequence;
+            set => this.SetProperty(ref currentKeySequence, value);
+        }
+
+        public Dictionary<KeySequence, List<BindEntry>> BoundEntries => this.cfgManager.Entries;
 
 
         public MainModel()
@@ -1082,7 +1094,7 @@ namespace ConfigMaker.Mvvm.Models
             if (duplicatedKeyGroup != null) throw new Exception($"Duplicate key: {duplicatedKeyGroup.Key}");
 
             // Зададим привязку по умолчанию
-            this.SetStateAndUpdateUI(EntryStateBinding.Default);
+            this.StateBinding = EntryStateBinding.Default;
         }
 
         public void SaveConfig()
@@ -1168,19 +1180,7 @@ namespace ConfigMaker.Mvvm.Models
             // Обновим панели
             this.UpdateAttachmentPanels();
         }
-
-        void SetStateAndUpdateUI(EntryStateBinding newState)
-        {
-            this.StateBinding = newState;
-
-            foreach (var controller in this.entryControllers)
-                controller.HandleState(this.StateBinding);
-
-            KeyDownAttachments.IsSelected = newState == EntryStateBinding.KeyDown;
-            KeyUpAttachments.IsSelected = newState == EntryStateBinding.KeyUp;
-            SolidAttachments.IsSelected = newState != EntryStateBinding.InvalidState;
-        }
-
+        
         BindEntry ConvertToBindEntry(Entry entry)
         {
             BindEntry bindEntry = (BindEntry)entry;
@@ -1503,15 +1503,54 @@ namespace ConfigMaker.Mvvm.Models
                 return Directory.GetCurrentDirectory();
         }
 
+        public void ClickButton(string key, VirtualKeyboard.SpecialKey flags)
+        {
+            //Определим новую последовательность
+            key = key.ToLower();
+
+            if (currentKeySequence == null || currentKeySequence.Keys.Length == 2 ||
+                currentKeySequence.Keys.Length == 1 && !flags.HasFlag(VirtualKeyboard.SpecialKey.Shift))
+            {
+                // Теперь создаем новую последовательность с 1 клавишей
+                this.KeySequence = new KeySequence(key);
+
+                // Отредактируем текст у панелей
+                this.KeyDownAttachments.Hint = string.Format(Res.KeyDown1_Format, currentKeySequence[0].ToUpper());
+                this.KeyUpAttachments.Hint = string.Format(Res.KeyUp1_Format, currentKeySequence[0].ToUpper());
+            }
+            else if (currentKeySequence.Keys.Length == 1)
+            {
+                // Иначе в последовательности уже есть 1 кнопка и надо добавить вторую
+                // Проверяем, что выбрана не та же кнопка
+                if (currentKeySequence[0] == key) return;
+
+                this.KeySequence = new KeySequence(currentKeySequence[0], key);
+
+                string key1Upper = currentKeySequence[0].ToUpper();
+                string key2Upper = currentKeySequence[1].ToUpper();
+
+                this.KeyDownAttachments.Hint = string.Format(Res.KeyDown2_Format, key2Upper, key1Upper);
+                this.KeyUpAttachments.Hint = string.Format(Res.KeyUp2_Format, key2Upper, key1Upper);
+            }
+
+            // Зададим привязку к нажатию клавиши
+            this.StateBinding = EntryStateBinding.KeyDown;
+
+            //ColorizeKeyboard();
+
+            // Обновляем интерфейс под новую последовательность
+            this.UpdateAttachmentPanels();
+        }
+
         EntryStateBinding CoerceStateBinding(EntryStateBinding entryStateBinding)
         {
             //ComboBox cbox = (ComboBox)e.Source;
             //ComboBoxItem selectedItem = (ComboBoxItem)cbox.SelectedItem;
 
-            if (entryStateBinding == EntryStateBinding.KeyDown)
+            if (entryStateBinding == EntryStateBinding.KeyDown || entryStateBinding == EntryStateBinding.KeyUp)
             {
-                // При выборе клавиатуры по умолчанию не выбрана последовательность
-                return EntryStateBinding.InvalidState;
+                // Если последовательность задана, то не меняем значение
+                return this.currentKeySequence != null ? entryStateBinding : EntryStateBinding.InvalidState;
             }
             else
             {
@@ -1523,7 +1562,7 @@ namespace ConfigMaker.Mvvm.Models
                     Res.CommandsByDefault_Hint :
                     Res.CommandsInAlias_Hint;
 
-                this.currentKeySequence = null;
+                this.KeySequence = null;
                 //this.ColorizeKeyboard();
 
                 if (coercedState == EntryStateBinding.Alias)
