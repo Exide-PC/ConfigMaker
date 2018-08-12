@@ -15,7 +15,7 @@ namespace ConfigMaker.Mvvm.ViewModels
 
         public ItemViewModel(ItemModel model): base(model)
         {
-            this.SelectCommand = new DelegateCommand(() =>
+            this.SelectCommand = new DelegateCommand((obj) =>
             {
                 model.SelectCommand.Execute(null);
             });

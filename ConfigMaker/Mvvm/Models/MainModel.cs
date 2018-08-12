@@ -41,10 +41,6 @@ namespace ConfigMaker.Mvvm.Models
                 {
                     foreach (EntryController controller in this.entryControllers)
                         controller.HandleState(this.StateBinding);
-
-                    KeyDownAttachments.IsSelected = this.StateBinding == EntryStateBinding.KeyDown;
-                    KeyUpAttachments.IsSelected = this.StateBinding == EntryStateBinding.KeyUp;
-                    SolidAttachments.IsSelected = this.StateBinding != EntryStateBinding.InvalidState;
                 }
             }   
         }

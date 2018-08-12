@@ -12,7 +12,7 @@ namespace ConfigMaker.Mvvm.ViewModels
     {
         public EntryViewModel(EntryModel entryModel): base(entryModel)
         {
-            this.SelectCommand = new DelegateCommand(() =>
+            this.SelectCommand = new DelegateCommand((obj) =>
             {
                 this.Model.SelectCommand.Execute(null);
             });

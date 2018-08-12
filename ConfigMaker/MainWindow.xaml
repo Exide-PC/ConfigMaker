@@ -413,7 +413,30 @@
         </DataTemplate>
 
         <DataTemplate DataType="{x:Type viewmodels:AttachmentsViewModel}">
-            <Border MouseLeftButtonUp="AttachmentsBorder_Click">
+            <Button Click="Button_Click" Height="Auto" Width="Auto" 
+                    Command="{Binding Path=DataContext.SelectAttachmentsCommand, RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type Window}}}"
+                    CommandParameter="{Binding Tag}">
+                <Button.Template>
+                    <ControlTemplate TargetType="Button">
+                        <Border Height="Auto">
+                            <Border.Style>
+                                <Style TargetType="Border" BasedOn="{StaticResource AttachmentBorder}">
+                                    <Setter Property="BorderBrush" Value="{StaticResource MaterialDesignCheckBoxDisabled}"/>
+                                    <Setter Property="BorderThickness" Value="2"/>
+                                    <Setter Property="Background" Value="Transparent"/>
+                                    <Setter Property="Margin" Value="1"/>
+                                    <Style.Triggers>
+                                        <DataTrigger Binding="{Binding Path=IsSelected}" Value="True">
+                                            <Setter Property="BorderBrush" Value="{StaticResource SecondaryAccentBrush}"/>
+                                        </DataTrigger>
+                                    </Style.Triggers>
+                                </Style>
+                            </Border.Style>
+                        </Border>
+                    </ControlTemplate>
+                </Button.Template>
+            </Button>
+            <!--<Border MouseLeftButtonUp="AttachmentsBorder_Click">
                 <Border.Style>
                     <Style TargetType="Border" BasedOn="{StaticResource AttachmentBorder}">
                         <Setter Property="BorderBrush" Value="{StaticResource MaterialDesignCheckBoxDisabled}"/>
@@ -439,7 +462,7 @@
                     </ScrollViewer>
                     <TextBlock VerticalAlignment="Bottom" HorizontalAlignment="Right" Margin="0,0,18,0" Text="{Binding Hint}" FontStyle="Italic" FontSize="10"/>
                 </Grid>
-            </Border>
+            </Border>-->
         </DataTemplate>
     </Window.Resources>
     <Window.DataContext>

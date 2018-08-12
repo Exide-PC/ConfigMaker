@@ -20,11 +20,5 @@ namespace ConfigMaker.Mvvm.Models
             get => this._hint;
             set => this.SetProperty(ref _hint, value);
         }
-
-        public bool IsSelected
-        {
-            get => this._isSelected;
-            set => this.SetProperty(ref _isSelected, value);
-        }
     }
 }

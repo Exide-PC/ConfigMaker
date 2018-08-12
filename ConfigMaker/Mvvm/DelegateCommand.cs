@@ -6,11 +6,11 @@ namespace ConfigMaker.Mvvm
     public class DelegateCommand: ICommand
     {
         private readonly Predicate<object> _canExecute;
-        private readonly Action _execute;
+        private readonly Action<object> _execute;
 
         public event EventHandler CanExecuteChanged;
 
-        public DelegateCommand(Action execute)
+        public DelegateCommand(Action<object> execute)
         {
             this._execute = execute;
         }
@@ -19,7 +19,7 @@ namespace ConfigMaker.Mvvm
 
         public void Execute(object parameter)
         {
-            _execute();
+            _execute(parameter);
         }
     }
 }

@@ -52,14 +52,34 @@ namespace ConfigMaker.Mvvm.ViewModels
 
         public ComboBoxItemsViewModel StateBindingItemsVM { get; }
 
+        public ICommand SelectAttachmentsCommand { get; }
         public ICommand SaveCommand { get; }
 
         public MainViewModel(): base(new MainModel())
         {
+            this.SelectAttachmentsCommand = new DelegateCommand((obj) =>
+            {
+                int attachmentsBorderTag = (int)obj;
+
+                if (attachmentsBorderTag == 0) this.StateBinding = EntryStateBinding.KeyDown;
+                if (attachmentsBorderTag == 1) this.StateBinding = EntryStateBinding.KeyUp;
+
+            });
+
+            this.KeyDownAttachmentsVM = new AttachmentsViewModel(this.Model.KeyDownAttachments) { Tag = 0 };
+            this.KeyUpAttachmentsVM = new AttachmentsViewModel(this.Model.KeyUpAttachments) { Tag = 1 };
+            this.SolidAttachmentsVM = new AttachmentsViewModel(this.Model.SolidAttachments) { Tag = 2 };
+
             this.Model.PropertyChanged += (_, arg) =>
             {
                 if (arg.PropertyName == nameof(MainModel.StateBinding))
                 {
+                    // Зададим панелям значение IsSelected
+                    this.KeyDownAttachmentsVM.IsSelected = this.StateBinding == EntryStateBinding.KeyDown;
+                    this.KeyUpAttachmentsVM.IsSelected = this.StateBinding == EntryStateBinding.KeyUp;
+                    this.SolidAttachmentsVM.IsSelected = this.StateBinding != EntryStateBinding.InvalidState;
+
+                    // Определим выбранный индекс в комбобоксе
                     switch (this.Model.StateBinding)
                     {
                         case EntryStateBinding.Default:
@@ -109,10 +129,7 @@ namespace ConfigMaker.Mvvm.ViewModels
                 this.GameSettingsCategoryViewModels.Add(new SettingsCategoryViewModel(category));
             }
 
-            this.KeyDownAttachmentsVM = new AttachmentsViewModel(this.Model.KeyDownAttachments);
-            this.KeyUpAttachmentsVM = new AttachmentsViewModel(this.Model.KeyUpAttachments);
-            this.SolidAttachmentsVM = new AttachmentsViewModel(this.Model.SolidAttachments);
-
+            
             this.StateBindingItemsVM = new ComboBoxItemsViewModel()
             {
                 Items = new ObservableCollection<string>()

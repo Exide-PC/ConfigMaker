@@ -6,15 +6,31 @@ using System.Collections.Specialized;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Windows.Input;
 
 namespace ConfigMaker.Mvvm.ViewModels
 {
-    public class AttachmentsViewModel: ViewModelBase<AttachmentsModel>
+    public class AttachmentsViewModel : ViewModelBase<AttachmentsModel>
     {
         public ObservableCollection<ItemViewModel> Items { get; } = new ObservableCollection<ItemViewModel>();
 
+        bool _isSelected = false;
+        object _tag;
+
+        public ICommand SelectAttachmentsCommand { get; }
+        public object Tag
+        {
+            get => this._tag;
+            set => this.SetProperty(ref _tag, value);
+        }
+
         public AttachmentsViewModel(AttachmentsModel model): base(model)
         {
+            this.SelectAttachmentsCommand = new DelegateCommand((obj) =>
+            {
+
+            });
+
             model.Items.CollectionChanged += (_, arg) =>
             {
                 switch (arg.Action)
@@ -48,8 +64,8 @@ namespace ConfigMaker.Mvvm.ViewModels
 
         public bool IsSelected
         {
-            get => this.Model.IsSelected;
-            set => this.Model.IsSelected = value;
+            get => this._isSelected;
+            set => this.SetProperty(ref _isSelected, value);
         }   
     }
 }
