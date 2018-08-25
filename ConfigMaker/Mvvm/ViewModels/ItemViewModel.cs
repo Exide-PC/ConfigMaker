@@ -12,6 +12,7 @@ namespace ConfigMaker.Mvvm.ViewModels
     public class ItemViewModel: ViewModelBase<ItemModel>
     {
         double _fontSize = 14;
+        double _height = 24;
 
         public ItemViewModel(ItemModel model): base(model)
         {
@@ -39,6 +40,12 @@ namespace ConfigMaker.Mvvm.ViewModels
         {
             get => this._fontSize;
             set => this.SetProperty(ref _fontSize, value);
+        }
+
+        public double Height
+        {
+            get => this._height;
+            set => this.SetProperty(ref _height, value);
         }
     }
 }

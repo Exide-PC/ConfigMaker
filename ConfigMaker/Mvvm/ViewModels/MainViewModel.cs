@@ -45,6 +45,12 @@ namespace ConfigMaker.Mvvm.ViewModels
             get => this.Model.CustomCfgName;
             set => this.Model.CustomCfgName = value.Trim();
         }
+
+        public int SelectedTab
+        {
+            get => this.Model.SelectedTab;
+            set => this.Model.SelectedTab = value;
+        }
         
         public AttachmentsViewModel KeyDownAttachmentsVM { get; }
         public AttachmentsViewModel KeyUpAttachmentsVM { get; }
@@ -52,11 +58,17 @@ namespace ConfigMaker.Mvvm.ViewModels
 
         public ComboBoxItemsViewModel StateBindingItemsVM { get; }
 
+        public ICommand SelectTabCommand { get; }
         public ICommand SelectAttachmentsCommand { get; }
         public ICommand SaveCommand { get; }
 
         public MainViewModel(): base(new MainModel())
         {
+            this.SelectTabCommand = new DelegateCommand((obj) =>
+            {
+                this.SelectedTab = int.Parse(obj.ToString());
+            });
+
             this.SelectAttachmentsCommand = new DelegateCommand((obj) =>
             {
                 int attachmentsBorderTag = (int)obj;
@@ -69,36 +81,12 @@ namespace ConfigMaker.Mvvm.ViewModels
             this.KeyDownAttachmentsVM = new AttachmentsViewModel(this.Model.KeyDownAttachments) { Tag = 0 };
             this.KeyUpAttachmentsVM = new AttachmentsViewModel(this.Model.KeyUpAttachments) { Tag = 1 };
             this.SolidAttachmentsVM = new AttachmentsViewModel(this.Model.SolidAttachments) { Tag = 2 };
-
+            
             this.Model.PropertyChanged += (_, arg) =>
             {
                 if (arg.PropertyName == nameof(MainModel.StateBinding))
                 {
-                    // Зададим панелям значение IsSelected
-                    this.KeyDownAttachmentsVM.IsSelected = this.StateBinding == EntryStateBinding.KeyDown;
-                    this.KeyUpAttachmentsVM.IsSelected = this.StateBinding == EntryStateBinding.KeyUp;
-                    this.SolidAttachmentsVM.IsSelected = this.StateBinding != EntryStateBinding.InvalidState;
-
-                    // Определим выбранный индекс в комбобоксе
-                    switch (this.Model.StateBinding)
-                    {
-                        case EntryStateBinding.Default:
-                            {
-                                this.StateBindingItemsVM.SelectedIndex = 0;
-                                break;
-                            }
-                        case EntryStateBinding.KeyDown:
-                        case EntryStateBinding.KeyUp:
-                            {
-                                this.StateBindingItemsVM.SelectedIndex = 1;
-                                break;
-                            }
-                        case EntryStateBinding.Alias:
-                            {
-                                this.StateBindingItemsVM.SelectedIndex = 2;
-                                break;
-                            }
-                    }
+                    HandleStateBinding(this.StateBinding);
                 }
             };
 
@@ -163,6 +151,40 @@ namespace ConfigMaker.Mvvm.ViewModels
                     }
                 }
             };
+
+            // Разово вызовем метод для обновления моделей представления, 
+            // т.к. PropertyChanged был вызван давно в конструкторе модели
+            HandleStateBinding(this.StateBinding);
+
+        }
+
+        void HandleStateBinding(EntryStateBinding state)
+        {
+            // Зададим панелям значение IsSelected
+            this.KeyDownAttachmentsVM.IsSelected = this.StateBinding == EntryStateBinding.KeyDown;
+            this.KeyUpAttachmentsVM.IsSelected = this.StateBinding == EntryStateBinding.KeyUp;
+            this.SolidAttachmentsVM.IsSelected = this.StateBinding != EntryStateBinding.InvalidState;
+
+            // Определим выбранный индекс в комбобоксе
+            switch (this.Model.StateBinding)
+            {
+                case EntryStateBinding.Default:
+                    {
+                        this.StateBindingItemsVM.SelectedIndex = 0;
+                        break;
+                    }
+                case EntryStateBinding.KeyDown:
+                case EntryStateBinding.KeyUp:
+                    {
+                        this.StateBindingItemsVM.SelectedIndex = 1;
+                        break;
+                    }
+                case EntryStateBinding.Alias:
+                    {
+                        this.StateBindingItemsVM.SelectedIndex = 2;
+                        break;
+                    }
+            }
         }
 
         public void ClickButton(string button, VirtualKeyboard.SpecialKey flags)

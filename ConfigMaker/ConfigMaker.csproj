@@ -107,6 +107,7 @@
     <Compile Include="Utils\Converters\BoolToFontWeightConverter.cs" />
     <Compile Include="Utils\Converters\BoolToVisibilityConverter.cs" />
     <Compile Include="Utils\Converters\CfgDirValidationRule.cs" />
+    <Compile Include="Utils\Converters\EquivalenceChecker.cs" />
     <Compile Include="Utils\Converters\NameValidationRule.cs" />
     <Compile Include="Csgo\Config\Entries\Entry.cs" />
     <Compile Include="Csgo\Config\Entries\ParametrizedEntry.cs" />

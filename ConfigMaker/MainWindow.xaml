@@ -22,6 +22,7 @@
     <Window.Resources>
         <converters:BoolToFontWeightConverter x:Key="boolToFontweightConverter"/>
         <converters:BoolToVisibilityConverter x:Key="boolToVisibilityConverter"/>
+        <converters:EquivalenceChecker x:Key="equivalenceChecker"/>
         <Style x:Key="BubbleButton" TargetType="materialDesign:Chip">
             <Setter Property="FontSize" Value="10"/>
             <Setter Property="MinWidth" Value="40"/>
@@ -93,13 +94,13 @@
                 <Setter.Value>
                     <ControlTemplate TargetType="RadioButton">
                         <Grid>
-                            <Button x:Name="button" Style="{StaticResource MaterialDesignFlatButton}">
+                            <Button x:Name="button" Style="{StaticResource MaterialDesignFlatButton}" Command="{Binding SelectTabCommand}" CommandParameter="{TemplateBinding Tag}">
                                 <ContentPresenter Content="{TemplateBinding Content}"/>
                             </Button>
                             <Border VerticalAlignment="Bottom" Visibility="Hidden" x:Name="Underline" BorderBrush="{StaticResource PrimaryHueMidBrush}" BorderThickness="0 3 0 0"/>
                         </Grid>
                         <ControlTemplate.Triggers>
-                            <EventTrigger RoutedEvent="ButtonBase.Click" SourceName="button">
+                            <!--<EventTrigger RoutedEvent="ButtonBase.Click" SourceName="button">
                                 <BeginStoryboard>
                                     <Storyboard>
                                         <BooleanAnimationUsingKeyFrames Storyboard.TargetProperty="IsChecked">
@@ -107,7 +108,7 @@
                                         </BooleanAnimationUsingKeyFrames>
                                     </Storyboard>
                                 </BeginStoryboard>
-                            </EventTrigger>
+                            </EventTrigger>-->
                             <Trigger Property="IsChecked" Value="True">
                                 <Setter TargetName="Underline" Property="Visibility" Value="Visible"/>
                             </Trigger>
@@ -264,6 +265,8 @@
             <materialDesign:Chip 
                 Style="{StaticResource BubbleButton}"
                 Content="{Binding Text}"
+                Height="{Binding Height}"
+                Foreground="{StaticResource MaterialDesignBody}"
                 FontSize="{Binding FontSize}" 
                 FontWeight="{Binding IsSelected, Converter={StaticResource boolToFontweightConverter}}"
                 Command="{Binding SelectCommand}">
@@ -432,6 +435,13 @@
                                     </Style.Triggers>
                                 </Style>
                             </Border.Style>
+                            <ItemsControl ItemsSource="{Binding Items}">
+                                <ItemsControl.ItemsPanel>
+                                    <ItemsPanelTemplate>
+                                        <WrapPanel Orientation="Horizontal"/>
+                                    </ItemsPanelTemplate>
+                                </ItemsControl.ItemsPanel>
+                            </ItemsControl>
                         </Border>
                     </ControlTemplate>
                 </Button.Template>
@@ -522,10 +532,10 @@
                                 </TextBox>
                             </StackPanel>
                             <StackPanel Orientation="Horizontal">
-                                <RadioButton Name="actionTabButton" IsChecked="True" GroupName="TabGroup" Content="{x:Static res:Resources.ActionCategory_Button}" Style="{StaticResource MaterialDesignTabItem}"/>
-                                <RadioButton Name="buyTabButton" GroupName="TabGroup" Content="{x:Static res:Resources.BuyScenarioCategory_Button}" Style="{StaticResource MaterialDesignTabItem}"/>
-                                <RadioButton Name="gameSettingsTabButton" GroupName="TabGroup" Content="{x:Static res:Resources.GameSettingsCategory_Button}" Style="{StaticResource MaterialDesignTabItem}"/>
-                                <RadioButton Name="extraTabButton" GroupName="TabGroup" Content="{x:Static res:Resources.ExtraCategory_Button}" Style="{StaticResource MaterialDesignTabItem}"/>
+                                <RadioButton Tag="0" IsChecked="{Binding SelectedTab, Converter={StaticResource equivalenceChecker}, ConverterParameter=0}" GroupName="TabGroup" Content="{x:Static res:Resources.ActionCategory_Button}" Style="{StaticResource MaterialDesignTabItem}"/>
+                                <RadioButton Tag="1" IsChecked="{Binding SelectedTab, Converter={StaticResource equivalenceChecker}, ConverterParameter=1}" GroupName="TabGroup" Content="{x:Static res:Resources.BuyScenarioCategory_Button}" Style="{StaticResource MaterialDesignTabItem}"/>
+                                <RadioButton Tag="2" IsChecked="{Binding SelectedTab, Converter={StaticResource equivalenceChecker}, ConverterParameter=2}" GroupName="TabGroup" Content="{x:Static res:Resources.GameSettingsCategory_Button}" Style="{StaticResource MaterialDesignTabItem}"/>
+                                <RadioButton Tag="3" IsChecked="{Binding SelectedTab, Converter={StaticResource equivalenceChecker}, ConverterParameter=3}" GroupName="TabGroup" Content="{x:Static res:Resources.ExtraCategory_Button}" Style="{StaticResource MaterialDesignTabItem}"/>
                             </StackPanel>
                         </DockPanel>
                         <Border BorderBrush="{StaticResource MaterialDesignDivider}" BorderThickness="0,1,0,0"/>
@@ -537,7 +547,7 @@
                                 <Style TargetType="Grid">
                                     <Setter Property="Visibility" Value="Collapsed"/>
                                     <Style.Triggers>
-                                        <DataTrigger Binding="{Binding ElementName=actionTabButton, Path=IsChecked}" Value="True">
+                                        <DataTrigger Binding="{Binding SelectedTab}" Value="0">
                                             <Setter Property="Visibility" Value="Visible"/>
                                         </DataTrigger>
                                     </Style.Triggers>
@@ -559,7 +569,7 @@
                                 <Style TargetType="Grid">
                                     <Setter Property="Visibility" Value="Collapsed"/>
                                     <Style.Triggers>
-                                        <DataTrigger Binding="{Binding ElementName=buyTabButton, Path=IsChecked}" Value="True">
+                                        <DataTrigger Binding="{Binding SelectedTab}" Value="1">
                                             <Setter Property="Visibility" Value="Visible"/>
                                         </DataTrigger>
                                     </Style.Triggers>
@@ -575,7 +585,7 @@
                                 <Style TargetType="Grid">
                                     <Setter Property="Visibility" Value="Collapsed"/>
                                     <Style.Triggers>
-                                        <DataTrigger Binding="{Binding ElementName=gameSettingsTabButton, Path=IsChecked}" Value="True">
+                                        <DataTrigger Binding="{Binding SelectedTab}" Value="2">
                                             <Setter Property="Visibility" Value="Visible"/>
                                         </DataTrigger>
                                     </Style.Triggers>
@@ -608,7 +618,7 @@
                                 <Style TargetType="Grid">
                                     <Setter Property="Visibility" Value="Collapsed"/>
                                     <Style.Triggers>
-                                        <DataTrigger Binding="{Binding ElementName=extraTabButton, Path=IsChecked}" Value="True">
+                                        <DataTrigger Binding="{Binding SelectedTab}" Value="3">
                                             <Setter Property="Visibility" Value="Visible"/>
                                         </DataTrigger>
                                     </Style.Triggers>

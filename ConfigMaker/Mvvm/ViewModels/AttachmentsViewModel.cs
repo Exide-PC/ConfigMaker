@@ -38,7 +38,8 @@ namespace ConfigMaker.Mvvm.ViewModels
                     case NotifyCollectionChangedAction.Add:
                         {
                             ItemModel newItem = (ItemModel)arg.NewItems[0];
-                            this.Items.Add(new ItemViewModel(newItem));
+                            ItemViewModel newItemVM = new ItemViewModel(newItem) { FontSize = 12 };
+                            this.Items.Add(newItemVM);
                             break;
                         }
                     case NotifyCollectionChangedAction.Remove:

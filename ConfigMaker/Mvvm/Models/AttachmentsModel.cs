@@ -13,7 +13,6 @@ namespace ConfigMaker.Mvvm.Models
             new ObservableCollection<ItemModel>();
 
         string _hint = string.Empty;
-        bool _isSelected = false;
 
         public string Hint
         {

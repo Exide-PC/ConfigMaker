@@ -37,6 +37,7 @@ namespace ConfigMaker.Mvvm.Models
             get => _stateBinding;
             set
             {
+
                 if (SetProperty(ref _stateBinding, (CoerceStateBinding(value))))
                 {
                     foreach (EntryController controller in this.entryControllers)
@@ -55,6 +56,12 @@ namespace ConfigMaker.Mvvm.Models
         {
             get => _customCfgName;
             set => SetProperty(ref _customCfgName, value.Trim());
+        }
+
+        public int SelectedTab
+        {
+            get => this._selectedTab;
+            set => this.SetProperty(ref _selectedTab, value);
         }
 
         public KeySequence KeySequence
@@ -80,6 +87,8 @@ namespace ConfigMaker.Mvvm.Models
             InitActionTab();
             InitBuyTab();
             InitGameSettingsTab();
+
+            this.StateBinding = EntryStateBinding.Default;
         }
 
         ConfigManager cfgManager = new ConfigManager();
@@ -88,6 +97,7 @@ namespace ConfigMaker.Mvvm.Models
         string cfgPath = $"{nameof(AppConfig)}.xml";
         string _customCfgName = string.Empty;
         string _customCfgPath = string.Empty;
+        int _selectedTab = 0;
         ObservableCollection<EntryController> entryControllers = new ObservableCollection<EntryController>();
         EntryStateBinding _stateBinding;
         
@@ -134,7 +144,7 @@ namespace ConfigMaker.Mvvm.Models
                     UpdateUI = (entry) => actionModel.IsChecked = true,
                     Focus = () =>
                     {
-                        //actionTabButton.IsChecked = true;
+                        this.SelectedTab = 0;
                         actionModel.IsFocused = true;
                     },
                     Restore = () => actionModel.IsChecked = false,
@@ -246,7 +256,7 @@ namespace ConfigMaker.Mvvm.Models
                 Model = jumpthrowVM,
                 Focus = () =>
                 {
-                    //actionTabButton.IsChecked = true;
+                    this.SelectedTab = 0;
                     jumpthrowVM.IsFocused = true;
                 },
                 Generate = () =>
@@ -279,7 +289,7 @@ namespace ConfigMaker.Mvvm.Models
                 Model = displayDamageOnVM,
                 Focus = () =>
                 {
-                    //actionTabButton.IsChecked = true;
+                    this.SelectedTab = 0;
                     displayDamageOnVM.IsFocused = true;
                 },
                 Generate = () =>
@@ -317,7 +327,7 @@ namespace ConfigMaker.Mvvm.Models
                 Model = displayDamageOffVM,
                 Focus = () =>
                 {
-                    //actionTabButton.IsChecked = true;
+                    this.SelectedTab = 0;
                     displayDamageOffVM.IsFocused = true;
                 },
                 Generate = () =>
@@ -367,7 +377,7 @@ namespace ConfigMaker.Mvvm.Models
             this.entryControllers.Add(new EntryController()
             {
                 Model = this.BuyMenuModel,
-                //Focus = () => buyTabButton.IsChecked = true,
+                Focus = () => this.SelectedTab = 1,
                 UpdateUI = (entry) =>
                 {
                     IParametrizedEntry<string[]> extendedEntry = (IParametrizedEntry<string[]>)entry;
@@ -558,7 +568,7 @@ namespace ConfigMaker.Mvvm.Models
                     Model = entryModel,
                     Focus = () =>
                     {
-                        //gameSettingsTabButton.IsChecked = true;
+                        this.SelectedTab = 2;
                         entryModel.IsFocused = true;
                     },
                     Restore = () =>
@@ -657,7 +667,7 @@ namespace ConfigMaker.Mvvm.Models
                     Model = entryModel,
                     Focus = () =>
                     {
-                        //gameSettingsTabButton.IsChecked = true;
+                        this.SelectedTab = 2;
                         entryModel.IsFocused = true;
                     },
                     Restore = () =>
@@ -796,7 +806,7 @@ namespace ConfigMaker.Mvvm.Models
                     Model = entryModel,
                     Focus = () =>
                     {
-                        //gameSettingsTabButton.IsChecked = true;
+                        this.SelectedTab = 2;
                         entryModel.IsFocused = true;
                     },
                     Restore = () =>
@@ -877,7 +887,7 @@ namespace ConfigMaker.Mvvm.Models
                     Model = entryModel,
                     Focus = () =>
                     {
-                        //gameSettingsTabButton.IsChecked = true;
+                        this.SelectedTab = 2;
                         entryModel.IsFocused = true;
                     },
                     Restore = () =>
@@ -1072,14 +1082,6 @@ namespace ConfigMaker.Mvvm.Models
                 }
             };
 
-            
-
-            // Инициализируем панели
-            //this.keyDownAttachmentsContentControl.Content = keyDownAttachments;
-            //this.keyUpAttachmentsContentControl.Content = keyUpAttachmentsVM;
-            //this.solidAttachmentsContentControl.Content = solidAttachments;
-
-            
 
             // Проверим, что в словаре нет одинаковых ключей в разном регистре
             // Для этого сгруппируем все ключи, переведя их в нижний регистр,
@@ -1088,9 +1090,6 @@ namespace ConfigMaker.Mvvm.Models
                 .FirstOrDefault(g => g.Count() > 1);
 
             if (duplicatedKeyGroup != null) throw new Exception($"Duplicate key: {duplicatedKeyGroup.Key}");
-
-            // Зададим привязку по умолчанию
-            this.StateBinding = EntryStateBinding.Default;
         }
 
         public void SaveConfig()
