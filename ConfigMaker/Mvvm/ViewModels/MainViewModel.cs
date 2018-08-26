@@ -67,6 +67,7 @@ namespace ConfigMaker.Mvvm.ViewModels
         public ICommand SaveCommand { get; }
         public ICommand GenerateCommand { get; }
         public ICommand AboutCommand { get; }
+        public ICommand ToggleCommand { get; }
         
         public MainViewModel(): base(new MainModel())
         {
@@ -135,6 +136,11 @@ namespace ConfigMaker.Mvvm.ViewModels
             this.AboutCommand = new DelegateCommand((obj) =>
             {
                 new AboutWindow().ShowDialog();
+            });
+
+            this.ToggleCommand = new DelegateCommand((obj) =>
+            {
+                this.Model.SetToggleCommand(obj.ToString());
             });
 
             this.KeyDownAttachmentsVM = new AttachmentsViewModel(this.Model.KeyDownAttachments) { Tag = 0 };

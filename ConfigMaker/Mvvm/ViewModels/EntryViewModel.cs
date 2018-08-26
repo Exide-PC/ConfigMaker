@@ -20,6 +20,11 @@ namespace ConfigMaker.Mvvm.ViewModels
 
         public ICommand SelectCommand { get; }
         
+        public string Key
+        {
+            get => this.Model.Key;
+        }
+
         public bool IsEnabled
         {
             get => this.Model.IsEnabled;

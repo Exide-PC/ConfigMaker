@@ -28,6 +28,10 @@ namespace ConfigMaker.Mvvm.Models
             set => this.SetProperty(ref _needToggle, value);
         }
 
+        public bool IsInteger { get; set; }
+        public double From { get; set; }
+        public double To { get; set; }
+
         public BindableBase ControllerModel { get; }
     }
 }

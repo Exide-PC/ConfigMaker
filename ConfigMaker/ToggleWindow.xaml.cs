@@ -48,6 +48,7 @@ namespace ConfigMaker
         public double From { get; }
         public double To { get; }
         public string GeneratedArg { get; private set; } = null;
+        public double[] Values { get; private set; } = null;
 
         public ToggleWindow(bool isInteger, double from, double to)
         {
@@ -75,6 +76,7 @@ namespace ConfigMaker
                     return int.TryParse(p, out temp) && temp >= this.From && temp <= this.To;
                 }))
                 {
+                    this.Values = parts.Select(p => double.Parse(p)).ToArray();
                     this.GeneratedArg = string.Join(" ", parts);
                 }
                 else
@@ -88,13 +90,19 @@ namespace ConfigMaker
                     return Executable.TryParseDouble(p, out temp) && temp >= this.From && temp <= this.To;
                 }))
                 {
-                    string[] formattedArgs = parts.Select(p =>
+                    string[] formattedArgs = new string[parts.Length];
+                    double[] values = new double[parts.Length];
+
+                    for (int i = 0; i < parts.Length; i++)
                     {
                         double value;
-                        Executable.TryParseDouble(p, out value);
-                        return Executable.FormatNumber(value, false);
-                    }).ToArray();
+                        Executable.TryParseDouble(parts[i], out value);
+                        values[i] = value;
+                        formattedArgs[i] = Executable.FormatNumber(value, false);
+                    }
+
                     this.GeneratedArg = string.Join(" ", formattedArgs);
+                    this.Values = values;
                 }
                 else
                     this.GeneratedArg = null;

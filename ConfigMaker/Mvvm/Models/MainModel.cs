@@ -194,7 +194,6 @@ namespace ConfigMaker.Mvvm.Models
                     Focus = () =>
                     {
                         this.SelectedTab = 0;
-                        actionModel.IsFocused = true;
                     },
                     Restore = () => actionModel.IsChecked = false,
                     HandleState = (state) =>
@@ -306,7 +305,6 @@ namespace ConfigMaker.Mvvm.Models
                 Focus = () =>
                 {
                     this.SelectedTab = 0;
-                    jumpthrowVM.IsFocused = true;
                 },
                 Generate = () =>
                 {
@@ -339,7 +337,6 @@ namespace ConfigMaker.Mvvm.Models
                 Focus = () =>
                 {
                     this.SelectedTab = 0;
-                    displayDamageOnVM.IsFocused = true;
                 },
                 Generate = () =>
                 {
@@ -377,7 +374,6 @@ namespace ConfigMaker.Mvvm.Models
                 Focus = () =>
                 {
                     this.SelectedTab = 0;
-                    displayDamageOffVM.IsFocused = true;
                 },
                 Generate = () =>
                 {
@@ -591,6 +587,11 @@ namespace ConfigMaker.Mvvm.Models
                 // Получим базовую модель представления
                 DynamicEntryModel entryModel = RegisterEntry(cmd, sliderVM, true);
 
+                // Зададим параметры для команды toggle
+                entryModel.IsInteger = isInteger;
+                entryModel.From = from;
+                entryModel.To = to;
+
                 void HandleSliderValue(double value)
                 {
                     string formatted = Executable.FormatNumber(value, isInteger);
@@ -618,7 +619,6 @@ namespace ConfigMaker.Mvvm.Models
                     Focus = () =>
                     {
                         this.SelectedTab = 2;
-                        entryModel.IsFocused = true;
                     },
                     Restore = () =>
                     {
@@ -684,9 +684,14 @@ namespace ConfigMaker.Mvvm.Models
                 ComboBoxControllerModel comboboxController = new ComboBoxControllerModel();
                 DynamicEntryModel entryModel = RegisterEntry(cmd, comboboxController, isIntegerArg);
 
+
                 // Если надо предусмотреть функцию toggle, то расширяем сетку и добавляем кнопку
                 if (isIntegerArg)
                 {
+                    // Зададим параметры для команды toggle
+                    entryModel.IsInteger = true;
+                    entryModel.From = 0;
+                    entryModel.To = names.Length - 1;
                     //toggleButton.Click += (_, __) =>
                     //{
                     //    ToggleWindow toggleWindow = new ToggleWindow(true, 0, names.Length - 1);
@@ -717,7 +722,6 @@ namespace ConfigMaker.Mvvm.Models
                     Focus = () =>
                     {
                         this.SelectedTab = 2;
-                        entryModel.IsFocused = true;
                     },
                     Restore = () =>
                     {
@@ -806,6 +810,10 @@ namespace ConfigMaker.Mvvm.Models
                 TextboxControllerModel textboxModel = new TextboxControllerModel();
                 DynamicEntryModel entryModel = RegisterEntry(cmd, textboxModel, true);
 
+                // Зададим параметры для команды toggle
+                entryModel.IsInteger = asInteger;
+                entryModel.From = double.MinValue;
+                entryModel.To = double.MaxValue;
                 //toggleButton.Click += (_, __) =>
                 //{
                 //ToggleWindow toggleWindow = new ToggleWindow(asInteger, double.MinValue, double.MaxValue);
@@ -856,7 +864,6 @@ namespace ConfigMaker.Mvvm.Models
                     Focus = () =>
                     {
                         this.SelectedTab = 2;
-                        entryModel.IsFocused = true;
                     },
                     Restore = () =>
                     {
@@ -937,7 +944,6 @@ namespace ConfigMaker.Mvvm.Models
                     Focus = () =>
                     {
                         this.SelectedTab = 2;
-                        entryModel.IsFocused = true;
                     },
                     Restore = () =>
                     {
@@ -1333,6 +1339,7 @@ namespace ConfigMaker.Mvvm.Models
                     Text = Localize(entryKey),
                     Tag = entryKey
                 };
+                item.Click += (_, __) => this.GetController(entryKey).Focus();
                 attachmentsVM.Items.Add(item);
             }
 
@@ -1583,6 +1590,69 @@ namespace ConfigMaker.Mvvm.Models
                 return coercedState;
             }
         }
-        //#endregion
+
+        public void SetToggleCommand(string entryKey)
+        {
+            DynamicEntryModel model = (DynamicEntryModel)this.GetController(entryKey).Model;
+
+            if (!model.NeedToggle)
+                throw new Exception($"Toggle mode can not be used with entry {model.Key}");
+
+            ToggleWindow toggleWindow = new ToggleWindow(model.IsInteger, model.From, model.To);
+            
+            if (toggleWindow.ShowDialog() == true)
+            {
+                string args = toggleWindow.GeneratedArg;
+
+                model.Content = Executable.GenerateToggleCmd(
+                    model.Key,
+                    toggleWindow.Values, 
+                    model.IsInteger).ToString();
+
+
+                if (model.IsInteger)
+                    model.Arg = toggleWindow.Values.Select(v => (int)v).ToArray();
+                else
+                    model.Arg = toggleWindow.Values;
+
+                this.AddEntry(model.Key, true);
+
+                //ToggleWindow toggleWindow = new ToggleWindow(true, 0, names.Length - 1);
+                //    if ((bool)toggleWindow.ShowDialog())
+                //    {
+                //        int[] values = toggleWindow.GeneratedArg.Split(' ').Select(n => int.Parse(n)).ToArray();
+                //        resultCmdBlock.Text = Executable.GenerateToggleCmd(cmd, values).ToString();
+                //        // Сохраним аргумент в теге
+                //        resultCmdBlock.Tag = values;
+
+                //        //if ((bool)checkbox.IsChecked) // Добавляем в конфиг только если это сделал сам пользователь
+                //        this.AddEntry(cmd, true);
+                //    }
+                //    else
+                //    {
+
+                //    }
+
+
+                //toggleButton.Click += (_, __) =>
+                //{
+                //ToggleWindow toggleWindow = new ToggleWindow(asInteger, double.MinValue, double.MaxValue);
+                //if ((bool)toggleWindow.ShowDialog())
+                //{
+                //    double[] values = toggleWindow.GeneratedArg.Split(' ').Select(value =>
+                //    {
+                //        Executable.TryParseDouble(value, out double parsedValue);
+                //        return parsedValue;
+                //    }).ToArray();
+
+                //    resultCmdBlock.Text = Executable.GenerateToggleCmd(cmd, values, asInteger).ToString();
+                //    // Сохраним аргумент в теге
+                //    resultCmdBlock.Tag = values;
+
+                //    //if ((bool)checkbox.IsChecked) // Добавляем в конфиг только если это сделал сам пользователь
+                //    this.AddEntry(cmd, true);
+                //}
+            }
+        }
     }
 }

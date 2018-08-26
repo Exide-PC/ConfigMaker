@@ -11,12 +11,12 @@
         xmlns:res="clr-namespace:ConfigMaker.Properties"
         xmlns:local="clr-namespace:ConfigMaker"
         TextElement.Foreground="{DynamicResource MaterialDesignBody}"
-         TextElement.FontWeight="Regular"
-         TextElement.FontSize="13"
-         TextOptions.TextFormattingMode="Ideal"
-         TextOptions.TextRenderingMode="Auto"
-         Background="{DynamicResource MaterialDesignPaper}"
-         FontFamily="{DynamicResource MaterialDesignFont}"
+        TextElement.FontWeight="Regular"
+        TextElement.FontSize="13"
+        TextOptions.TextFormattingMode="Ideal"
+        TextOptions.TextRenderingMode="Auto"
+        Background="{DynamicResource MaterialDesignPaper}"
+        FontFamily="{DynamicResource MaterialDesignFont}"
         mc:Ignorable="d"
         Title="" Height="500" Width="1120" MinHeight="500" MinWidth="1120" Name="mainWindow" WindowState="Maximized">
     <Window.Resources>
@@ -187,17 +187,19 @@
                     <ColumnDefinition Width="1*"/>
                 </Grid.ColumnDefinitions>
                 <TextBlock Text="{Binding Content}" HorizontalAlignment="Center" VerticalAlignment="Center"/>
-                <Grid Grid.Column="1">
+                <Grid Grid.Column="1" IsEnabled="{Binding IsChecked}">
                     <Grid.ColumnDefinitions>
                         <ColumnDefinition Width="1*"/>
                         <ColumnDefinition Width="Auto"/>
                     </Grid.ColumnDefinitions>
-                    <ContentControl Content="{Binding ControllerViewModel}" IsEnabled="{Binding IsChecked}"/>
+                    <ContentControl Content="{Binding ControllerViewModel}"/>
                     <Button 
                         Visibility="{Binding NeedToggle, Converter={StaticResource boolToVisibilityConverter}}" 
                         Grid.Column="1" 
                         Style="{StaticResource MaterialDesignFlatButton}" 
-                        Content="⇄"/>
+                        Content="⇄"
+                        Command="{Binding Path=DataContext.ToggleCommand, RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type Window}}}"
+                        CommandParameter="{Binding Key}"/>
                 </Grid>
                 <CheckBox 
                     Command="{Binding SelectCommand}"
