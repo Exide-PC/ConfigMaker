@@ -54,7 +54,7 @@ namespace ConfigMaker.Mvvm.Models
 
         public string CustomCfgName
         {
-            get => _customCfgName;
+            get => string.IsNullOrEmpty(_customCfgName.Trim()) ? "Config" : _customCfgName;
             set => SetProperty(ref _customCfgName, value.Trim());
         }
 
@@ -82,12 +82,61 @@ namespace ConfigMaker.Mvvm.Models
                 Hint = Localize(Res.CommandsByDefault_Hint)
             };
 
-            ReadConfig();
+            // Делаем поиск по ресурсам регистронезависимым
+            Res.ResourceManager.IgnoreCase = true;
 
+            // Возьмем данные из конфига, если такой есть. Иначе создадим
+            XmlSerializer ser = new XmlSerializer(typeof(AppConfig));
+
+            if (!File.Exists(this.cfgPath))
+            {
+                using (FileStream fs = File.OpenWrite(this.cfgPath))
+                {
+                    AppConfig defaultCfg = new AppConfig()
+                    {
+                        CfgName = this.CustomCfgName,
+                        CsgoCfgPath = this.CustomCfgPath
+                    };
+                    ser.Serialize(fs, defaultCfg);
+                }
+            }
+            // К этому моменту у нас гарантированно создан конфигурационный файл
+            using (FileStream fs = File.OpenRead(this.cfgPath))
+            {
+
+                this.cfg = (AppConfig)ser.Deserialize(fs);
+
+                this.CustomCfgName = this.cfg.CfgName;
+                this.CustomCfgPath = this.cfg.CsgoCfgPath;
+            }
+
+            // Добавляем слушателя на нажатие виртуальной клавиатуры
+            //this.kb.OnKeyboardKeyDown += KeyboardKeyDownHandler;
+
+            // Пусть коллекция сама добавляет слушатель нажатия новым элементам
+            this.entryControllers.CollectionChanged += (_, arg) =>
+            {
+                if (arg.Action == System.Collections.Specialized.NotifyCollectionChangedAction.Add)
+                {
+                    EntryController controller = (EntryController)arg.NewItems[0];
+                    EntryModel entryModel = controller.Model;
+                    entryModel.Click += (__, ___) => HandleEntryClick(entryModel.Key);
+                }
+            };
+
+            // Заполним модель контроллерами
             InitActionTab();
             InitBuyTab();
             InitGameSettingsTab();
 
+            // Проверим, что в словаре нет одинаковых ключей в разном регистре
+            // Для этого сгруппируем все ключи, переведя их в нижний регистр,
+            // и найдем группу, где больше 1 элемента
+            var duplicatedKeyGroup = this.entryControllers.GroupBy(c => c.Model.Key.ToLower())
+                .FirstOrDefault(g => g.Count() > 1);
+
+            if (duplicatedKeyGroup != null) throw new Exception($"Duplicate key: {duplicatedKeyGroup.Key}");
+            
             this.StateBinding = EntryStateBinding.Default;
         }
 
@@ -1037,61 +1086,7 @@ namespace ConfigMaker.Mvvm.Models
             AddComboboxCmdController("bot_crouch", toggleStrings, 0, true);
             AddIntervalCmdController("bot_mimic_yaw_offset", 0, 180, 5, 0);
         }
-
-        void ReadConfig()
-        {
-            // Делаем поиск по ресурсам регистронезависимым
-            Res.ResourceManager.IgnoreCase = true;
-
-            // Возьмем данные из конфига, если такой есть. Иначе создадим
-            XmlSerializer ser = new XmlSerializer(typeof(AppConfig));
-
-            if (!File.Exists(this.cfgPath))
-            {
-                using (FileStream fs = File.OpenWrite(this.cfgPath))
-                {
-                    AppConfig defaultCfg = new AppConfig()
-                    {
-                        CfgName = this.CustomCfgName,
-                        CsgoCfgPath = this.CustomCfgPath
-                    };
-                    ser.Serialize(fs, defaultCfg);
-                }
-            }
-            // К этому моменту у нас гарантированно создан конфигурационный файл
-            using (FileStream fs = File.OpenRead(this.cfgPath))
-            {
-
-                this.cfg = (AppConfig)ser.Deserialize(fs);
-
-                this.CustomCfgName = this.cfg.CfgName;
-                this.CustomCfgPath = this.cfg.CsgoCfgPath;
-            }
-
-            // Добавляем слушателя на нажатие виртуальной клавиатуры
-            //this.kb.OnKeyboardKeyDown += KeyboardKeyDownHandler;
-
-            // Пусть коллекция сама добавляет слушатель нажатия новым элементам
-            this.entryControllers.CollectionChanged += (_, arg) =>
-            {
-                if (arg.Action == System.Collections.Specialized.NotifyCollectionChangedAction.Add)
-                {
-                    EntryController controller = (EntryController)arg.NewItems[0];
-                    EntryModel entryModel = controller.Model;
-                    entryModel.Click += (__, ___) => HandleEntryClick(entryModel.Key);
-                }
-            };
-
-
-            // Проверим, что в словаре нет одинаковых ключей в разном регистре
-            // Для этого сгруппируем все ключи, переведя их в нижний регистр,
-            // и найдем группу, где больше 1 элемента
-            var duplicatedKeyGroup = this.entryControllers.GroupBy(c => c.Model.Key.ToLower())
-                .FirstOrDefault(g => g.Count() > 1);
-
-            if (duplicatedKeyGroup != null) throw new Exception($"Duplicate key: {duplicatedKeyGroup.Key}");
-        }
-
+        
         public void SaveConfig()
         {
             // Удалим прошлый файл
@@ -1470,25 +1465,8 @@ namespace ConfigMaker.Mvvm.Models
             }
             System.Diagnostics.Process.Start("explorer.exe", $"/select,\"{firstCrosshair}\"");
         }
-
-        void UpdateCfgManager()
-        {
-            // Сбросим все настройки от прошлого конфига
-            foreach (EntryController controller in this.entryControllers)
-                controller.Restore();
-
-            // Зададим привязку к дефолтному состоянию
-            //keyboardAliasCombobox.SelectedIndex = 0; // TODO:
-            this.StateBinding = EntryStateBinding.Default;
-
-            foreach (Entry entry in this.cfgManager.DefaultEntries)
-                this.GetController(entry.PrimaryKey).UpdateUI(entry);
-
-            this.UpdateAttachmentPanels();
-            //this.ColorizeKeyboard(); // TODO:
-        }
-
-        string GetTargetFolder()
+        
+        public string GetTargetFolder()
         {
             string cfgPath = this.CustomCfgPath;
 
@@ -1537,6 +1515,39 @@ namespace ConfigMaker.Mvvm.Models
             this.UpdateAttachmentPanels();
         }
 
+        public void LoadCfgManager(ConfigManager newCfgManager)
+        {
+            // Сбросим все настройки от прошлого конфига
+            foreach (EntryController controller in this.entryControllers)
+                controller.Restore();
+
+            // Зададим привязку к дефолтному состоянию
+            //keyboardAliasCombobox.SelectedIndex = 0; // TODO:
+            this.StateBinding = EntryStateBinding.Default;
+
+            foreach (Entry entry in newCfgManager.DefaultEntries)
+                this.GetController(entry.PrimaryKey).UpdateUI(entry);
+
+            this.cfgManager = newCfgManager;
+            this.UpdateAttachmentPanels();
+            //this.ColorizeKeyboard(); // TODO:
+        }
+
+        public void SaveCfgManager(string path)
+        {
+            if (File.Exists(path)) File.Delete(path);
+            using (FileStream fs = File.OpenWrite(path))
+            {
+                XmlSerializer ser = new XmlSerializer(typeof(ConfigManager));
+                ser.Serialize(fs, this.cfgManager);
+            }
+        }
+
+        public void GenerateConfig(string path)
+        {
+            this.cfgManager.GenerateCfg(path);
+        }
+
         EntryStateBinding CoerceStateBinding(EntryStateBinding entryStateBinding)
         {
             //ComboBox cbox = (ComboBox)e.Source;
@@ -1571,23 +1582,6 @@ namespace ConfigMaker.Mvvm.Models
 
                 return coercedState;
             }
-        }
-
-        void HandleException(string userMsg, Exception ex)
-        {
-            System.Text.StringBuilder builder = new System.Text.StringBuilder();
-            builder.AppendLine(userMsg);
-
-            Exception currentException = ex;
-
-            do
-            {
-                builder.AppendLine($"{currentException.Message}");
-                currentException = currentException.InnerException;
-            } while (currentException != null);
-
-            builder.Append($"StackTrace: {ex.StackTrace}");
-            MessageBox.Show(builder.ToString());
         }
         //#endregion
     }

@@ -485,11 +485,11 @@
                 <DockPanel LastChildFill="True">
                     <materialDesign:PopupBox DockPanel.Dock="Right" PlacementMode="BottomAndAlignRightEdges">
                         <StackPanel>
-                            <Button Content="{x:Static res:Resources.SelectConfig_Button}" Click="OpenCfgButton_Click"/>
-                            <Button Content="{x:Static res:Resources.SaveConfig_Button}" Click="SaveCfgButton_Click"/>
-                            <Button Content="{x:Static res:Resources.GenerateConfig_Button}" Click="GenerateConfig"/>
+                            <Button Content="{x:Static res:Resources.SelectConfig_Button}" Command="{Binding OpenCfgCommand}"/>
+                            <Button Content="{x:Static res:Resources.SaveConfig_Button}" Command="{Binding SaveCommand}"/>
+                            <Button Content="{x:Static res:Resources.GenerateConfig_Button}" Command="{Binding GenerateCommand}"/>
                             <Border BorderBrush="{StaticResource MaterialDesignDivider}" BorderThickness="0,1,0,0"/>
-                            <Button Content="{x:Static res:Resources.About_Button}" Click="AboutButton_Click"/>
+                            <Button Content="{x:Static res:Resources.About_Button}" Command="{Binding AboutCommand}"/>
                         </StackPanel>
                     </materialDesign:PopupBox>
                     <TextBlock Text="ConfigMaker by Exide"  Style="{StaticResource MaterialDesignHeadlineTextBlock}"/>

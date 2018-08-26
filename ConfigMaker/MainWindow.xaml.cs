@@ -93,65 +93,6 @@ namespace ConfigMaker
             //this.GenerateCrosshairsCommand.Execute(null);
         }
 
-        private void AttachmentsBorder_Click(object sender, System.Windows.Input.MouseButtonEventArgs e)
-        {
-            // Нажатие на панель возможно когда еще не указана последовательность
-            //if (this.currentKeySequence == null)
-            //    return;
-
-            //bool isKeyDownBinding = ((FrameworkElement)sender).DataContext == this.keyDownAttachmentsVM;
-            //this.SetStateAndUpdateUI(isKeyDownBinding ? EntryStateBinding.KeyDown : EntryStateBinding.KeyUp);
-
-            //UpdateAttachmentPanels();
-        }
-
-        private void OpenCfgButton_Click(object sender, RoutedEventArgs e)
-        {
-            //OpenFileDialog openFileDialog = new OpenFileDialog
-            //{
-            //    Filter = "Config Maker Config (*.cmc)|*.cmc",
-            //    InitialDirectory = GetTargetFolder()
-            //};
-
-            //if (openFileDialog.ShowDialog() == true)
-            //{
-            //    XmlSerializer cfgSerializer = new XmlSerializer(typeof(ConfigManager));
-
-            //    FileInfo fi = new FileInfo(openFileDialog.FileName);
-            //    string cfgName = fi.Name.Replace(".cmc", "");
-            //    this.CfgName = cfgName;
-
-            //    try
-            //    {
-            //        using (FileStream fs = File.OpenRead(openFileDialog.FileName))
-            //        {
-            //            this.cfgManager = (ConfigManager)cfgSerializer.Deserialize(fs);
-            //        }
-            //        UpdateCfgManager();
-            //    }
-            //    catch (Exception ex)
-            //    {
-            //        HandleException("Файл поврежден", ex);
-            //    }
-            //}
-        }
-
-        private void SaveCfgButton_Click(object sender, RoutedEventArgs e)
-        {
-            //if (this.CfgName.Length == 0)
-            //    this.CfgName = (string)CfgNameProperty.DefaultMetadata.DefaultValue;
-
-            //string cfgManagerPath = Path.Combine(GetTargetFolder(), $"{this.CfgName}.cmc");
-
-            //if (File.Exists(cfgManagerPath)) File.Delete(cfgManagerPath);
-            //using (FileStream fs = File.OpenWrite(cfgManagerPath))
-            //{
-            //    XmlSerializer ser = new XmlSerializer(typeof(ConfigManager));
-            //    ser.Serialize(fs, this.cfgManager);
-            //}
-            //System.Diagnostics.Process.Start("explorer.exe", $"/select,\"{cfgManagerPath}\"");
-        }
-
         private void ComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
             //ComboBox cbox = (ComboBox)e.Source;

@@ -514,10 +514,10 @@
     <value>Select config</value>
   </data>
   <data name="SaveConfig_Button" xml:space="preserve">
-    <value>Save config</value>
+    <value>Save config [.cmc]</value>
   </data>
   <data name="GenerateConfig_Button" xml:space="preserve">
-    <value>Generate .cfg</value>
+    <value>Generate config [.cfg]</value>
   </data>
   <data name="ConfigName_Hint" xml:space="preserve">
     <value>Config name</value>

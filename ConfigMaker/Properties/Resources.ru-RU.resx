@@ -514,10 +514,10 @@
     <value>Выбрать конфиг</value>
   </data>
   <data name="SaveConfig_Button" xml:space="preserve">
-    <value>Сохранить конфиг</value>
+    <value>Сохранить конфиг [.cmc]</value>
   </data>
   <data name="GenerateConfig_Button" xml:space="preserve">
-    <value>Сгенерировать .cfg</value>
+    <value>Сгенерировать конфиг [.cfg]</value>
   </data>
   <data name="ConfigName_Hint" xml:space="preserve">
     <value>Название конфига</value>

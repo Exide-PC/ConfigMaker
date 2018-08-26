@@ -1,13 +1,16 @@
 ﻿using ConfigMaker.Csgo.Config;
 using ConfigMaker.Mvvm.Models;
+using Microsoft.Win32;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Input;
+using System.Xml.Serialization;
 using static ConfigMaker.Mvvm.Models.MainModel;
 using Res = ConfigMaker.Properties.Resources;
 
@@ -60,8 +63,11 @@ namespace ConfigMaker.Mvvm.ViewModels
 
         public ICommand SelectTabCommand { get; }
         public ICommand SelectAttachmentsCommand { get; }
+        public ICommand OpenCfgCommand { get; }
         public ICommand SaveCommand { get; }
-
+        public ICommand GenerateCommand { get; }
+        public ICommand AboutCommand { get; }
+        
         public MainViewModel(): base(new MainModel())
         {
             this.SelectTabCommand = new DelegateCommand((obj) =>
@@ -76,6 +82,59 @@ namespace ConfigMaker.Mvvm.ViewModels
                 if (attachmentsBorderTag == 0) this.StateBinding = EntryStateBinding.KeyDown;
                 if (attachmentsBorderTag == 1) this.StateBinding = EntryStateBinding.KeyUp;
 
+            });
+
+            this.OpenCfgCommand = new DelegateCommand((obj) =>
+            {
+                OpenFileDialog openFileDialog = new OpenFileDialog
+                {
+                    Filter = "Config Maker Config (*.cmc)|*.cmc",
+                    InitialDirectory = this.Model.GetTargetFolder()
+                };
+
+                if (openFileDialog.ShowDialog() == true)
+                {
+                    XmlSerializer cfgSerializer = new XmlSerializer(typeof(ConfigManager));
+
+                    FileInfo fi = new FileInfo(openFileDialog.FileName);
+                    string cfgName = fi.Name.Replace(".cmc", "");
+                    this.CustomCfgName = cfgName;
+
+                    try
+                    {
+                        using (FileStream fs = File.OpenRead(openFileDialog.FileName))
+                        {
+                            ConfigManager cfgManager = (ConfigManager)cfgSerializer.Deserialize(fs);
+                            this.Model.LoadCfgManager(cfgManager);
+                        }
+                    }
+                    catch (Exception ex)
+                    {
+                        HandleException("Файл поврежден", ex);
+                    }
+                }
+            });
+
+            this.SaveCommand = new DelegateCommand((obj) =>
+            {
+                // Определим путь к файлу и передедим его на обработку модели
+                string path = Path.Combine(this.Model.GetTargetFolder(), $"{this.CustomCfgName}.cmc");
+                this.Model.SaveCfgManager(path);
+                // И через модель представления выделим файл в проводнике
+                System.Diagnostics.Process.Start("explorer.exe", $"/select,\"{path}\"");
+            });
+
+            this.GenerateCommand = new DelegateCommand((obj) =>
+            {
+                string cfgPath = Path.Combine(this.Model.GetTargetFolder(), $"{this.CustomCfgName}.cfg");
+                this.Model.GenerateConfig(cfgPath);
+
+                System.Diagnostics.Process.Start("explorer.exe", $"/select,\"{cfgPath}\"");
+            });
+
+            this.AboutCommand = new DelegateCommand((obj) =>
+            {
+                new AboutWindow().ShowDialog();
             });
 
             this.KeyDownAttachmentsVM = new AttachmentsViewModel(this.Model.KeyDownAttachments) { Tag = 0 };
@@ -190,6 +249,23 @@ namespace ConfigMaker.Mvvm.ViewModels
         public void ClickButton(string button, VirtualKeyboard.SpecialKey flags)
         {
             this.Model.ClickButton(button, flags);
+        }
+
+        void HandleException(string userMsg, Exception ex)
+        {
+            System.Text.StringBuilder builder = new System.Text.StringBuilder();
+            builder.AppendLine(userMsg);
+
+            Exception currentException = ex;
+
+            do
+            {
+                builder.AppendLine($"{currentException.Message}");
+                currentException = currentException.InnerException;
+            } while (currentException != null);
+
+            builder.Append($"StackTrace: {ex.StackTrace}");
+            MessageBox.Show(builder.ToString());
         }
     }
 }

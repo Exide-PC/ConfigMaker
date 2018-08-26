@@ -409,8 +409,8 @@ namespace ConfigMaker.Csgo.Config
                 // Выведем в консоль фирменный комментарий
                 writer.WriteLine("echo \"\"");
                 writer.WriteLine("echo \"Config is created by Exide's Config Maker\"");
-                writer.WriteLine("echo \"----------- blog.exideprod.com -----------\"");
-                writer.WriteLine("echo \"------------ vk.com/exideprod ------------\"");
+                writer.WriteLine("echo \"----------- blog.exideprod.com ----------\"");
+                writer.WriteLine("echo \"------------ vk.com/exideprod -----------\"");
                 writer.WriteLine("echo \"\"");
             } // Закрываем файловый поток      
         }

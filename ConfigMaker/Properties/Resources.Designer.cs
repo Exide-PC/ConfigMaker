@@ -646,7 +646,7 @@ namespace ConfigMaker.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Generate .cfg.
+        ///   Looks up a localized string similar to Generate config [.cfg].
         /// </summary>
         public static string GenerateConfig_Button {
             get {
@@ -1321,7 +1321,7 @@ namespace ConfigMaker.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Save config.
+        ///   Looks up a localized string similar to Save config [.cmc].
         /// </summary>
         public static string SaveConfig_Button {
             get {
