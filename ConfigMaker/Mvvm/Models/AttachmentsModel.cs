@@ -9,15 +9,17 @@ namespace ConfigMaker.Mvvm.Models
 {
     public class AttachmentsModel: BindableBase
     {
-        public ObservableCollection<ItemModel> Items { get; } =
-            new ObservableCollection<ItemModel>();
+        //public ObservableCollection<ItemModel> Items { get; } =
+        //new ObservableCollection<ItemModel>();
 
-        //LeakAwareCollection itemsHolder = new LeakAwareCollection(null);
+        public ObservableCollection<ItemModel> Items => this.itemsHolder.Items;
+
+        LeakAwareCollection itemsHolder = new LeakAwareCollection(null);
         string _hint = string.Empty;
 
         public AttachmentsModel()
         {
-            //this.itemsHolder.Items.CollectionChanged += (_, __) => this.RaisePropertyChanged(nameof(Items));
+            this.itemsHolder.Items.CollectionChanged += (_, __) => this.RaisePropertyChanged(nameof(Items));
         }
 
         public string Hint

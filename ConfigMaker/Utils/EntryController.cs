@@ -17,6 +17,6 @@ namespace ConfigMaker.Utils
         public Func<IEntry> Generate { get; set; }
         public Action Focus { get; set; } = () => { };
         public Action Restore { get; set; }
-        public Action<EntryStateBinding> HandleState { get; set; } = (state) => { };
+        public Action<EntryStateBinding> CoerceAccess { get; set; } = (state) => { };
     }
 }

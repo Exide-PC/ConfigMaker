@@ -40,11 +40,15 @@ namespace ConfigMaker.Mvvm.Models
             get => _stateBinding;
             set
             {
-
                 if (SetProperty(ref _stateBinding, (CoerceStateBinding(value))))
                 {
                     foreach (EntryController controller in this.entryControllers)
-                        controller.HandleState(this.StateBinding);
+                    {
+                        controller.CoerceAccess(this.StateBinding);
+                        // Если при новом состоянии контроллер отключается, 
+                        // то сбрасываем его до значений по умолчанию
+                        if (!controller.Model.IsEnabled) controller.Restore();
+                    }   
                 }
             }   
         }
@@ -200,7 +204,7 @@ namespace ConfigMaker.Mvvm.Models
                         this.SelectedTab = 0;
                     },
                     Restore = () => actionModel.IsChecked = false,
-                    HandleState = (state) =>
+                    CoerceAccess = (state) =>
                     {
                         actionModel.IsEnabled =
                             state != EntryStateBinding.InvalidState
@@ -328,7 +332,7 @@ namespace ConfigMaker.Mvvm.Models
                 },
                 UpdateUI = (entry) => jumpthrowVM.IsChecked = true,
                 Restore = () => jumpthrowVM.IsChecked = false,
-                HandleState = (state) => jumpthrowVM.IsEnabled = state == EntryStateBinding.KeyDown
+                CoerceAccess = (state) => jumpthrowVM.IsEnabled = state == EntryStateBinding.KeyDown
             });
 
             // DisplayDamageOn
@@ -365,7 +369,7 @@ namespace ConfigMaker.Mvvm.Models
                 },
                 UpdateUI = (entry) => displayDamageOnVM.IsChecked = true,
                 Restore = () => displayDamageOnVM.IsChecked = false,
-                HandleState = (state) => displayDamageOnVM.IsEnabled = state != EntryStateBinding.InvalidState
+                CoerceAccess = (state) => displayDamageOnVM.IsEnabled = state != EntryStateBinding.InvalidState
             });
 
             // DisplayDamageOff
@@ -401,7 +405,7 @@ namespace ConfigMaker.Mvvm.Models
                 },
                 UpdateUI = (entry) => displayDamageOffVM.IsChecked = true,
                 Restore = () => displayDamageOffVM.IsChecked = false,
-                HandleState = (state) => displayDamageOffVM.IsEnabled = state != EntryStateBinding.InvalidState
+                CoerceAccess = (state) => displayDamageOffVM.IsEnabled = state != EntryStateBinding.InvalidState
             });
         }
 
@@ -476,7 +480,7 @@ namespace ConfigMaker.Mvvm.Models
                     this.BuyMenuModel.IsChecked = false;
                     GetWeapons().ForEach(c => c.IsChecked = false);
                 },
-                HandleState = (state) => this.BuyMenuModel.IsEnabled = state != EntryStateBinding.InvalidState
+                CoerceAccess = (state) => this.BuyMenuModel.IsEnabled = state != EntryStateBinding.InvalidState
             });
 
             //StackPanel currentPanel = null;
@@ -671,7 +675,7 @@ namespace ConfigMaker.Mvvm.Models
                             entryModel.Arg = extendedEntry.Arg;
                         }
                     },
-                    HandleState = (state) => entryModel.IsEnabled = state != EntryStateBinding.InvalidState
+                    CoerceAccess = (state) => entryModel.IsEnabled = state != EntryStateBinding.InvalidState
                 });
 
                 // Задаем начальное значение и тут же подключаем обработчика интерфейса
@@ -760,7 +764,7 @@ namespace ConfigMaker.Mvvm.Models
                             entryModel.Arg = extendedEntry.Arg;
                         }
                     },
-                    HandleState = (state) => entryModel.IsEnabled = state != EntryStateBinding.InvalidState
+                    CoerceAccess = (state) => entryModel.IsEnabled = state != EntryStateBinding.InvalidState
                 });
 
                 comboboxController.PropertyChanged += (_, arg) =>
@@ -877,7 +881,7 @@ namespace ConfigMaker.Mvvm.Models
                             entryModel.Arg = extendedEntry.Arg;
                         }
                     },
-                    HandleState = (state) => entryModel.IsEnabled = state != EntryStateBinding.InvalidState
+                    CoerceAccess = (state) => entryModel.IsEnabled = state != EntryStateBinding.InvalidState
                 });
 
                 // Начальное значение
@@ -929,7 +933,7 @@ namespace ConfigMaker.Mvvm.Models
                         IParametrizedEntry<string> extendedEntry = (IParametrizedEntry<string>)entry;
                         textboxModel.Text = extendedEntry.Arg;
                     },
-                    HandleState = (state) => entryModel.IsEnabled = state != EntryStateBinding.InvalidState
+                    CoerceAccess = (state) => entryModel.IsEnabled = state != EntryStateBinding.InvalidState
                 });
 
                 // Начальное значение
@@ -1117,7 +1121,7 @@ namespace ConfigMaker.Mvvm.Models
                     customCmdModel.AdditionEnabled = false;
                     customCmdModel.DeletingEnabled = false;
                 },
-                HandleState = (state) => customCmdModel.IsEnabled = state != EntryStateBinding.InvalidState,
+                CoerceAccess = (state) => customCmdModel.IsEnabled = state != EntryStateBinding.InvalidState,
                 Generate = () =>
                 {
                     // Получим все указанные пользователем команды

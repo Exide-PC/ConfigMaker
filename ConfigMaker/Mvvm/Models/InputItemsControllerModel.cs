@@ -27,6 +27,7 @@ namespace ConfigMaker.Mvvm.Models
         {
             this.itemsHolder = new LeakAwareCollection(clickHandler);
             this.itemsHolder.Items.CollectionChanged += (_, __) => this.RaisePropertyChanged(nameof(Items));
+
             this._inputValidator = inputValidator;
 
             this.PropertyChanged += (_, arg) =>

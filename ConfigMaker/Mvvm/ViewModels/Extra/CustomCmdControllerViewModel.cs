@@ -17,7 +17,7 @@ namespace ConfigMaker.Mvvm.ViewModels
 
         public CustomCmdControllerViewModel(InputItemsControllerModel model): base(model)
         {
-            model.PropertyChanged += (_, arg) => this.RaisePropertyChanged(arg.PropertyName);
+            //model.PropertyChanged += (_, arg) => this.RaisePropertyChanged(arg.PropertyName);
 
             this.AddCommand = new DelegateCommand((obj) => ((InputItemsControllerModel)this.Model).InvokeAddition());
             this.DeleteCommand = new DelegateCommand((obj) => ((InputItemsControllerModel)this.Model).InvokeDeleting());

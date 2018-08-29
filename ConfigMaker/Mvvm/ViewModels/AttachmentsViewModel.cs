@@ -12,12 +12,14 @@ namespace ConfigMaker.Mvvm.ViewModels
 {
     public class AttachmentsViewModel : ViewModelBase<AttachmentsModel>
     {
-        public ObservableCollection<ItemViewModel> Items { get; } = new ObservableCollection<ItemViewModel>();
-
+        public IEnumerable<ItemViewModel> Items
+        {
+            get => this.Model.Items.Select(m => new ItemViewModel(m) { FontSize = 13, Height = 18 });
+        }
+            
         bool _isSelected = false;
         object _tag;
 
-        public ICommand SelectAttachmentsCommand { get; }
         public object Tag
         {
             get => this._tag;
@@ -26,35 +28,7 @@ namespace ConfigMaker.Mvvm.ViewModels
 
         public AttachmentsViewModel(AttachmentsModel model): base(model)
         {
-            this.SelectAttachmentsCommand = new DelegateCommand((obj) =>
-            {
 
-            });
-
-            model.Items.CollectionChanged += (_, arg) =>
-            {
-                switch (arg.Action)
-                {
-                    case NotifyCollectionChangedAction.Add:
-                        {
-                            ItemModel newItem = (ItemModel)arg.NewItems[0];
-                            ItemViewModel newItemVM = new ItemViewModel(newItem) { FontSize = 12 };
-                            this.Items.Add(newItemVM);
-                            break;
-                        }
-                    case NotifyCollectionChangedAction.Remove:
-                        {
-                            int deletedIndex = arg.OldStartingIndex;
-                            this.Items.RemoveAt(deletedIndex);
-                            break;
-                        }
-                    case NotifyCollectionChangedAction.Reset:
-                        {
-                            this.Items.Clear();
-                            break;
-                        }
-                }
-            };
         }
 
         public string Hint
