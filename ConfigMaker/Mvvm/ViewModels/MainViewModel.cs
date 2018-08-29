@@ -26,6 +26,9 @@ namespace ConfigMaker.Mvvm.ViewModels
         public ObservableCollection<SettingsCategoryViewModel> GameSettingsCategoryViewModels { get; } =
             new ObservableCollection<SettingsCategoryViewModel>();
 
+        public ObservableCollection<EntryViewModel> ExtraControllerViewModels { get; } =
+            new ObservableCollection<EntryViewModel>();
+
         public EntryStateBinding StateBinding
         {
             get => this.Model.StateBinding;
@@ -64,10 +67,11 @@ namespace ConfigMaker.Mvvm.ViewModels
         public ICommand SelectTabCommand { get; }
         public ICommand SelectAttachmentsCommand { get; }
         public ICommand OpenCfgCommand { get; }
-        public ICommand SaveCommand { get; }
+        public ICommand SaveCfgCommand { get; }
         public ICommand GenerateCommand { get; }
         public ICommand AboutCommand { get; }
         public ICommand ToggleCommand { get; }
+        public ICommand SaveAppCommand { get; }
         
         public MainViewModel(): base(new MainModel())
         {
@@ -116,7 +120,7 @@ namespace ConfigMaker.Mvvm.ViewModels
                 }
             });
 
-            this.SaveCommand = new DelegateCommand((obj) =>
+            this.SaveCfgCommand = new DelegateCommand((obj) =>
             {
                 // Определим путь к файлу и передедим его на обработку модели
                 string path = Path.Combine(this.Model.GetTargetFolder(), $"{this.CustomCfgName}.cmc");
@@ -142,6 +146,8 @@ namespace ConfigMaker.Mvvm.ViewModels
             {
                 this.Model.SetToggleCommand(obj.ToString());
             });
+
+            this.SaveAppCommand = new DelegateCommand((obj) => this.Model.SaveApp());
 
             this.KeyDownAttachmentsVM = new AttachmentsViewModel(this.Model.KeyDownAttachments) { Tag = 0 };
             this.KeyUpAttachmentsVM = new AttachmentsViewModel(this.Model.KeyUpAttachments) { Tag = 1 };
@@ -182,6 +188,11 @@ namespace ConfigMaker.Mvvm.ViewModels
                 this.GameSettingsCategoryViewModels.Add(new SettingsCategoryViewModel(category));
             }
 
+            foreach (EntryModel model in this.Model.ExtraControllerModels)
+            {
+                if (model is CustomCmdControllerModel customCmdModel)
+                    this.ExtraControllerViewModels.Add(new CustomCmdControllerViewModel(customCmdModel));
+            }
             
             this.StateBindingItemsVM = new ComboBoxItemsViewModel()
             {

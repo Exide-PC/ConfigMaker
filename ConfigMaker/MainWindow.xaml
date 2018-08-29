@@ -30,7 +30,8 @@
             <Setter Property="FontSize" Value="15"/>
         </Style>
         <Style x:Key="CustomBorder" TargetType="Border">
-            <Setter Property="Background" Value="{StaticResource MaterialDesignBackground}"/>
+            <!--<Setter Property="Background" Value="{StaticResource MaterialDesignBackground}"/>-->
+            <Setter Property="Background" Value="Transparent"/>
             <Setter Property="BorderBrush" Value="{StaticResource PrimaryHueMidBrush}"/>
             <Setter Property="BorderThickness" Value="2"/>
             <Style.Triggers>
@@ -291,13 +292,13 @@
                             Text="{Binding Input, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" 
                             Width="250"/>
                         <Button 
-                            IsEnabled="{Binding AddButtonEnabled}" 
+                            IsEnabled="{Binding AdditionEnabled}" 
                             Content="{x:Static res:Resources.Add_Button}"
-                            Click="AddCmdButton_Click"/>
+                            Command="{Binding AddCommand}"/>
                         <Button 
-                            IsEnabled="{Binding DeleteButtonEnabled}" 
+                            IsEnabled="{Binding DeletingEnabled}" 
                             Content="{x:Static res:Resources.Remove_Button}"
-                            Click="DeleteCmdButton_Click"/>
+                            Command="{Binding DeleteCommand}"/>
                     </StackPanel>
                     <Border Style="{StaticResource CustomBorder}" Margin="0,2,0,0">
                         <ItemsControl ItemsSource="{Binding Items}">
@@ -386,7 +387,7 @@
             </GroupBox>
         </DataTemplate>
 
-        <DataTemplate DataType="{x:Type viewmodels:AliasControllerViewModel}">
+        <!--<DataTemplate DataType="{x:Type viewmodels:AliasControllerViewModel}">
             <Grid IsEnabled="{Binding IsEnabled}">
                 <Grid.RowDefinitions>
                     <RowDefinition Height="30"/>
@@ -415,7 +416,7 @@
                     </ItemsControl>
                 </Border>
             </Grid>
-        </DataTemplate>
+        </DataTemplate>-->
 
         <DataTemplate DataType="{x:Type viewmodels:AttachmentsViewModel}">
             <Button Click="Button_Click" Height="Auto" Width="Auto" 
@@ -488,7 +489,7 @@
                     <materialDesign:PopupBox DockPanel.Dock="Right" PlacementMode="BottomAndAlignRightEdges">
                         <StackPanel>
                             <Button Content="{x:Static res:Resources.SelectConfig_Button}" Command="{Binding OpenCfgCommand}"/>
-                            <Button Content="{x:Static res:Resources.SaveConfig_Button}" Command="{Binding SaveCommand}"/>
+                            <Button Content="{x:Static res:Resources.SaveConfig_Button}" Command="{Binding SaveCfgCommand}"/>
                             <Button Content="{x:Static res:Resources.GenerateConfig_Button}" Command="{Binding GenerateCommand}"/>
                             <Border BorderBrush="{StaticResource MaterialDesignDivider}" BorderThickness="0,1,0,0"/>
                             <Button Content="{x:Static res:Resources.About_Button}" Command="{Binding AboutCommand}"/>
@@ -635,7 +636,7 @@
                                                 <Setter Property="Background" Value="{StaticResource MaterialDesignPaper}"/>
                                             </Style>
                                         </Grid.Resources>
-                                        <ItemsControl Name="extraItemsControl">
+                                        <ItemsControl ItemsSource="{Binding ExtraControllerViewModels}">
                                             <ItemsControl.ItemsPanel>
                                                 <ItemsPanelTemplate>
                                                     <StackPanel Orientation="Vertical"/>

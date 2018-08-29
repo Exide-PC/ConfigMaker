@@ -7,16 +7,16 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace ConfigMaker.Mvvm.ViewModels
+namespace ConfigMaker.Mvvm.Models
 {
-    public class LeakAwareItemCollection
+    public class LeakAwareCollection
     {
         public ObservableCollection<ItemModel> Items { get; } =
             new ObservableCollection<ItemModel>();
 
         private IEnumerable<ItemModel> itemsCopy = null;
 
-        public LeakAwareItemCollection(EventHandler clickHandler)
+        public LeakAwareCollection(EventHandler clickHandler)
         {
             this.Items.CollectionChanged += (_, arg) =>
             {

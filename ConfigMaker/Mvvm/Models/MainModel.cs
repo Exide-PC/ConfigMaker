@@ -31,6 +31,9 @@ namespace ConfigMaker.Mvvm.Models
         public BuyMenuModel BuyMenuModel { get; private set; }
         public ObservableCollection<SettingsCategoryModel> SettingsCategoryModels { get; } =
             new ObservableCollection<SettingsCategoryModel>();
+        public ObservableCollection<EntryModel> ExtraControllerModels { get; } = 
+            new ObservableCollection<EntryModel>();
+        //public CustomCmdControllerModel CustomCmdModel { get; private set; }
 
         public EntryStateBinding StateBinding
         {
@@ -128,6 +131,7 @@ namespace ConfigMaker.Mvvm.Models
             InitActionTab();
             InitBuyTab();
             InitGameSettingsTab();
+            InitExtra();
 
             // Проверим, что в словаре нет одинаковых ключей в разном регистре
             // Для этого сгруппируем все ключи, переведя их в нижний регистр,
@@ -600,9 +604,7 @@ namespace ConfigMaker.Mvvm.Models
 
                     entryModel.Content = new SingleCmd($"{cmd} {formatted}").ToString();
                     entryModel.Arg = fixedValue;
-                    //resultCmdBlock.Tag = fixedValue;
 
-                    //if ((bool)checkbox.IsChecked) // Добавляем в конфиг только если это сделал сам пользователь
                     this.AddEntry(cmd, true);
                 }
 
@@ -692,24 +694,6 @@ namespace ConfigMaker.Mvvm.Models
                     entryModel.IsInteger = true;
                     entryModel.From = 0;
                     entryModel.To = names.Length - 1;
-                    //toggleButton.Click += (_, __) =>
-                    //{
-                    //    ToggleWindow toggleWindow = new ToggleWindow(true, 0, names.Length - 1);
-                    //    if ((bool)toggleWindow.ShowDialog())
-                    //    {
-                    //        int[] values = toggleWindow.GeneratedArg.Split(' ').Select(n => int.Parse(n)).ToArray();
-                    //        resultCmdBlock.Text = Executable.GenerateToggleCmd(cmd, values).ToString();
-                    //        // Сохраним аргумент в теге
-                    //        resultCmdBlock.Tag = values;
-
-                    //        //if ((bool)checkbox.IsChecked) // Добавляем в конфиг только если это сделал сам пользователь
-                    //        this.AddEntry(cmd, true);
-                    //    }
-                    //    else
-                    //    {
-
-                    //    }
-                    //};
                 }
 
                 // Зададим элементы комбобокса
@@ -814,29 +798,6 @@ namespace ConfigMaker.Mvvm.Models
                 entryModel.IsInteger = asInteger;
                 entryModel.From = double.MinValue;
                 entryModel.To = double.MaxValue;
-                //toggleButton.Click += (_, __) =>
-                //{
-                //ToggleWindow toggleWindow = new ToggleWindow(asInteger, double.MinValue, double.MaxValue);
-                //if ((bool)toggleWindow.ShowDialog())
-                //{
-                //    double[] values = toggleWindow.GeneratedArg.Split(' ').Select(value =>
-                //    {
-                //        Executable.TryParseDouble(value, out double parsedValue);
-                //        return parsedValue;
-                //    }).ToArray();
-
-                //    resultCmdBlock.Text = Executable.GenerateToggleCmd(cmd, values, asInteger).ToString();
-                //    // Сохраним аргумент в теге
-                //    resultCmdBlock.Tag = values;
-
-                //    //if ((bool)checkbox.IsChecked) // Добавляем в конфиг только если это сделал сам пользователь
-                //    this.AddEntry(cmd, true);
-                //}
-                //else
-                //{
-
-                //}
-                //};
 
                 textboxModel.PropertyChanged += (_, arg) =>
                 {
@@ -853,7 +814,6 @@ namespace ConfigMaker.Mvvm.Models
                         string formatted = Executable.FormatNumber(fixedValue, asInteger);
                         entryModel.Content = new SingleCmd($"{cmd} {formatted}").ToString();
 
-                        //if ((bool)checkbox.IsChecked) // Добавляем в конфиг только если это сделал сам пользователь
                         AddEntry(cmd, true);
                     }
                 };
@@ -1092,8 +1052,125 @@ namespace ConfigMaker.Mvvm.Models
             AddComboboxCmdController("bot_crouch", toggleStrings, 0, true);
             AddIntervalCmdController("bot_mimic_yaw_offset", 0, 180, 5, 0);
         }
+
+        void InitExtra()
+        {
+            string customCmdEntryKey = "ExecCustomCmds";
+
+            CustomCmdControllerModel customCmdModel = null;
+
+            Predicate<string> validateCmd = (input) =>
+            {
+                return customCmdModel.Items.All(i => i.Text.ToLower() != input.ToLower());
+            };
+
+            customCmdModel = new CustomCmdControllerModel(validateCmd)
+            {
+                Content = Localize(customCmdEntryKey),
+                Key = customCmdEntryKey
+            };
+            this.ExtraControllerModels.Add(customCmdModel);
+
+            customCmdModel.OnAddition += (_, __) => this.AddEntry(customCmdEntryKey, false);
+            customCmdModel.OnDeleting += (_, __) => this.AddEntry(customCmdEntryKey, false);
+
+            //this.AddCmdCommand = new DelegateCommand(() =>
+            //    {
+            //        customCmdVM.Items.Add(new ItemViewModel() { Text = customCmdVM.Input });
+            //        this.AddEntry(execCustomCmdsEntryKey, false);
+            //    });
+            //    // Обработчик нажатия на кнопку добавления неизвестной программе команды
+            //    addUnknownCmdButton.Click += (sender, args) =>
+            //    {
+            //        // Перейдем в клатке с соответствующим контроллером
+            //        this.GetController(execCustomCmdsEntryKey).Focus();
+            //        //this.entryControllers[execCustomCmdsEntryKey].
+            //        customCmdVM.IsChecked = true;
+
+            //        // Добавим указанную пользователем команду в контроллер ExecCustomCmds
+            //        string cmd = searchCmdBox.Text.Trim();
+            //        customCmdVM.Input = cmd;
+
+            //        // И выполним команду по добавлению
+            //        this.AddCmdCommand.Execute(null);
+
+            //    };
+
+            //    // А так же повесим действие на кнопку удаления команды
+            //    this.DeleteCmdCommand = new DelegateCommand(() =>
+            //    {
+            //        int firstSelectedIndex = customCmdVM.Items
+            //            .IndexOf(customCmdVM.Items.First(b => b.IsSelected));
+
+            //        customCmdVM.Items.RemoveAt(firstSelectedIndex);
+            //        AddEntry(execCustomCmdsEntryKey, false);
+            //    });
+
+            this.entryControllers.Add(new EntryController()
+            {
+                Model = customCmdModel,
+                Focus = () => this.SelectedTab = 3,
+                Restore = () =>
+                {
+                    customCmdModel.Items.Clear();
+                    customCmdModel.Input = string.Empty;
+                    customCmdModel.AdditionEnabled = false;
+                    customCmdModel.DeletingEnabled = false;
+                },
+                HandleState = (state) => customCmdModel.IsEnabled = state != EntryStateBinding.InvalidState,
+                Generate = () =>
+                {
+                    // Получим все указанные пользователем команды
+                    string[] cmds = customCmdModel.Items.Select(b => b.Text).ToArray();
+
+                    SingleCmd cmd = null;
+                    CommandCollection dependencies = null;
+
+                    // Если указана только одна команда - просто выписываем её в конфиг напрямую
+                    if (cmds.Length == 1)
+                    {
+                        cmd = new SingleCmd(cmds[0].Trim());
+                        dependencies = new CommandCollection();
+                    }
+                    else
+                    {
+                        // Иначе генерируем специальный алиас и привязываемся к нему
+                        string aliasName = $"{GeneratePrefix()}_exec";
+                        AliasCmd execCmdsAlias = new AliasCmd(aliasName, cmds.Select(strCmd => new SingleCmd(strCmd)));
+
+                        cmd = new SingleCmd(aliasName);
+                        dependencies = new CommandCollection(execCmdsAlias);
+                    }
+
+                    return new ParametrizedEntry<string[]>()
+                    {
+                        PrimaryKey = customCmdEntryKey,
+                        Cmd = cmd,
+                        IsMetaScript = false,
+                        Type = EntryType.Dynamic,
+                        Dependencies = dependencies,
+                        Arg = cmds
+                    };
+                },
+                UpdateUI = (entry) =>
+                {
+                    customCmdModel.IsChecked = true;
+
+                    IParametrizedEntry<string[]> extendedEntry = (IParametrizedEntry<string[]>)entry;
+                    string[] cmds = extendedEntry.Arg;
+
+                    customCmdModel.Items.Clear();
+
+                    foreach (string cmd in cmds)
+                    {
+                        customCmdModel.Input = cmd;
+                        customCmdModel.InvokeAddition();
+                    }
+                }
+            });
+        }
         
-        public void SaveConfig()
+        public void SaveApp()
         {
             // Удалим прошлый файл
             File.Delete(this.cfgPath);
@@ -1593,65 +1670,31 @@ namespace ConfigMaker.Mvvm.Models
 
         public void SetToggleCommand(string entryKey)
         {
+            // Получим модель динамического элемента конфига
             DynamicEntryModel model = (DynamicEntryModel)this.GetController(entryKey).Model;
 
             if (!model.NeedToggle)
                 throw new Exception($"Toggle mode can not be used with entry {model.Key}");
 
+            // Выведем диалог в котором пользователь настроит аргументы как ему надо
             ToggleWindow toggleWindow = new ToggleWindow(model.IsInteger, model.From, model.To);
             
             if (toggleWindow.ShowDialog() == true)
             {
-                string args = toggleWindow.GeneratedArg;
-
+                // Выведем результирующую команду в интерфейс в нужном форматировании
                 model.Content = Executable.GenerateToggleCmd(
                     model.Key,
                     toggleWindow.Values, 
                     model.IsInteger).ToString();
 
-
+                // В зависимости от того целочисленные аргументы или нет - зададим аргумент модели
                 if (model.IsInteger)
                     model.Arg = toggleWindow.Values.Select(v => (int)v).ToArray();
                 else
                     model.Arg = toggleWindow.Values;
 
+                // Обновим элемент в менеджере, если это сделал сам пользователь
                 this.AddEntry(model.Key, true);
-
-                //ToggleWindow toggleWindow = new ToggleWindow(true, 0, names.Length - 1);
-                //    if ((bool)toggleWindow.ShowDialog())
-                //    {
-                //        int[] values = toggleWindow.GeneratedArg.Split(' ').Select(n => int.Parse(n)).ToArray();
-                //        resultCmdBlock.Text = Executable.GenerateToggleCmd(cmd, values).ToString();
-                //        // Сохраним аргумент в теге
-                //        resultCmdBlock.Tag = values;
-
-                //        //if ((bool)checkbox.IsChecked) // Добавляем в конфиг только если это сделал сам пользователь
-                //        this.AddEntry(cmd, true);
-                //    }
-                //    else
-                //    {
-
-                //    }
-
-
-                //toggleButton.Click += (_, __) =>
-                //{
-                //ToggleWindow toggleWindow = new ToggleWindow(asInteger, double.MinValue, double.MaxValue);
-                //if ((bool)toggleWindow.ShowDialog())
-                //{
-                //    double[] values = toggleWindow.GeneratedArg.Split(' ').Select(value =>
-                //    {
-                //        Executable.TryParseDouble(value, out double parsedValue);
-                //        return parsedValue;
-                //    }).ToArray();
-
-                //    resultCmdBlock.Text = Executable.GenerateToggleCmd(cmd, values, asInteger).ToString();
-                //    // Сохраним аргумент в теге
-                //    resultCmdBlock.Tag = values;
-
-                //    //if ((bool)checkbox.IsChecked) // Добавляем в конфиг только если это сделал сам пользователь
-                //    this.AddEntry(cmd, true);
-                //}
             }
         }
     }

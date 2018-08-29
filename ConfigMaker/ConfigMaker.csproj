@@ -84,6 +84,7 @@
     <Compile Include="Mvvm\Models\Actions\ActionModel.cs" />
     <Compile Include="Mvvm\Models\AttachmentsModel.cs" />
     <Compile Include="Mvvm\Models\BuyMenu\BuyMenuModel.cs" />
+    <Compile Include="Mvvm\Models\Extra\CustomCmdControllerModel.cs" />
     <Compile Include="Mvvm\Models\GameSettings\DynamicEntryModel.cs" />
     <Compile Include="Mvvm\Models\EntryModel.cs" />
     <Compile Include="Mvvm\Models\GameSettings\ComboBoxControllerModel.cs" />
@@ -97,6 +98,8 @@
     <Compile Include="Mvvm\ViewModelBase.cs" />
     <Compile Include="Mvvm\ViewModels\ComboBoxItemsViewModel.cs" />
     <Compile Include="Mvvm\ViewModels\GameSettings\GameSettingsCategoryViewModel.cs" />
+    <Compile Include="Mvvm\ViewModels\InputItemsControllerViewModel.cs" />
+    <Compile Include="Mvvm\ViewModels\KeyboardViewModel.cs" />
     <Compile Include="Mvvm\ViewModels\MainViewModel.cs" />
     <Compile Include="Properties\Resources.Designer.cs">
       <AutoGen>True</AutoGen>
@@ -133,7 +136,6 @@
       <DependentUpon>ToggleWindow.xaml</DependentUpon>
     </Compile>
     <Compile Include="Mvvm\ViewModels\Actions\ActionViewModel.cs" />
-    <Compile Include="Mvvm\ViewModels\AliasControllerViewModel.cs" />
     <Compile Include="Mvvm\ViewModels\AttachmentsViewModel.cs" />
     <Compile Include="Mvvm\ViewModels\ItemViewModel.cs" />
     <Compile Include="Mvvm\ViewModels\BuyMenu\BuyMenuViewModel.cs" />
@@ -143,8 +145,8 @@
     <Compile Include="Mvvm\ViewModels\GameSettings\DynamicEntryViewModel.cs" />
     <Compile Include="Mvvm\ViewModels\EntryViewModel.cs" />
     <Compile Include="Mvvm\ViewModels\GameSettings\IntervalControllerViewModel.cs" />
-    <Compile Include="Mvvm\ViewModels\InputItemsControllerViewModel.cs" />
-    <Compile Include="Mvvm\ViewModels\LeakAwareItemsViewModel.cs" />
+    <Compile Include="Mvvm\Models\InputItemsControllerModel.cs" />
+    <Compile Include="Mvvm\Models\LeakAwareCollection.cs" />
     <Compile Include="Mvvm\ViewModels\GameSettings\TextboxControllerViewModel.cs" />
     <Compile Include="Mvvm\ViewModels\TextViewModel.cs" />
     <Compile Include="Mvvm\ViewModels\Extra\VolumeRegulatorControllerViewModel.cs" />
@@ -218,8 +220,6 @@
       <Install>false</Install>
     </BootstrapperPackage>
   </ItemGroup>
-  <ItemGroup>
-    <Folder Include="Mvvm\Models\Extra\" />
-  </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

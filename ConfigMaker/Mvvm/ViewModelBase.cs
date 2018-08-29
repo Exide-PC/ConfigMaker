@@ -18,7 +18,5 @@ namespace ConfigMaker.Mvvm
             this._model = model;
             this._model.PropertyChanged += (_, arg) => this.RaisePropertyChanged(arg.PropertyName);
         }
-
-        
     }
 }

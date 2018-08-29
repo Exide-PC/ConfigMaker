@@ -65,7 +65,7 @@ namespace ConfigMaker
 
         private void Window_Closing(object sender, System.ComponentModel.CancelEventArgs e)
         {
-            //this.MainVM.SaveCommand.Execute(null);
+            this.MainVM.SaveAppCommand.Execute(null);
         }
 
         private void AddCmdButton_Click(object sender, RoutedEventArgs e)

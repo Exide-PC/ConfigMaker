@@ -12,7 +12,13 @@ namespace ConfigMaker.Mvvm.Models
         public ObservableCollection<ItemModel> Items { get; } =
             new ObservableCollection<ItemModel>();
 
+        //LeakAwareCollection itemsHolder = new LeakAwareCollection(null);
         string _hint = string.Empty;
+
+        public AttachmentsModel()
+        {
+            //this.itemsHolder.Items.CollectionChanged += (_, __) => this.RaisePropertyChanged(nameof(Items));
+        }
 
         public string Hint
         {
