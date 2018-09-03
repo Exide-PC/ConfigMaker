@@ -48,7 +48,9 @@ namespace ConfigMaker.Mvvm.Models
                         // Если при новом состоянии контроллер отключается, 
                         // то сбрасываем его до значений по умолчанию
                         if (!controller.Model.IsEnabled) controller.Restore();
-                    }   
+                    }
+
+                    UpdateAttachmentPanels();
                 }
             }   
         }
@@ -1065,7 +1067,8 @@ namespace ConfigMaker.Mvvm.Models
 
             Predicate<string> validateCmd = (input) =>
             {
-                return customCmdModel.Items.All(i => i.Text.ToLower() != input.ToLower());
+                return !string.IsNullOrEmpty(input.Trim()) && 
+                    customCmdModel.Items.All(i => i.Text.ToLower() != input.ToLower());
             };
 
             customCmdModel = new CustomCmdControllerModel(validateCmd)
@@ -1077,7 +1080,7 @@ namespace ConfigMaker.Mvvm.Models
 
             customCmdModel.OnAddition += (_, __) => this.AddEntry(customCmdEntryKey, false);
             customCmdModel.OnDeleting += (_, __) => this.AddEntry(customCmdEntryKey, false);
-
+            
             //this.AddCmdCommand = new DelegateCommand(() =>
             //    {
             //        customCmdVM.Items.Add(new ItemViewModel() { Text = customCmdVM.Input });
@@ -1170,6 +1173,86 @@ namespace ConfigMaker.Mvvm.Models
                         customCmdModel.Input = cmd;
                         customCmdModel.InvokeAddition();
                     }
+                }
+            });
+
+
+            // Crosshair loop
+            string cycleChEntryKey = "CrosshairLoop";
+
+            CycleCrosshairModel chLoopModel = new CycleCrosshairModel()
+            {
+                Content = Localize(cycleChEntryKey),
+                Key = cycleChEntryKey
+            };
+            this.ExtraControllerModels.Add(chLoopModel);
+
+            chLoopModel.PropertyChanged += (_, arg) =>
+            {
+                if (arg.PropertyName == nameof(CycleCrosshairModel.CrosshairCount))
+                    this.AddEntry(cycleChEntryKey, true);
+            };
+
+            this.entryControllers.Add(new EntryController()
+            {
+                Model = chLoopModel,
+                Focus = () => this.SelectedTab = 3,
+                Restore = () =>
+                {
+                    chLoopModel.IsChecked = false;
+                    chLoopModel.CrosshairCount = chLoopModel.DefaultCount;
+                },
+                CoerceAccess = (state) => chLoopModel.IsEnabled = 
+                    state != EntryStateBinding.Default && state != EntryStateBinding.InvalidState,
+                Generate = () =>
+                {
+                    int crosshairCount = chLoopModel.CrosshairCount;
+                    string prefix = GeneratePrefix();
+                    string scriptName = $"{prefix}_crosshairLoop";
+
+                    // Зададим имена итерациям
+                    string[] iterationNames = new string[crosshairCount];
+
+                    for (int i = 0; i < crosshairCount; i++)
+                        iterationNames[i] = $"{scriptName}{i + 1}";
+
+                    List<CommandCollection> iterations = new List<CommandCollection>();
+
+                    for (int i = 0; i < crosshairCount; i++)
+                    {
+                        CommandCollection currentIteration = new CommandCollection()
+                                    {
+                                        new SingleCmd($"exec {prefix}_ch{i + 1}"),
+                                        new SingleCmd($"echo \"Crosshair {i + 1} loaded\"")
+                                    };
+                        iterations.Add(currentIteration);
+                    }
+
+                    CycleCmd crosshairLoop = new CycleCmd(scriptName, iterations, iterationNames);
+
+                    // Задаем начальную команду для алиаса
+                    CommandCollection dependencies = new CommandCollection();
+
+                    // И добавим в конец все итерации нашего цикла
+                    foreach (Executable iteration in crosshairLoop)
+                        dependencies.Add(iteration);
+
+                    return new ParametrizedEntry<int>()
+                    {
+                        PrimaryKey = cycleChEntryKey,
+                        Cmd = new SingleCmd(scriptName),
+                        Type = EntryType.Dynamic,
+                        IsMetaScript = false,
+                        Arg = crosshairCount,
+                        Dependencies = dependencies
+                    };
+                },
+                UpdateUI = (entry) =>
+                {
+                    chLoopModel.IsChecked = true;
+                    int crosshairCount = (entry as IParametrizedEntry<int>).Arg;
+
+                    chLoopModel.CrosshairCount = crosshairCount;
                 }
             });
         }

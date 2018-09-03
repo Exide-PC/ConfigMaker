@@ -21,13 +21,13 @@ namespace ConfigMaker.Mvvm.Models
 
         public EntryModel()
         {
-            this.SelectCommand = new DelegateCommand((obj) =>
-            {
-                this.Click?.Invoke(this, null);
-            });
+
         }
 
-        public ICommand SelectCommand { get; }
+        public void Select()
+        {
+            this.Click?.Invoke(this, null);
+        }
 
         public string Key
         {

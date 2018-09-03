@@ -405,7 +405,7 @@
   <data name="Jumpthrow" xml:space="preserve">
     <value>Jumpthrow script</value>
   </data>
-  <data name="CycleCrosshair" xml:space="preserve">
+  <data name="CrosshairLoop" xml:space="preserve">
     <value>Cycle crosshairs</value>
   </data>
   <data name="CategoryMovement" xml:space="preserve">

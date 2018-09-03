@@ -192,6 +192,8 @@ namespace ConfigMaker.Mvvm.ViewModels
             {
                 if (model is CustomCmdControllerModel customCmdModel)
                     this.ExtraControllerViewModels.Add(new CustomCmdControllerViewModel(customCmdModel));
+                else if (model is CycleCrosshairModel chLoopModel)
+                    this.ExtraControllerViewModels.Add(new CycleCrosshairViewModel(chLoopModel));
             }
             
             this.StateBindingItemsVM = new ComboBoxItemsViewModel()

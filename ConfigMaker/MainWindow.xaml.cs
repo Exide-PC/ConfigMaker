@@ -246,7 +246,7 @@ namespace ConfigMaker
         //}
 
 
-
+ 
         //#region Proxy methods
         //private void CmdInputTextbox_TextChanged(object sender, TextChangedEventArgs e)
         //{

@@ -439,20 +439,20 @@ namespace ConfigMaker.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Cycle crosshairs.
+        /// </summary>
+        public static string CrosshairLoop {
+            get {
+                return ResourceManager.GetString("CrosshairLoop", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Path to csgo/cfg.
         /// </summary>
         public static string CsgoCfgPath_Hint {
             get {
                 return ResourceManager.GetString("CsgoCfgPath_Hint", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Cycle crosshairs.
-        /// </summary>
-        public static string CycleCrosshair {
-            get {
-                return ResourceManager.GetString("CycleCrosshair", resourceCulture);
             }
         }
         

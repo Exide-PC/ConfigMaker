@@ -1,4 +1,5 @@
-﻿using System;
+﻿using ConfigMaker.Mvvm.Models;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -8,31 +9,27 @@ namespace ConfigMaker.Mvvm.ViewModels
 {
     public class CycleCrosshairViewModel: EntryViewModel
     {
-        int _minumumCount = 2;
-        int _maximumCount = 10;
-        int _crosshairCount = 2;
-
-        public CycleCrosshairViewModel(): base(null) // TODO:
+        public CycleCrosshairViewModel(CycleCrosshairModel model) : base(model)
         {
 
         }
 
         public int CrosshairCount
         {
-            get => this._crosshairCount;
-            set => this.SetProperty(ref _crosshairCount, value);
+            get => ((CycleCrosshairModel)this.Model).CrosshairCount;
+            set => ((CycleCrosshairModel)this.Model).CrosshairCount = value;
         }
 
         public int MinimumCount
         {
-            get => this._minumumCount;
-            set => this.SetProperty(ref _minumumCount, value);
+            get => ((CycleCrosshairModel)this.Model).MinimumCount;
+            set => ((CycleCrosshairModel)this.Model).MinimumCount = value;
         }
 
         public int MaximumCount
         {
-            get => this._maximumCount;
-            set => this.SetProperty(ref _maximumCount, value);
+            get => ((CycleCrosshairModel)this.Model).MaximumCount;
+            set => ((CycleCrosshairModel)this.Model).MaximumCount = value;
         }
     }
 }

@@ -84,6 +84,7 @@
     <Compile Include="Mvvm\Models\Actions\ActionModel.cs" />
     <Compile Include="Mvvm\Models\AttachmentsModel.cs" />
     <Compile Include="Mvvm\Models\BuyMenu\BuyMenuModel.cs" />
+    <Compile Include="Mvvm\Models\CycleCrosshairModel.cs" />
     <Compile Include="Mvvm\Models\Extra\CustomCmdControllerModel.cs" />
     <Compile Include="Mvvm\Models\GameSettings\DynamicEntryModel.cs" />
     <Compile Include="Mvvm\Models\EntryModel.cs" />
