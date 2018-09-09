@@ -22,14 +22,17 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 */
 
+using ConfigMaker.Mvvm.ViewModels;
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Controls.Primitives;
 using System.Windows.Data;
 using System.Windows.Documents;
 using System.Windows.Input;
@@ -37,13 +40,14 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
+using static ConfigMaker.Mvvm.Models.VirtualKeyboardModel;
 
 namespace ConfigMaker
 {
     /// <summary>
     /// Interaction logic for VirtualKeyboard.xaml
     /// </summary>
-    public partial class VirtualKeyboard : UserControl, IEnumerable<Button>
+    public partial class VirtualKeyboard : UserControl
     {
         public VirtualKeyboard()
         {
@@ -56,61 +60,80 @@ namespace ConfigMaker
             // зададим всплывающий тултип для всех клавиш
             foreach (Button b in this.allButtons)
                 b.ToolTip = b.Tag as string;
+
+            // Как только будет задан нужный контекст - повесим соответствующий обработчик,
+            // который будет редактировать цвета кнопок клавиатуры
+            this.DataContextChanged += (_, newContextArg) =>
+            {
+                if (newContextArg.NewValue is VirtualKeyboardViewModel viewModel)
+                {
+                    viewModel.PropertyChanged += (__, arg) =>
+                    {
+                        if (arg.PropertyName is nameof(VirtualKeyboardViewModel.KeyStates))
+                            this.ColorizeKeyboard();
+                    };
+                }
+            };
         }
 
-        [Flags]
-        public enum SpecialKey
+        void ColorizeKeyboard()
         {
-            Ctrl = 0x0001,
-            Shift = 0x0010,
-            Alt = 0x0011
+            // сбрасываем цвета перед обновлением
+            foreach (Button key in this.allButtons)
+            {
+                key.ClearValue(ButtonBase.BackgroundProperty);
+                key.ClearValue(ButtonBase.ForegroundProperty);
+            }
+
+            // Получим информацию о новом состоянии клавиш
+            Dictionary<string, KeyState> keyMap = ((VirtualKeyboardViewModel)this.DataContext).KeyStates;
+
+            // Также вытащим необходимые для работы кисти
+            SolidColorBrush keyInSequenceBackground = (SolidColorBrush)this.FindResource("SecondaryAccentBrush");
+            SolidColorBrush keyInSequenceForeground = (SolidColorBrush)this.FindResource("SecondaryAccentForegroundBrush");
+
+            SolidColorBrush firstKeyBackground = (SolidColorBrush)this.FindResource("PrimaryHueMidBrush");
+            SolidColorBrush firstKeyForeground = (SolidColorBrush)this.FindResource("PrimaryHueMidForegroundBrush");
+
+            SolidColorBrush secondKeyBackground = (SolidColorBrush)this.FindResource("PrimaryHueDarkBrush");
+            SolidColorBrush secondKeyForeground = (SolidColorBrush)this.FindResource("PrimaryHueDarkForegroundBrush");
+
+            foreach (KeyValuePair<string, KeyState> pair in keyMap)
+            {
+                string key = pair.Key;
+                Button targetButton = this.GetButtonByName(key);
+
+                switch(pair.Value)
+                {
+                    case KeyState.FirstInSequence:
+                        {
+                            targetButton.Background = firstKeyBackground;
+                            targetButton.Foreground = firstKeyForeground;
+                            break;
+                        };
+                    case KeyState.SecondInSequence:
+                        {
+                            targetButton.Background = secondKeyBackground;
+                            targetButton.Foreground = secondKeyForeground;
+                            break;
+                        }
+                    case KeyState.InCurrentSequence:
+                        {
+                            targetButton.Background = keyInSequenceBackground;
+                            targetButton.Foreground = keyInSequenceForeground;
+                            break;
+                        }
+                }
+            }
         }
 
         // для быстродействия сохраним все кнопки отдельно
         private IEnumerable<Button> allButtons;
-
-        private void Button_Click(object sender, RoutedEventArgs e)
-        {
-            SpecialKey flags = 0;
-
-            if (Keyboard.IsKeyDown(Key.LeftCtrl))
-                flags |= SpecialKey.Ctrl;
-            if (Keyboard.IsKeyDown(Key.LeftShift))
-                flags |= SpecialKey.Shift;
-            if (Keyboard.IsKeyDown(Key.LeftAlt))
-                flags |= SpecialKey.Alt;
-
-            this.OnKeyboardKeyDown?.Invoke(this, new KeyboardClickRoutedEvtArgs(e, flags));
-        }
 
         public Button GetButtonByName(string key)
         {
             key = key.ToLower();
             return allButtons.FirstOrDefault(b => ((string)b.Tag).ToLower() == key);
         }
-
-        public IEnumerator<Button> GetEnumerator() => this.allButtons.GetEnumerator();
-
-        IEnumerator IEnumerable.GetEnumerator() => this.GetEnumerator();
-
-        public event EventHandler<KeyboardClickRoutedEvtArgs> OnKeyboardKeyDown;
-
-        public class KeyboardClickRoutedEvtArgs: RoutedEventArgs
-        {
-            public string Key { get; }
-            public SpecialKey SpecialKeyFlags { get; }
-
-            public KeyboardClickRoutedEvtArgs(RoutedEventArgs innerArgs, SpecialKey flags)
-            {
-                this.RoutedEvent = innerArgs.RoutedEvent;
-                this.Handled = false;
-                this.Source = innerArgs.Source;
-                this.SpecialKeyFlags = flags;
-
-                this.Key = (string)((Button)this.Source).Tag;
-            }
-        }
-
-        
     }
 }

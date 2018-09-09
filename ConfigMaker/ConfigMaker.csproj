@@ -84,8 +84,8 @@
     <Compile Include="Mvvm\Models\Actions\ActionModel.cs" />
     <Compile Include="Mvvm\Models\AttachmentsModel.cs" />
     <Compile Include="Mvvm\Models\BuyMenu\BuyMenuModel.cs" />
-    <Compile Include="Mvvm\Models\CycleCrosshairModel.cs" />
-    <Compile Include="Mvvm\Models\Extra\CustomCmdControllerModel.cs" />
+    <Compile Include="Mvvm\Models\Extra\CycleCrosshairModel.cs" />
+    <Compile Include="Mvvm\Models\Extra\CustomCmdModel.cs" />
     <Compile Include="Mvvm\Models\GameSettings\DynamicEntryModel.cs" />
     <Compile Include="Mvvm\Models\EntryModel.cs" />
     <Compile Include="Mvvm\Models\GameSettings\ComboBoxControllerModel.cs" />
@@ -96,12 +96,15 @@
     <Compile Include="Mvvm\Models\MainModel.cs" />
     <Compile Include="Mvvm\Models\TextModel.cs" />
     <Compile Include="Mvvm\Models\BuyMenu\WeaponCategoryModel.cs" />
+    <Compile Include="Mvvm\Models\VirtualKeyboardModel.cs" />
+    <Compile Include="Mvvm\Models\VolumeRegulatorModel.cs" />
     <Compile Include="Mvvm\ViewModelBase.cs" />
     <Compile Include="Mvvm\ViewModels\ComboBoxItemsViewModel.cs" />
     <Compile Include="Mvvm\ViewModels\GameSettings\GameSettingsCategoryViewModel.cs" />
     <Compile Include="Mvvm\ViewModels\InputItemsControllerViewModel.cs" />
     <Compile Include="Mvvm\ViewModels\KeyboardViewModel.cs" />
     <Compile Include="Mvvm\ViewModels\MainViewModel.cs" />
+    <Compile Include="Mvvm\ViewModels\VirtualKeyboardViewModel.cs" />
     <Compile Include="Properties\Resources.Designer.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
@@ -112,6 +115,7 @@
     <Compile Include="Utils\Converters\BoolToVisibilityConverter.cs" />
     <Compile Include="Utils\Converters\CfgDirValidationRule.cs" />
     <Compile Include="Utils\Converters\EquivalenceChecker.cs" />
+    <Compile Include="Utils\Converters\KeyToStyleConverter.cs" />
     <Compile Include="Utils\Converters\NameValidationRule.cs" />
     <Compile Include="Csgo\Config\Entries\Entry.cs" />
     <Compile Include="Csgo\Config\Entries\ParametrizedEntry.cs" />
@@ -141,7 +145,7 @@
     <Compile Include="Mvvm\ViewModels\ItemViewModel.cs" />
     <Compile Include="Mvvm\ViewModels\BuyMenu\BuyMenuViewModel.cs" />
     <Compile Include="Mvvm\ViewModels\GameSettings\ComboBoxControllerViewModel.cs" />
-    <Compile Include="Mvvm\ViewModels\Extra\CustomCmdControllerViewModel.cs" />
+    <Compile Include="Mvvm\ViewModels\Extra\CustomCmdViewModel.cs" />
     <Compile Include="Mvvm\ViewModels\Extra\CycleCrosshairViewModel.cs" />
     <Compile Include="Mvvm\ViewModels\GameSettings\DynamicEntryViewModel.cs" />
     <Compile Include="Mvvm\ViewModels\EntryViewModel.cs" />
@@ -150,7 +154,7 @@
     <Compile Include="Mvvm\Models\LeakAwareCollection.cs" />
     <Compile Include="Mvvm\ViewModels\GameSettings\TextboxControllerViewModel.cs" />
     <Compile Include="Mvvm\ViewModels\TextViewModel.cs" />
-    <Compile Include="Mvvm\ViewModels\Extra\VolumeRegulatorControllerViewModel.cs" />
+    <Compile Include="Mvvm\ViewModels\Extra\VolumeRegulatorViewModel.cs" />
     <Compile Include="Mvvm\ViewModels\BuyMenu\WeaponCategoryViewModel.cs" />
     <Compile Include="VirtualKeyboard.xaml.cs">
       <DependentUpon>VirtualKeyboard.xaml</DependentUpon>

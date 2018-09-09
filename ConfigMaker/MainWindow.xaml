@@ -276,7 +276,7 @@
             </materialDesign:Chip>
         </DataTemplate>
 
-        <DataTemplate DataType="{x:Type viewmodels:CustomCmdControllerViewModel}">
+        <DataTemplate DataType="{x:Type viewmodels:CustomCmdViewModel}">
             <GroupBox>
                 <GroupBox.Header>
                     <CheckBox
@@ -344,7 +344,7 @@
             </GroupBox>
         </DataTemplate>
 
-        <DataTemplate DataType="{x:Type viewmodels:VolumeRegulatorControllerViewModel}">
+        <DataTemplate DataType="{x:Type viewmodels:VolumeRegulatorViewModel}">
             <GroupBox>
                 <GroupBox.Header>
                     <CheckBox
@@ -419,7 +419,7 @@
         </DataTemplate>-->
 
         <DataTemplate DataType="{x:Type viewmodels:AttachmentsViewModel}">
-            <Button Click="Button_Click" Height="Auto" Width="Auto" 
+            <Button Height="Auto" Width="Auto" 
                     Command="{Binding Path=DataContext.SelectAttachmentsCommand, RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type Window}}}"
                     CommandParameter="{Binding Tag}">
                 <Button.Template>
@@ -720,7 +720,7 @@
                             </Style.Triggers>
                         </Style>
                     </Grid.Style>
-                    <local:VirtualKeyboard x:Name="kb" Grid.ColumnSpan="2" Margin="0,0,-0.4,0.8" OnKeyboardKeyDown="kb_OnKeyboardKeyDown"/>
+                    <local:VirtualKeyboard DataContext="{Binding KeyboardViewModel}" Grid.ColumnSpan="2" Margin="0,0,-0.4,0.8"/>
                 </Grid>
                 <Grid x:Name="aliasGrid" Grid.Row="3" Grid.ColumnSpan="4" Margin="1">
                     <Grid.Style>

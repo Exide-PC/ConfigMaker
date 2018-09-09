@@ -29,16 +29,13 @@ namespace ConfigMaker.Mvvm.ViewModels
         public ObservableCollection<EntryViewModel> ExtraControllerViewModels { get; } =
             new ObservableCollection<EntryViewModel>();
 
+        public VirtualKeyboardViewModel KeyboardViewModel { get; }
+
         public EntryStateBinding StateBinding
         {
             get => this.Model.StateBinding;
             set => this.Model.StateBinding = value;
         }
-
-        #region Directly exposed from model. TODO: REMOVE
-        public KeySequence KeySequence => this.Model.KeySequence;
-        public Dictionary<KeySequence, List<Csgo.Config.Entries.BindEntry>> BoundEntries => this.Model.BoundEntries;
-        #endregion
 
         public string CustomCfgPath
         {
@@ -72,9 +69,26 @@ namespace ConfigMaker.Mvvm.ViewModels
         public ICommand AboutCommand { get; }
         public ICommand ToggleCommand { get; }
         public ICommand SaveAppCommand { get; }
+        public ICommand ClickButtonCommand { get; }
         
         public MainViewModel(): base(new MainModel())
         {
+            this.KeyboardViewModel = new VirtualKeyboardViewModel(this.Model.KeyboardModel);
+
+            this.ClickButtonCommand = new DelegateCommand((obj) =>
+            {
+                SpecialKey flags = 0;
+
+                if (Keyboard.IsKeyDown(Key.LeftCtrl))
+                    flags |= SpecialKey.Ctrl;
+                if (Keyboard.IsKeyDown(Key.LeftShift))
+                    flags |= SpecialKey.Shift;
+                if (Keyboard.IsKeyDown(Key.LeftAlt))
+                    flags |= SpecialKey.Alt;
+
+                this.Model.ClickButton(obj as string, flags);
+            });
+
             this.SelectTabCommand = new DelegateCommand((obj) =>
             {
                 this.SelectedTab = int.Parse(obj.ToString());
@@ -159,6 +173,10 @@ namespace ConfigMaker.Mvvm.ViewModels
                 {
                     HandleStateBinding(this.StateBinding);
                 }
+                else if (arg.PropertyName == nameof(MainModel.KeyboardModel))
+                {
+                    this.KeyboardViewModel.Raise();
+                }
             };
 
             foreach (BindableBase item in this.Model.ActionTabItems)
@@ -190,8 +208,8 @@ namespace ConfigMaker.Mvvm.ViewModels
 
             foreach (EntryModel model in this.Model.ExtraControllerModels)
             {
-                if (model is CustomCmdControllerModel customCmdModel)
-                    this.ExtraControllerViewModels.Add(new CustomCmdControllerViewModel(customCmdModel));
+                if (model is CustomCmdModel customCmdModel)
+                    this.ExtraControllerViewModels.Add(new CustomCmdViewModel(customCmdModel));
                 else if (model is CycleCrosshairModel chLoopModel)
                     this.ExtraControllerViewModels.Add(new CycleCrosshairViewModel(chLoopModel));
             }
@@ -263,11 +281,6 @@ namespace ConfigMaker.Mvvm.ViewModels
                         break;
                     }
             }
-        }
-
-        public void ClickButton(string button, VirtualKeyboard.SpecialKey flags)
-        {
-            this.Model.ClickButton(button, flags);
         }
 
         void HandleException(string userMsg, Exception ex)

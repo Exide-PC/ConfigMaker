@@ -93,62 +93,6 @@ namespace ConfigMaker
             //this.GenerateCrosshairsCommand.Execute(null);
         }
 
-        private void ComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
-        {
-            //ComboBox cbox = (ComboBox)e.Source;
-            //ComboBoxItem selectedItem = (ComboBoxItem)cbox.SelectedItem;
-
-            //if (selectedItem.Name == iKeyboard.Name)
-            //{
-            //    // При выборе клавиатуры по умолчанию не выбрана последовательность
-            //    this.SetStateAndUpdateUI(EntryStateBinding.InvalidState);
-            //}
-            //else
-            //{
-            //    if (solidAttachmentsVM == null) return;
-
-            //    EntryStateBinding selectedState = selectedItem.Name == iDefault.Name ?
-            //        EntryStateBinding.Default :
-            //        EntryStateBinding.Alias;
-
-            //    solidAttachmentsVM.Hint = selectedState == EntryStateBinding.Default ?
-            //        Res.CommandsByDefault_Hint :
-            //        Res.CommandsInAlias_Hint;
-
-            //    this.currentKeySequence = null;
-            //    this.ColorizeKeyboard();
-
-            //    if (selectedState == EntryStateBinding.Alias)
-            //    {
-            //        // И при этом если ни одной команды не создано, то задаем неверное состояние
-            //        selectedState =
-            //            this.aliasSetVM.Items.Count == 0 ?
-            //            EntryStateBinding.InvalidState :
-            //            EntryStateBinding.Alias;
-            //    }
-
-            //    this.SetStateAndUpdateUI(selectedState);
-            //}
-
-            //UpdateAttachmentPanels();
-        }
-
-        private void GenerateConfig(object sender, RoutedEventArgs e)
-        {
-            //if (this.CfgName.Length == 0)
-            //    this.CfgName = (string)CfgNameProperty.DefaultMetadata.DefaultValue;
-
-            //string resultCfgPath = Path.Combine(GetTargetFolder(), $"{this.CfgName}.cfg");
-
-            //this.cfgManager.GenerateCfg(resultCfgPath);
-            //System.Diagnostics.Process.Start("explorer.exe", $"/select,\"{resultCfgPath}\"");
-        }
-
-        private void AboutButton_Click(object sender, RoutedEventArgs e)
-        {
-
-        }
-
         private void SearchCmdTextbox(object sender, TextChangedEventArgs e)
         {
             //TextBox textbox = (TextBox)sender;
@@ -198,11 +142,11 @@ namespace ConfigMaker
             //}
         }
 
-        private void kb_OnKeyboardKeyDown(object sender, VirtualKeyboard.KeyboardClickRoutedEvtArgs e)
-        {
-            this.MainVM.ClickButton(e.Key, e.SpecialKeyFlags);
-            this.ColorizeKeyboard();
-        }
+        //private void kb_OnKeyboardKeyDown(object sender, VirtualKeyboard.KeyboardClickRoutedEvtArgs e)
+        //{
+        //    this.MainVM.ClickButton(e.Key, e.SpecialKeyFlags);
+        //    this.ColorizeKeyboard();
+        //}
 
         //private void KeyboardKeyDownHandler(object sender, VirtualKeyboard.KeyboardClickRoutedEvtArgs args)
         //{
@@ -749,69 +693,5 @@ namespace ConfigMaker
         //}
         //#endregion
 
-        //#region Framework
-        void ColorizeKeyboard()
-        {
-            // сбрасываем цвета перед обновлением
-            foreach (Button key in this.kb)
-            {
-                key.ClearValue(ButtonBase.BackgroundProperty);
-                key.ClearValue(ButtonBase.ForegroundProperty);
-            }
-
-            SolidColorBrush keyInSequenceBackground = (SolidColorBrush)this.FindResource("SecondaryAccentBrush");
-            SolidColorBrush keyInSequenceForeground = (SolidColorBrush)this.FindResource("SecondaryAccentForegroundBrush");
-
-            SolidColorBrush firstKeyBackground = (SolidColorBrush)this.FindResource("PrimaryHueMidBrush");
-            SolidColorBrush firstKeyForeground = (SolidColorBrush)this.FindResource("PrimaryHueMidForegroundBrush");
-
-            SolidColorBrush secondKeyBackground = (SolidColorBrush)this.FindResource("PrimaryHueDarkBrush");
-            SolidColorBrush secondKeyForeground = (SolidColorBrush)this.FindResource("PrimaryHueDarkForegroundBrush");
-
-            // Все элементы конфига
-            KeySequence currentKeySequence = this.MainVM.KeySequence;
-            var allEntries = this.MainVM.BoundEntries;
-
-            // Закрасим первым цветом все кнопки, которые 1-е в последовательности
-            allEntries.ToList()
-            .ForEach(pair =>
-            {
-                Button button = this.kb.GetButtonByName(pair.Key.Keys[0]);
-                button.Background = firstKeyBackground;
-                button.Foreground = firstKeyForeground;
-            });
-
-            // Если в текущей последовательности 1 кнопка - закрасим вторым цветом все кнопки, 
-            // которые связаны с текущей и являются вторыми в последовательности
-            if (currentKeySequence != null && currentKeySequence.Keys.Length == 1)
-            {
-                allEntries.Where(p => p.Key.Keys.Length == 2 && p.Key.Keys[0] == currentKeySequence[0]).ToList()
-               .ForEach(pair =>
-               {
-                   Button button = this.kb.GetButtonByName(pair.Key.Keys[1]);
-                   button.Background = secondKeyBackground;
-                   button.Foreground = secondKeyForeground;
-               });
-            }
-
-            // Теперь выделим акцентным цветом все кнопки в текущей последовательности
-            if (currentKeySequence != null)
-            {
-                Button seqKey1 = this.kb.GetButtonByName(currentKeySequence[0]);
-                seqKey1.Background = keyInSequenceBackground;
-                seqKey1.Foreground = keyInSequenceForeground;
-                if (currentKeySequence.Keys.Length == 2)
-                {
-                    Button seqKey2 = this.kb.GetButtonByName(currentKeySequence[1]);
-                    seqKey2.Background = keyInSequenceBackground;
-                    seqKey2.Foreground = keyInSequenceForeground;
-                }
-            }
-        }
-
-        private void Button_Click(object sender, RoutedEventArgs e)
-        {
-
-        }
     }
 }
