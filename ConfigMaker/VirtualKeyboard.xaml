@@ -20,7 +20,7 @@
         <SolidColorBrush x:Key="DefaultBackground" Color="{Binding Source={StaticResource MaterialDesignCardBackground}, Path=Color}"/>
         <Style TargetType="Button" BasedOn="{StaticResource MaterialDesignFlatButton}">
             <Setter Property="Background" Value="{StaticResource DefaultBackground}"/>
-            <Setter Property="Command" Value="{Binding RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=Window}, Path=DataContext.ClickButtonCommand}"/>
+            <Setter Property="Command" Value="{Binding RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=Window}, Path=DataContext.ClickVirtualKey}"/>
             <Setter Property="CommandParameter" Value="{Binding RelativeSource={RelativeSource Self}, Path=Tag}"/>
             <Setter Property="Margin" Value="1"/>
             <Setter Property="Grid.ColumnSpan" Value="2"/>

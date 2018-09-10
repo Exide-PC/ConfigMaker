@@ -69,13 +69,15 @@ namespace ConfigMaker.Mvvm.ViewModels
         public ICommand AboutCommand { get; }
         public ICommand ToggleCommand { get; }
         public ICommand SaveAppCommand { get; }
-        public ICommand ClickButtonCommand { get; }
+        public ICommand ClickVirtualKey { get; }
+        public ICommand GenerateCrosshairsCommand { get; }
+       
         
         public MainViewModel(): base(new MainModel())
         {
             this.KeyboardViewModel = new VirtualKeyboardViewModel(this.Model.KeyboardModel);
 
-            this.ClickButtonCommand = new DelegateCommand((obj) =>
+            this.ClickVirtualKey = new DelegateCommand((obj) =>
             {
                 SpecialKey flags = 0;
 
@@ -139,16 +141,12 @@ namespace ConfigMaker.Mvvm.ViewModels
                 // Определим путь к файлу и передедим его на обработку модели
                 string path = Path.Combine(this.Model.GetTargetFolder(), $"{this.CustomCfgName}.cmc");
                 this.Model.SaveCfgManager(path);
-                // И через модель представления выделим файл в проводнике
-                System.Diagnostics.Process.Start("explorer.exe", $"/select,\"{path}\"");
             });
 
             this.GenerateCommand = new DelegateCommand((obj) =>
             {
                 string cfgPath = Path.Combine(this.Model.GetTargetFolder(), $"{this.CustomCfgName}.cfg");
                 this.Model.GenerateConfig(cfgPath);
-
-                System.Diagnostics.Process.Start("explorer.exe", $"/select,\"{cfgPath}\"");
             });
 
             this.AboutCommand = new DelegateCommand((obj) =>
@@ -162,6 +160,11 @@ namespace ConfigMaker.Mvvm.ViewModels
             });
 
             this.SaveAppCommand = new DelegateCommand((obj) => this.Model.SaveApp());
+
+            this.GenerateCrosshairsCommand = new DelegateCommand((obj) =>
+            {
+                this.Model.GenerateRandomCrosshairs();
+            });
 
             this.KeyDownAttachmentsVM = new AttachmentsViewModel(this.Model.KeyDownAttachments) { Tag = 0 };
             this.KeyUpAttachmentsVM = new AttachmentsViewModel(this.Model.KeyUpAttachments) { Tag = 1 };
@@ -212,6 +215,8 @@ namespace ConfigMaker.Mvvm.ViewModels
                     this.ExtraControllerViewModels.Add(new CustomCmdViewModel(customCmdModel));
                 else if (model is CycleCrosshairModel chLoopModel)
                     this.ExtraControllerViewModels.Add(new CycleCrosshairViewModel(chLoopModel));
+                else if (model is VolumeRegulatorModel volumeModel)
+                    this.ExtraControllerViewModels.Add(new VolumeRegulatorViewModel(volumeModel));
             }
             
             this.StateBindingItemsVM = new ComboBoxItemsViewModel()
@@ -282,6 +287,8 @@ namespace ConfigMaker.Mvvm.ViewModels
                     }
             }
         }
+
+        
 
         void HandleException(string userMsg, Exception ex)
         {

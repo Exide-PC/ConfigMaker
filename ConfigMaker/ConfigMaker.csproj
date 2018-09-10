@@ -86,6 +86,7 @@
     <Compile Include="Mvvm\Models\BuyMenu\BuyMenuModel.cs" />
     <Compile Include="Mvvm\Models\Extra\CycleCrosshairModel.cs" />
     <Compile Include="Mvvm\Models\Extra\CustomCmdModel.cs" />
+    <Compile Include="Mvvm\Models\Extra\VolumeRegulatorModel.cs" />
     <Compile Include="Mvvm\Models\GameSettings\DynamicEntryModel.cs" />
     <Compile Include="Mvvm\Models\EntryModel.cs" />
     <Compile Include="Mvvm\Models\GameSettings\ComboBoxControllerModel.cs" />
@@ -97,7 +98,6 @@
     <Compile Include="Mvvm\Models\TextModel.cs" />
     <Compile Include="Mvvm\Models\BuyMenu\WeaponCategoryModel.cs" />
     <Compile Include="Mvvm\Models\VirtualKeyboardModel.cs" />
-    <Compile Include="Mvvm\Models\VolumeRegulatorModel.cs" />
     <Compile Include="Mvvm\ViewModelBase.cs" />
     <Compile Include="Mvvm\ViewModels\ComboBoxItemsViewModel.cs" />
     <Compile Include="Mvvm\ViewModels\GameSettings\GameSettingsCategoryViewModel.cs" />

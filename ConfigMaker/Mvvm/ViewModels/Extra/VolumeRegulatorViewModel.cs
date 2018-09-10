@@ -27,62 +27,62 @@ namespace ConfigMaker.Mvvm.ViewModels
 
         public double From
         {
-            get => this._from;
-            set => this.SetProperty(ref _from, value);
+            get => ((VolumeRegulatorModel)this.Model).From;
+            set => ((VolumeRegulatorModel)this.Model).From = value;
         }
 
         public double FromMinimum
         {
-            get => this._fromMinimum;
-            set => this.SetProperty(ref _fromMinimum, value);
+            get => ((VolumeRegulatorModel)this.Model).FromMinimum;
+            set => ((VolumeRegulatorModel)this.Model).FromMinimum = value;
         }
 
         public double FromMaximum
         {
-            get => this._fromMaximum;
-            set => this.SetProperty(ref _fromMaximum, value);
+            get => ((VolumeRegulatorModel)this.Model).FromMaximum;
+            set => ((VolumeRegulatorModel)this.Model).FromMaximum = value;
         }
 
         public double To
         {
-            get => this._to;
-            set => this.SetProperty(ref _to, value);
+            get => ((VolumeRegulatorModel)this.Model).To;
+            set => ((VolumeRegulatorModel)this.Model).To = value;
         }
 
         public double ToMinimum
         {
-            get => this._toMinimum;
-            set => this.SetProperty(ref _toMinimum, value);
+            get => ((VolumeRegulatorModel)this.Model).ToMinimum;
+            set => ((VolumeRegulatorModel)this.Model).ToMinimum = value;
         }
 
         public double ToMaximum
         {
-            get => this._toMaximum;
-            set => this.SetProperty(ref _toMaximum, value);
+            get => ((VolumeRegulatorModel)this.Model).ToMaximum;
+            set => ((VolumeRegulatorModel)this.Model).ToMaximum = value;
         }
 
         public double Step
         {
-            get => this._step;
-            set => this.SetProperty(ref _step, value);
+            get => ((VolumeRegulatorModel)this.Model).Step;
+            set => ((VolumeRegulatorModel)this.Model).Step = value;
         }
 
         public double StepMinimum
         {
-            get => this._stepMinimum;
-            set => this.SetProperty(ref _stepMinimum, value);
+            get => ((VolumeRegulatorModel)this.Model).StepMinimum;
+            set => ((VolumeRegulatorModel)this.Model).StepMinimum = value;
         }
 
         public double StepMaximum
         {
-            get => this._stepMaximum;
-            set => this.SetProperty(ref _stepMaximum, value);
+            get => ((VolumeRegulatorModel)this.Model).StepMaximum;
+            set => ((VolumeRegulatorModel)this.Model).StepMaximum = value;
         }
 
         public int Mode
         {
-            get => this._mode;
-            set => this.SetProperty(ref _mode, value);
+            get => ((VolumeRegulatorModel)this.Model).Mode;
+            set => ((VolumeRegulatorModel)this.Model).Mode = value;
         }
     }
 }

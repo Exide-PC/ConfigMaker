@@ -60,7 +60,7 @@ namespace ConfigMaker.Mvvm.Models
                         if (!controller.Model.IsEnabled) controller.Restore();
                     }
 
-                    UpdateAttachmentPanels();
+                    UpdateAttachments();
                 }
             }   
         }
@@ -1266,6 +1266,168 @@ namespace ConfigMaker.Mvvm.Models
                     chLoopModel.CrosshairCount = crosshairCount;
                 }
             });
+
+
+            // Volume regulator controller
+            string volumeRegulatorEntryKey = "VolumeRegulator";
+
+            VolumeRegulatorModel volumeModel = new VolumeRegulatorModel()
+            {
+                Content = Localize(volumeRegulatorEntryKey),
+                Key = volumeRegulatorEntryKey
+            };
+            this.ExtraControllerModels.Add(volumeModel);
+
+            volumeModel.PropertyChanged += (_, arg) =>
+            {
+                //string prop = arg.PropertyName;
+
+                //if (prop == nameof(VolumeRegulatorModel.From) ||
+                //    prop == nameof(VolumeRegulatorModel.To) ||
+                //    prop == nameof(VolumeRegulatorModel.Step) ||
+                //    prop == nameof(VolumeRegulatorModel.Mode))
+                //{
+                //    this.AddEntry(volumeRegulatorEntryKey, true);
+                //}
+
+                string prop = arg.PropertyName;
+                
+                if (prop == nameof(VolumeRegulatorModel.From))
+                {
+                    volumeModel.ToMinimum = volumeModel.From + 0.01;
+                }
+                else if (prop == nameof(VolumeRegulatorModel.To))
+                {
+                    volumeModel.FromMaximum = volumeModel.To - 0.01;
+                }
+                else if (prop == nameof(VolumeRegulatorModel.Step) 
+                      || prop == nameof(VolumeRegulatorModel.Mode))
+                {
+
+                }
+                else
+                {
+                    // Если изменено не одно из вышеперечисленных свойств - ничего не делаем
+                    return;
+                }
+
+                // Определим дельту
+                double delta = volumeModel.To - volumeModel.From;
+                volumeModel.StepMaximum = delta;
+
+                // Обновим регулировщик в конфиге, если изменение было сделано пользователем
+                this.AddEntry(volumeRegulatorEntryKey, true);
+            };
+
+            this.entryControllers.Add(new EntryController()
+            {
+                Model = volumeModel,
+                Focus = () => this.SelectedTab = 3,
+                Generate = () =>
+                {
+                    double minVolume = Math.Round(volumeModel.From, 2);
+                    double maxVolume = Math.Round(volumeModel.To, 2);
+                    double volumeStep = Math.Round(volumeModel.Step, 2);
+                    volumeStep = volumeStep == 0 ? 0.01 : volumeStep;
+                    bool volumeUp = volumeModel.Mode == 1;
+
+                    // Определяем промежуточные значения от максимума к минимуму
+                    List<double> volumeValues = new List<double>();
+
+                    double currentValue = maxVolume;
+
+                    while (currentValue >= minVolume)
+                    {
+                        volumeValues.Add(currentValue);
+                        currentValue -= volumeStep;
+                        string formatted = Executable.FormatNumber(currentValue, false);
+                        Executable.TryParseDouble(formatted, out currentValue);
+                    }
+                    // Если минимальное значение не захватилось, то добавим его вручную
+                    if (volumeValues.Last() != minVolume)
+                        volumeValues.Add(minVolume);
+
+                    // Теперь упорядочим по возрастанию
+                    volumeValues.Reverse();
+
+                    // Создаем цикл
+                    string volumeUpCmd = "volume_up";
+                    string volumeDownCmd = "volume_down";
+
+                    SingleCmd[] iterationNames = volumeValues
+                        .Select(v => new SingleCmd($"volume_{Executable.FormatNumber(v, false)}")).ToArray();
+
+                    CommandCollection dependencies = new CommandCollection();
+
+                    for (int i = 0; i < volumeValues.Count; i++)
+                    {
+                        double value = volumeValues[i];
+                        string formattedValue = Executable.FormatNumber(value, false);
+
+                        CommandCollection iterationCmds = new CommandCollection();
+
+                        // Задаем звук на текущей итерации с комментарием в консоль
+                        SingleCmd volumeCmd = new SingleCmd($"volume {formattedValue}");
+                        iterationCmds.Add(volumeCmd);
+                        iterationCmds.Add(new SingleCmd($"echo {volumeCmd.ToString()}"));
+
+                        if (i == 0)
+                        {
+                            iterationCmds.Add(
+                                new AliasCmd(volumeDownCmd, new SingleCmd("echo Volume: Min")));
+                            iterationCmds.Add(
+                                new AliasCmd(volumeUpCmd, iterationNames[i + 1]));
+                        }
+                        else if (i == volumeValues.Count - 1)
+                        {
+                            iterationCmds.Add(
+                                new AliasCmd(volumeUpCmd, new SingleCmd("echo Volume: Max")));
+                            iterationCmds.Add(
+                                new AliasCmd(volumeDownCmd, iterationNames[i - 1]));
+                        }
+                        else
+                        {
+                            iterationCmds.Add(
+                                new AliasCmd(volumeDownCmd, iterationNames[i - 1]));
+                            iterationCmds.Add(
+                                new AliasCmd(volumeUpCmd, iterationNames[i + 1]));
+                        }
+
+                        // Добавим зависимость
+                        dependencies.Add(new AliasCmd(iterationNames[i].ToString(), iterationCmds));
+                    }
+
+                    // По умолчанию будет задано минимальное значение звука
+                    dependencies.Add(iterationNames[0]);
+
+                    return new ParametrizedEntry<double[]>()
+                    {
+                        PrimaryKey = volumeRegulatorEntryKey,
+                        Cmd = volumeUp ? new SingleCmd(volumeUpCmd) : new SingleCmd(volumeDownCmd),
+                        Type = EntryType.Semistatic,
+                        IsMetaScript = false,
+                        Dependencies = dependencies,
+                        Arg = new double[] { minVolume, maxVolume, volumeStep }
+                    };
+                },
+                UpdateUI = (entry) =>
+                {
+                    volumeModel.IsChecked = true;
+                    double[] args = ((IParametrizedEntry<double[]>)entry).Arg;
+
+                    volumeModel.From = args[0];
+                    volumeModel.To = args[1];
+                    volumeModel.Step = args[2];
+                    volumeModel.Mode = entry.Cmd.ToString() == "volume_up" ? 1 : 0;
+                },
+                Restore = () =>
+                {
+                    volumeModel.IsChecked = false;
+                    volumeModel.Mode = 0;
+                },
+                CoerceAccess = (state) => volumeModel.IsEnabled =
+                    state != EntryStateBinding.InvalidState && state != EntryStateBinding.Default
+            });
         }
         
         public void SaveApp()
@@ -1349,7 +1511,7 @@ namespace ConfigMaker.Mvvm.Models
                 this.RemoveEntry(entry);
 
             // Обновим панели
-            this.UpdateAttachmentPanels();
+            this.UpdateAttachments();
         }
         
         BindEntry ConvertToBindEntry(Entry entry)
@@ -1501,7 +1663,7 @@ namespace ConfigMaker.Mvvm.Models
         ///// <summary>
         ///// Метод для обновления панелей с привязанными к сочетанию клавиш элементами конфига
         ///// </summary>
-        void UpdateAttachmentPanels()
+        void UpdateAttachments()
         {
             // Очистим панели и сбросим настройки интерфейса
             ResetAttachmentPanels();
@@ -1586,7 +1748,7 @@ namespace ConfigMaker.Mvvm.Models
             string resultCfgPath = Path.Combine(GetTargetFolder(), $"{this.CustomCfgName}.cfg");
 
             this.cfgManager.GenerateCfg(resultCfgPath);
-            System.Diagnostics.Process.Start("explorer.exe", $"/select,\"{resultCfgPath}\"");
+            //System.Diagnostics.Process.Start("explorer.exe", $"/select,\"{resultCfgPath}\"");
         }
 
         bool IsEntryAttachedToCurrentState(BindEntry entry)
@@ -1606,8 +1768,12 @@ namespace ConfigMaker.Mvvm.Models
                 return false;
         }
 
-        void GenerateRandomCrosshairs(int count)
+        public void GenerateRandomCrosshairs()
         {
+            CycleCrosshairModel cycleChModel = (CycleCrosshairModel) this.ExtraControllerModels
+                .First(c => c is CycleCrosshairModel);
+
+            int count = cycleChModel.CrosshairCount;
             string prefix = GeneratePrefix();
             Random rnd = new Random();
 
@@ -1648,7 +1814,9 @@ namespace ConfigMaker.Mvvm.Models
                 if (File.Exists(crosshairPath)) File.Delete(crosshairPath);
                 File.WriteAllLines(crosshairPath, lines);
             }
-            System.Diagnostics.Process.Start("explorer.exe", $"/select,\"{firstCrosshair}\"");
+
+            OpenExplorer(firstCrosshair);
+            //System.Diagnostics.Process.Start("explorer.exe", $"/select,\"{firstCrosshair}\"");
         }
         
         public string GetTargetFolder()
@@ -1694,7 +1862,7 @@ namespace ConfigMaker.Mvvm.Models
             //ColorizeKeyboard();
 
             // Обновляем интерфейс под новую последовательность
-            this.UpdateAttachmentPanels();
+            this.UpdateAttachments();
         }
 
         public void LoadCfgManager(ConfigManager newCfgManager)
@@ -1711,7 +1879,7 @@ namespace ConfigMaker.Mvvm.Models
                 this.GetController(entry.PrimaryKey).UpdateUI(entry);
 
             this.cfgManager = newCfgManager;
-            this.UpdateAttachmentPanels();
+            this.UpdateAttachments();
             //this.ColorizeKeyboard(); // TODO:
         }
 
@@ -1723,11 +1891,25 @@ namespace ConfigMaker.Mvvm.Models
                 XmlSerializer ser = new XmlSerializer(typeof(ConfigManager));
                 ser.Serialize(fs, this.cfgManager);
             }
+            OpenExplorer(path);
         }
 
         public void GenerateConfig(string path)
         {
             this.cfgManager.GenerateCfg(path);
+            OpenExplorer(path);
+        }
+
+        void OpenExplorer(string path)
+        {
+            if (Directory.Exists(path))
+            {
+                System.Diagnostics.Process.Start(path);
+            }
+            else if (File.Exists(path))
+            {
+                System.Diagnostics.Process.Start("explorer.exe", $"/select,\"{path}\"");
+            }
         }
 
         void UpdateKeyboard()

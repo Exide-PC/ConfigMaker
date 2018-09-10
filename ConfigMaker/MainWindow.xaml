@@ -339,7 +339,7 @@
                         Text="{Binding ElementName=cycleChSlider, Path=Value}"/>
                     <Button 
                         Content="{x:Static res:Resources.GenerateCrosshairs_Button}"
-                        Click="GenerateRandomCrosshairsButton_Click"/>
+                        Command="{Binding RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=Window}, Path=DataContext.GenerateCrosshairsCommand}" />
                 </StackPanel>
             </GroupBox>
         </DataTemplate>
