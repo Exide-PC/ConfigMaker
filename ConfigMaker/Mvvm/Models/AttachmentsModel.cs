@@ -14,7 +14,7 @@ namespace ConfigMaker.Mvvm.Models
 
         public ObservableCollection<ItemModel> Items => this.itemsHolder.Items;
 
-        LeakAwareCollection itemsHolder = new LeakAwareCollection(null);
+        ItemCollectionModel itemsHolder = new ItemCollectionModel();
         string _hint = string.Empty;
 
         public AttachmentsModel()

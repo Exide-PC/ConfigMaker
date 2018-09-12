@@ -7,7 +7,7 @@ using System.Windows.Input;
 
 namespace ConfigMaker.Mvvm.Models
 {
-    public class ItemModel: BindableBase
+    public class ItemModel: BindableBase, IDisposable
     {
         string _text = string.Empty;
         bool _isSelected = false;
@@ -17,11 +17,17 @@ namespace ConfigMaker.Mvvm.Models
         {
             this.SelectCommand = new DelegateCommand((obj) =>
             {
-                this.Click?.Invoke(this, null);
+                this._click?.Invoke(this, null);
             });
         }
 
-        public event EventHandler Click;
+        event EventHandler _click;
+
+        public event EventHandler Click
+        {
+            add { _click += value; }
+            remove { _click -= value; }
+        }
 
         public ICommand SelectCommand { get; }
 
@@ -41,6 +47,14 @@ namespace ConfigMaker.Mvvm.Models
         {
             get => this._tag;
             set => this.SetProperty(ref _tag, value);
+        }
+
+        /// <summary>
+        /// Метод, очищающий событие Click от слушателей во избежание утечки памяти
+        /// </summary>
+        public void Dispose()
+        {
+            this._click = null;
         }
     }
 }

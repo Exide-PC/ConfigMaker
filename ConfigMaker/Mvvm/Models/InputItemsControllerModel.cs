@@ -10,30 +10,31 @@ namespace ConfigMaker.Mvvm.Models
         string _input;
         bool _addButtonEnabled = false;
         bool _deleteButtonEnabled = false;
-        Predicate<string> _inputValidator = (input) => true;
-        LeakAwareCollection itemsHolder;
+        //Predicate<string> _inputValidator = (input) => true;
+        ItemCollectionModel itemsHolder;
 
         public event EventHandler OnAddition;
         public event EventHandler OnDeleting;
+        public event EventHandler SelectedIndexChanged;
+        public Func<string, ItemModel> ItemCreator = (input) => new ItemModel() { Text = input };
+
+        public Predicate<string> InputValidator { get; set; } = (input) => true;
 
         public ObservableCollection<ItemModel> Items => this.itemsHolder.Items;
-
-        public InputItemsControllerModel(Predicate<string> inputValidator): this(inputValidator, null)
+        public int SelectedIndex => this.itemsHolder.SelectedIndex;
+        
+        public InputItemsControllerModel()
         {
-
-        }
-
-        public InputItemsControllerModel(Predicate<string> inputValidator, EventHandler clickHandler)
-        {
-            this.itemsHolder = new LeakAwareCollection(clickHandler);
+            this.itemsHolder = new ItemCollectionModel();
             this.itemsHolder.Items.CollectionChanged += (_, __) => this.RaisePropertyChanged(nameof(Items));
+            this.itemsHolder.SelectedIndexChanged += (_, __) => this.SelectedIndexChanged?.Invoke(this, null);
 
-            this._inputValidator = inputValidator;
+            //this._inputValidator = inputValidator;
 
             this.PropertyChanged += (_, arg) =>
            {
                 if (arg.PropertyName == nameof(Input))
-                    this.AdditionEnabled = this._inputValidator(this._input);
+                    this.AdditionEnabled = this.InputValidator(this._input);
             };
 
             this.Items.CollectionChanged += (_, arg) =>
@@ -44,13 +45,14 @@ namespace ConfigMaker.Mvvm.Models
                         {
                             this.DeletingEnabled = true;
                             // Проверим заново доступность кнопки, т.к. возможно дубликаты недопустимы
-                            this.AdditionEnabled = this._inputValidator(this._input);
-
+                            this.AdditionEnabled = this.InputValidator(this._input);
+                            this.OnAddition?.Invoke(this, null);
                             break;
                         }
                     case NotifyCollectionChangedAction.Remove:
                         {
                             this.DeletingEnabled = this.Items.Count > 0;
+                            this.OnDeleting?.Invoke(this, null);
                             break;
                         }
                 }
@@ -75,31 +77,36 @@ namespace ConfigMaker.Mvvm.Models
             set => this.SetProperty(ref _deleteButtonEnabled, value);
         }
 
-        public int GetFirstSelectedIndex()
-        {
-            ItemModel firstSelectedItem = this.GetSelectedItem();
-            return firstSelectedItem != null ? this.Items.IndexOf(firstSelectedItem) : -1;
-        }
-
         public void InvokeAddition()
         {
-            this.Items.Add(new ItemModel() { Text = this.Input });
-            this.Input = string.Empty;
-            this.OnAddition?.Invoke(this, null);
+            this.InvokeAddition(this.Input);
+        }
+
+        public void InvokeAddition(string input)
+        {
+            ItemModel newItem = this.ItemCreator(input);
+            this.InvokeAddition(newItem);
+        }
+
+        public void InvokeAddition(ItemModel item)
+        {
+            if (this.InputValidator(item.Text) == true)
+            {
+                this.Items.Add(item);
+                this.Input = string.Empty;
+            }
         }
 
         public void InvokeDeleting()
         {
-            int selectedIndex = GetFirstSelectedIndex();
-            if (selectedIndex == -1) return;
-
-            this.Items.RemoveAt(selectedIndex);
-            this.OnDeleting?.Invoke(this, null);
+            this.Items.RemoveAt(this.SelectedIndex);
         }
 
         public ItemModel GetSelectedItem()
         {
-            return this.Items.FirstOrDefault(i => i.IsSelected);
+            return this.SelectedIndex != -1 ? this.Items[this.SelectedIndex] : null;
         }
+
+
     }
 }

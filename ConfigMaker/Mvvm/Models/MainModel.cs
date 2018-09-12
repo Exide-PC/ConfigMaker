@@ -42,6 +42,7 @@ namespace ConfigMaker.Mvvm.Models
             new ObservableCollection<SettingsCategoryModel>();
         public ObservableCollection<EntryModel> ExtraControllerModels { get; } = 
             new ObservableCollection<EntryModel>();
+        public AliasSetModel AliasSetModel { get; private set; }
 
         public VirtualKeyboardModel KeyboardModel { get; }
 
@@ -162,6 +163,7 @@ namespace ConfigMaker.Mvvm.Models
             InitBuyTab();
             InitGameSettingsTab();
             InitExtra();
+            InitAliasController();
 
             // Проверим, что в словаре нет одинаковых ключей в разном регистре
             // Для этого сгруппируем все ключи, переведя их в нижний регистр,
@@ -174,7 +176,6 @@ namespace ConfigMaker.Mvvm.Models
             this.StateBinding = EntryStateBinding.Default;
         }
 
-       
 
         void InitActionTab()
         {
@@ -1078,14 +1079,17 @@ namespace ConfigMaker.Mvvm.Models
 
             Predicate<string> validateCmd = (input) =>
             {
-                return !string.IsNullOrEmpty(input.Trim()) && 
+                input = input.Trim();
+
+                return !string.IsNullOrEmpty(input) && 
                     customCmdModel.Items.All(i => i.Text.ToLower() != input.ToLower());
             };
 
-            customCmdModel = new CustomCmdModel(validateCmd)
+            customCmdModel = new CustomCmdModel()
             {
                 Content = Localize(customCmdEntryKey),
-                Key = customCmdEntryKey
+                Key = customCmdEntryKey,
+                InputValidator = validateCmd
             };
             this.ExtraControllerModels.Add(customCmdModel);
 
@@ -1181,8 +1185,7 @@ namespace ConfigMaker.Mvvm.Models
 
                     foreach (string cmd in cmds)
                     {
-                        customCmdModel.Input = cmd;
-                        customCmdModel.InvokeAddition();
+                        customCmdModel.InvokeAddition(cmd);
                     }
                 }
             });
@@ -1429,7 +1432,158 @@ namespace ConfigMaker.Mvvm.Models
                     state != EntryStateBinding.InvalidState && state != EntryStateBinding.Default
             });
         }
-        
+
+        void InitAliasController()
+        {
+            string aliasSetEntryKey = "ExtraAliasSet";
+            AliasSetModel aliasModel = null;
+
+            // Предикат для проверки валидности ввода
+            Predicate<string> aliasValidator = (alias) => Executable.IsValidAliasName(alias)
+                && aliasModel.Items.All(i => i.Text.ToLower() != alias.ToLower());
+
+            Func<string, ItemModel> itemCreator = (input) =>
+            {
+                return new ItemModel()
+                {
+                    Text = input,
+                    Tag = new List<Entry>()
+                };
+            };
+            
+            // Скармливаем предикат в конструктор
+            aliasModel = new AliasSetModel()
+            {
+                Key = aliasSetEntryKey,
+                IsSelectable = false,
+                InputValidator = aliasValidator,
+                ItemCreator = itemCreator
+            };
+            this.AliasSetModel = aliasModel;
+
+            aliasModel.OnAddition += (_, __) =>
+            {
+                if (this.StateBinding == EntryStateBinding.InvalidState)
+                    this.StateBinding = EntryStateBinding.Alias;
+
+                this.AddEntry(aliasModel.Key, false);
+                //AddAlias(aliasModel.Input, new List<Entry>());
+            };
+
+            aliasModel.OnDeleting += (_, __) =>
+            {
+                this.ResetAttachmentPanels();
+                
+                if (aliasModel.Items.Count > 0)
+                {
+                    UpdateAttachments();
+
+                    // Так же для удобства сделаем фокус на первом элементе панели, если такой есть
+                    if (this.SolidAttachments.Items.Count > 0)
+                    {
+                        string firstEntry = (string)(this.SolidAttachments.Items[0].Tag);
+
+                        this.GetController(firstEntry).Focus();
+                    }
+
+                    // Если в панели еще остались алиасы, то обновим конфиг
+                    this.AddEntry(aliasModel.Key, false);
+                }
+                else
+                {
+                    // Если удалили последнюю кнопку, то удалим 
+                    this.RemoveEntry(aliasModel.Key);
+                    this.StateBinding = EntryStateBinding.InvalidState;
+                }
+            };
+
+            aliasModel.SelectedIndexChanged += (_, __) =>
+            {
+                UpdateAttachments();
+            };
+            
+            void AddAlias(string name, List<Entry> attachedEntries)
+            {
+                ItemModel newItem = itemCreator(name);
+
+                attachedEntries = attachedEntries ?? new List<Entry>();
+                newItem.Tag = attachedEntries;
+                
+                aliasModel.InvokeAddition(newItem);
+                
+                //this.AddEntry(aliasModel.Key, false);
+                //UpdateAttachments();
+            }
+
+
+            this.entryControllers.Add(new EntryController()
+            {
+                Model = aliasModel,
+                Generate = () =>
+                {
+                    List<ParametrizedEntry<Entry[]>> aliases =
+                    new List<ParametrizedEntry<Entry[]>>();
+
+                    CommandCollection dependencies = new CommandCollection();
+
+                    foreach (ItemModel aliaselement in aliasModel.Items)
+                    {
+                        string aliasName = aliaselement.Text.ToString();
+                        List<Entry> attachedEntries = (List<Entry>)aliaselement.Tag;
+
+                        // Выпишем все зависимости, которые есть для текущего элемента
+                        foreach (Entry entry in attachedEntries)
+                            foreach (Executable dependency in entry.Dependencies)
+                                dependencies.Add(dependency);
+
+                        ParametrizedEntry<Entry[]> aliasEntry = new ParametrizedEntry<Entry[]>()
+                        {
+                            PrimaryKey = "ExtraAlias",
+                            Cmd = new SingleCmd(aliasName),
+                            IsMetaScript = false,
+                            Type = EntryType.Dynamic,
+                            Arg = attachedEntries.ToArray()
+                        };
+
+                        AliasCmd alias = new AliasCmd(
+                            aliaselement.Text,
+                            attachedEntries.Select(e => e.Cmd));
+
+                        aliases.Add(aliasEntry);
+                        dependencies.Add(alias);
+                    }
+
+                    // сформируем итоговый элемент конфига
+                    return new ParametrizedEntry<Entry[]>()
+                    {
+                        PrimaryKey = aliasModel.Key,
+                        Cmd = null,
+                        IsMetaScript = false,
+                        Type = EntryType.Dynamic,
+                        Arg = aliases.ToArray(),
+                        Dependencies = dependencies
+                    };
+                },
+                UpdateUI = (entry) =>
+                {
+                    ParametrizedEntry<Entry[]> extendedEntry = (ParametrizedEntry<Entry[]>)entry;
+
+                    Entry[] aliases = extendedEntry.Arg;
+
+                    foreach (Entry alias in aliases)
+                    {
+                        AddAlias(alias.Cmd.ToString(), (alias as ParametrizedEntry<Entry[]>).Arg.ToList());
+                    }
+                },
+                Restore = () =>
+                {
+                    this.ResetAttachmentPanels();
+                    aliasModel.Items.Clear();
+                },
+                CoerceAccess = (state) => { }
+            });
+        }
+
         public void SaveApp()
         {
             // Удалим прошлый файл
@@ -1564,24 +1718,24 @@ namespace ConfigMaker.Mvvm.Models
                 case EntryStateBinding.Alias:
                     {
                         // Проверяем, что добавляется не основной узел со всеми алиасами
-                        //if (entry.PrimaryKey != aliasSetVM.Key)
-                        //{
-                        //    // Добавляем текущий элемент к коллекции, привязанной к выбранной кнопке
-                        //    ItemViewModel selectedItem = aliasSetVM.GetSelectedItem();
-                        //    List<Entry> attachedToAlias = (List<Entry>)(selectedItem.Tag);
+                        if (entry.PrimaryKey != this.AliasSetModel.Key)
+                        {
+                            // Добавляем текущий элемент к коллекции, привязанной к выбранной кнопке
+                            ItemModel selectedItem = this.AliasSetModel.GetSelectedItem();
+                            List<Entry> attachedToAlias = (List<Entry>)(selectedItem.Tag);
 
-                        //    attachedToAlias.Add(entry);
-                        //    selectedItem.Tag = attachedToAlias;
+                            attachedToAlias.Add(entry);
+                            selectedItem.Tag = attachedToAlias;
 
-                        //    // И вызываем обработчика пользовательских алиасов
-                        //    Entry aliasSetEntry = (Entry)this.GetController(aliasSetVM.Key).Generate();
-                        //    this.cfgManager.AddEntry(aliasSetEntry);
-                        //}
-                        //else
-                        //{
-                        //    // Если это основной узел, то добавим его напрямую в конфиг
-                        //    this.cfgManager.AddEntry(entry);
-                        //}
+                            // И вызываем обработчика пользовательских алиасов
+                            Entry aliasSetEntry = (Entry)this.GetController(this.AliasSetModel.Key).Generate();
+                            this.cfgManager.AddEntry(aliasSetEntry);
+                        }
+                        else
+                        {
+                            // Если это основной узел, то добавим его напрямую в конфиг
+                            this.cfgManager.AddEntry(entry);
+                        }
                         break;
                     }
                 default: throw new Exception($"Состояние {this.StateBinding} при добавлении элемента");
@@ -1606,24 +1760,24 @@ namespace ConfigMaker.Mvvm.Models
                     }
                 case EntryStateBinding.Alias:
                     {
-                        //if (entry.PrimaryKey != aliasSetVM.Key)
-                        //{
-                        //    // Добавляем текущий элемент к коллекции, привязанной к выбранной кнопке
-                        //    ItemViewModel selectedItem = aliasSetVM.GetSelectedItem();
-                        //    List<Entry> attachedToAlias = ((List<Entry>)selectedItem.Tag)
-                        //        .Where(e => e.PrimaryKey != entry.PrimaryKey).ToList();
+                        if (entry.PrimaryKey != this.AliasSetModel.Key)
+                        {
+                            // Добавляем текущий элемент к коллекции, привязанной к выбранной кнопке
+                            ItemModel selectedItem = this.AliasSetModel.GetSelectedItem();
+                            List<Entry> attachedToAlias = ((List<Entry>)selectedItem.Tag)
+                                .Where(e => e.PrimaryKey != entry.PrimaryKey).ToList();
 
-                        //    selectedItem.Tag = attachedToAlias;
+                            selectedItem.Tag = attachedToAlias;
 
-                        //    // Напрямую обновим узел в менеджере
-                        //    Entry aliasSetEntry = (Entry)this.GetController(aliasSetVM.Key).Generate();
-                        //    this.cfgManager.AddEntry(aliasSetEntry);
-                        //}
-                        //else
-                        //{
-                        //    // Если удаляем основной узел со всеми алиасами, то напрямую стираем его из менеджера
-                        //    this.cfgManager.RemoveEntry(entry);
-                        //}
+                            // Напрямую обновим узел в менеджере
+                            Entry aliasSetEntry = (Entry)this.GetController(this.AliasSetModel.Key).Generate();
+                            this.cfgManager.AddEntry(aliasSetEntry);
+                        }
+                        else
+                        {
+                            // Если удаляем основной узел со всеми алиасами, то напрямую стираем его из менеджера
+                            this.cfgManager.RemoveEntry(entry);
+                        }
                         break;
                     }
                 default: throw new Exception($"Состояние {this.StateBinding} при попытке удалить элемент");
@@ -1721,19 +1875,18 @@ namespace ConfigMaker.Mvvm.Models
             }
             else if (this.StateBinding == EntryStateBinding.Alias)
             {
-                //int selectedIndex = this.aliasSetVM.GetFirstSelectedIndex();
+                ItemModel selectedItem = this.AliasSetModel.GetSelectedItem();
 
-                //if (selectedIndex == -1) return;
-
-                //// Узнаем какие элементы привязаны к текущей команде
-                //List<Entry> attachedEntries = (List<Entry>)(this.aliasSetVM.Items[selectedIndex].Tag);
-
-                //attachedEntries.ForEach(entry =>
-                //{
-                //    AddAttachment(entry.PrimaryKey, solidAttachments);
-                //    // Обновим интерфейс согласно элементам, привязанным к текущему состоянию
-                //    this.GetController(entry.PrimaryKey).UpdateUI(entry);
-                //});
+                if (selectedItem != null)
+                {
+                    List<Entry> attachedToAlias = (List<Entry>)(this.AliasSetModel.GetSelectedItem().Tag);
+                    attachedToAlias.ForEach(entry =>
+                    {
+                        AddAttachment(entry.PrimaryKey, this.SolidAttachments);
+                        // Обновим интерфейс согласно элементам, привязанным к текущему состоянию
+                        this.GetController(entry.PrimaryKey).UpdateUI(entry);
+                    });
+                }
             }
             else { } // InvalidState
 
@@ -1977,7 +2130,7 @@ namespace ConfigMaker.Mvvm.Models
                 {
                     // И при этом если ни одной команды не создано, то задаем неверное состояние
                     coercedState =
-                        true ? //this.aliasSetVM.Items.Count == 0 ? // TODO
+                        this.AliasSetModel.Items.Count == 0 ?
                         EntryStateBinding.InvalidState :
                         EntryStateBinding.Alias;
                 }

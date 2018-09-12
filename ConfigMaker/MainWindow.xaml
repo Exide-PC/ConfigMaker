@@ -387,7 +387,7 @@
             </GroupBox>
         </DataTemplate>
 
-        <!--<DataTemplate DataType="{x:Type viewmodels:AliasControllerViewModel}">
+        <DataTemplate DataType="{x:Type viewmodels:AliasSetViewModel}">
             <Grid IsEnabled="{Binding IsEnabled}">
                 <Grid.RowDefinitions>
                     <RowDefinition Height="30"/>
@@ -398,13 +398,13 @@
                             Text="{Binding Input, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" 
                             Width="250"/>
                     <Button 
-                            IsEnabled="{Binding AddButtonEnabled}" 
+                            IsEnabled="{Binding AdditionEnabled}" 
                             Content="{x:Static res:Resources.Add_Button}"
-                            Click="AddAliasButton_Click"/>
+                            Command="{Binding AddCommand}"/>
                     <Button 
-                            IsEnabled="{Binding DeleteButtonEnabled}" 
+                            IsEnabled="{Binding DeletingEnabled}" 
                             Content="{x:Static res:Resources.Remove_Button}"
-                            Click="DeleteAliasButton_Click"/>
+                            Command="{Binding DeleteCommand}"/>
                 </StackPanel>
                 <Border Grid.Row="1" Style="{StaticResource CustomBorder}" Margin="0,2,0,0">
                     <ItemsControl ItemsSource="{Binding Items}">
@@ -416,7 +416,7 @@
                     </ItemsControl>
                 </Border>
             </Grid>
-        </DataTemplate>-->
+        </DataTemplate>
 
         <DataTemplate DataType="{x:Type viewmodels:AttachmentsViewModel}">
             <Button Height="Auto" Width="Auto" 
@@ -704,6 +704,7 @@
                     </Grid.Style>
                     <ContentControl Content="{Binding SolidAttachmentsVM}"/>
                 </Grid>
+                <!--keyboard grid-->
                 <Grid x:Name="keyboardGrid" Grid.Row="3" Grid.ColumnSpan="4" Margin="1">
                     <Grid.ColumnDefinitions>
                         <ColumnDefinition Width="4*"/>
@@ -722,6 +723,7 @@
                     </Grid.Style>
                     <local:VirtualKeyboard DataContext="{Binding KeyboardViewModel}" Grid.ColumnSpan="2" Margin="0,0,-0.4,0.8"/>
                 </Grid>
+                <!--alias grid-->
                 <Grid x:Name="aliasGrid" Grid.Row="3" Grid.ColumnSpan="4" Margin="1">
                     <Grid.Style>
                         <Style TargetType="Grid">
@@ -734,12 +736,7 @@
                         </Style>
                     </Grid.Style>
                     <Grid>
-                        <Grid.RowDefinitions>
-                            <RowDefinition Height="30"/>
-                            <RowDefinition Height="1*"/>
-                        </Grid.RowDefinitions>
-                        <ContentControl Name="aliasContentControl"/>
-                        <StackPanel HorizontalAlignment="Left" VerticalAlignment="Bottom" Orientation="Horizontal"/>
+                        <ContentControl Name="aliasContentControl" Content="{Binding AliasSetViewModel}"/>
                     </Grid>
                 </Grid>
                 <StackPanel Orientation="Horizontal" Grid.Row="2" Grid.ColumnSpan="4">

@@ -1,8 +1,6 @@
 ﻿using ConfigMaker.Mvvm.Models;
 using System;
 using System.Collections.Generic;
-using System.Collections.ObjectModel;
-using System.Collections.Specialized;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -10,12 +8,12 @@ using System.Windows.Input;
 
 namespace ConfigMaker.Mvvm.ViewModels
 {
-    public class CustomCmdViewModel : EntryViewModel
+    public class AliasSetViewModel: EntryViewModel
     {
         public ICommand AddCommand { get; }
         public ICommand DeleteCommand { get; }
 
-        public CustomCmdViewModel(InputItemsControllerModel model): base(model)
+        public AliasSetViewModel(AliasSetModel model): base(model)
         {
             this.AddCommand = new DelegateCommand((obj) => ((InputItemsControllerModel)this.Model).InvokeAddition());
             this.DeleteCommand = new DelegateCommand((obj) => ((InputItemsControllerModel)this.Model).InvokeDeleting());
@@ -33,23 +31,23 @@ namespace ConfigMaker.Mvvm.ViewModels
                 return items;
             }
         }
-        
+
         public string Input
         {
-            get => ((InputItemsControllerModel)this.Model).Input;
-            set => ((InputItemsControllerModel)this.Model).Input = value;
+            get => ((AliasSetModel)this.Model).Input;
+            set => ((AliasSetModel)this.Model).Input = value;
         }
 
         public bool AdditionEnabled
         {
-            get => ((InputItemsControllerModel)this.Model).AdditionEnabled;
-            set => ((InputItemsControllerModel)this.Model).AdditionEnabled = value;
+            get => ((AliasSetModel)this.Model).AdditionEnabled;
+            set => ((AliasSetModel)this.Model).AdditionEnabled = value;
         }
 
         public bool DeletingEnabled
         {
-            get => ((InputItemsControllerModel)this.Model).DeletingEnabled;
-            set => ((InputItemsControllerModel)this.Model).DeletingEnabled = value;
+            get => ((AliasSetModel)this.Model).DeletingEnabled;
+            set => ((AliasSetModel)this.Model).DeletingEnabled = value;
         }
     }
 }

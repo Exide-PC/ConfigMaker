@@ -28,6 +28,8 @@ namespace ConfigMaker.Mvvm.ViewModels
 
         public ObservableCollection<EntryViewModel> ExtraControllerViewModels { get; } =
             new ObservableCollection<EntryViewModel>();
+        
+        public AliasSetViewModel AliasSetViewModel { get; }
 
         public VirtualKeyboardViewModel KeyboardViewModel { get; }
 
@@ -218,6 +220,8 @@ namespace ConfigMaker.Mvvm.ViewModels
                 else if (model is VolumeRegulatorModel volumeModel)
                     this.ExtraControllerViewModels.Add(new VolumeRegulatorViewModel(volumeModel));
             }
+
+            this.AliasSetViewModel = new AliasSetViewModel(this.Model.AliasSetModel);
             
             this.StateBindingItemsVM = new ComboBoxItemsViewModel()
             {

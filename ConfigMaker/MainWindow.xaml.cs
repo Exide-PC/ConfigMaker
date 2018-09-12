@@ -142,55 +142,7 @@ namespace ConfigMaker
             //}
         }
 
-        //private void kb_OnKeyboardKeyDown(object sender, VirtualKeyboard.KeyboardClickRoutedEvtArgs e)
-        //{
-        //    this.MainVM.ClickButton(e.Key, e.SpecialKeyFlags);
-        //    this.ColorizeKeyboard();
-        //}
 
-        //private void KeyboardKeyDownHandler(object sender, VirtualKeyboard.KeyboardClickRoutedEvtArgs args)
-        //{
-        //    // Определим новую последовательность
-        //    string key = args.Key.ToLower();
-
-        //    // Убедимся, что в комбобоксе выделен нужный элемент
-        //    this.iKeyboard.IsSelected = true;
-
-        //    if (currentKeySequence == null || currentKeySequence.Keys.Length == 2 ||
-        //        currentKeySequence.Keys.Length == 1 && !args.SpecialKeyFlags.HasFlag(VirtualKeyboard.SpecialKey.Shift))
-        //    {
-        //        // Теперь создаем новую последовательность с 1 клавишей
-        //        currentKeySequence = new KeySequence(key);
-        //        this.SetStateAndUpdateUI(EntryStateBinding.KeyDown);
-
-        //        // Отредактируем текст у панелей
-        //        this.keyDownAttachmentsVM.Hint = string.Format(Res.KeyDown1_Format, currentKeySequence[0].ToUpper());
-        //        this.keyUpAttachmentsVM.Hint = string.Format(Res.KeyUp1_Format, currentKeySequence[0].ToUpper());
-        //    }
-        //    else if (currentKeySequence.Keys.Length == 1)
-        //    {
-        //        // Иначе в последовательности уже есть 1 кнопка и надо добавить вторую
-        //        // Проверяем, что выбрана не та же кнопка
-        //        if (currentKeySequence[0] == key) return;
-
-        //        currentKeySequence = new KeySequence(currentKeySequence[0], key);
-        //        this.SetStateAndUpdateUI(EntryStateBinding.KeyDown);
-
-        //        string key1Upper = currentKeySequence[0].ToUpper();
-        //        string key2Upper = currentKeySequence[1].ToUpper();
-
-        //        this.keyDownAttachmentsVM.Hint = string.Format(Res.KeyDown2_Format, key2Upper, key1Upper);
-        //        this.keyUpAttachmentsVM.Hint = string.Format(Res.KeyUp2_Format, key2Upper, key1Upper);
-        //    }
-
-        //    ColorizeKeyboard();
-
-        //    // Обновляем интерфейс под новую последовательность
-        //    this.UpdateAttachmentPanels();
-        //}
-
-
- 
         //#region Proxy methods
         //private void CmdInputTextbox_TextChanged(object sender, TextChangedEventArgs e)
         //{
