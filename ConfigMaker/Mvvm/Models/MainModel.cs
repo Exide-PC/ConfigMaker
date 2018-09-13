@@ -45,6 +45,7 @@ namespace ConfigMaker.Mvvm.Models
         public AliasSetModel AliasSetModel { get; private set; }
 
         public VirtualKeyboardModel KeyboardModel { get; }
+        public SearchModel SearchModel { get; }
 
         public EntryStateBinding StateBinding
         {
@@ -89,8 +90,7 @@ namespace ConfigMaker.Mvvm.Models
             get => this._currentKeySequence;
             set => this.SetProperty(ref _currentKeySequence, value);
         }
-
-        //AliasControllerViewModel aliasSetVM = null;
+        
         public AttachmentsModel KeyDownAttachments { get; }
         public AttachmentsModel KeyUpAttachments { get; }
         public AttachmentsModel SolidAttachments { get; }
@@ -108,6 +108,14 @@ namespace ConfigMaker.Mvvm.Models
         public MainModel()
         {
             this.KeyboardModel = new VirtualKeyboardModel();
+            this.SearchModel = new SearchModel();
+
+            // Добавляем слушатель, который будет искать элементы при вводе
+            this.SearchModel.PropertyChanged += (_, arg) =>
+            {
+                if (arg.PropertyName == nameof(SearchModel.SearchInput))
+                    this.SearchGameSettings();
+            };
 
             this.KeyDownAttachments = new AttachmentsModel();
             this.KeyUpAttachments = new AttachmentsModel();
@@ -143,10 +151,7 @@ namespace ConfigMaker.Mvvm.Models
                 this.CustomCfgName = this.cfg.CfgName;
                 this.CustomCfgPath = this.cfg.CsgoCfgPath;
             }
-
-            // Добавляем слушателя на нажатие виртуальной клавиатуры
-            //this.kb.OnKeyboardKeyDown += KeyboardKeyDownHandler;
-
+            
             // Пусть коллекция сама добавляет слушатель нажатия новым элементам
             this.entryControllers.CollectionChanged += (_, arg) =>
             {
@@ -154,7 +159,9 @@ namespace ConfigMaker.Mvvm.Models
                 {
                     EntryController controller = (EntryController)arg.NewItems[0];
                     EntryModel entryModel = controller.Model;
-                    entryModel.Click += (__, ___) => HandleEntryClick(entryModel.Key);
+                    // Добавим слушатель нажатия, если у элемента есть чекбокс
+                    if (entryModel.IsClickable == true)
+                        entryModel.Click += (__, ___) => HandleEntryClick(entryModel.Key);
                 }
             };
 
@@ -1096,50 +1103,25 @@ namespace ConfigMaker.Mvvm.Models
             customCmdModel.OnAddition += (_, __) => this.AddEntry(customCmdEntryKey, false);
             customCmdModel.OnDeleting += (_, __) => this.AddEntry(customCmdEntryKey, false);
             
-            //this.AddCmdCommand = new DelegateCommand(() =>
-            //    {
-            //        customCmdVM.Items.Add(new ItemViewModel() { Text = customCmdVM.Input });
-            //        this.AddEntry(execCustomCmdsEntryKey, false);
-            //    });
-            //    // Обработчик нажатия на кнопку добавления неизвестной программе команды
-            //    addUnknownCmdButton.Click += (sender, args) =>
-            //    {
-            //        // Перейдем в клатке с соответствующим контроллером
-            //        this.GetController(execCustomCmdsEntryKey).Focus();
-            //        //this.entryControllers[execCustomCmdsEntryKey].
-            //        customCmdVM.IsChecked = true;
-
-            //        // Добавим указанную пользователем команду в контроллер ExecCustomCmds
-            //        string cmd = searchCmdBox.Text.Trim();
-            //        customCmdVM.Input = cmd;
-
-            //        // И выполним команду по добавлению
-            //        this.AddCmdCommand.Execute(null);
-
-            //    };
-
-            //    // А так же повесим действие на кнопку удаления команды
-            //    this.DeleteCmdCommand = new DelegateCommand(() =>
-            //    {
-            //        int firstSelectedIndex = customCmdVM.Items
-            //            .IndexOf(customCmdVM.Items.First(b => b.IsSelected));
-
-            //        customCmdVM.Items.RemoveAt(firstSelectedIndex);
-            //        AddEntry(execCustomCmdsEntryKey, false);
-            //    });
-
             this.entryControllers.Add(new EntryController()
             {
                 Model = customCmdModel,
                 Focus = () => this.SelectedTab = 3,
                 Restore = () =>
                 {
+                    // Очистим все поля, снимем выделения
+                    customCmdModel.IsChecked = false;
                     customCmdModel.Items.Clear();
                     customCmdModel.Input = string.Empty;
                     customCmdModel.AdditionEnabled = false;
                     customCmdModel.DeletingEnabled = false;
                 },
-                CoerceAccess = (state) => customCmdModel.IsEnabled = state != EntryStateBinding.InvalidState,
+                CoerceAccess = (state) =>
+                {
+                    customCmdModel.IsEnabled = state != EntryStateBinding.InvalidState;
+                    // Уточним доступна ли кнопка добавления неизвестной команды
+                    this.SearchModel.IsAdditionPossible = customCmdModel.IsEnabled;
+                },
                 Generate = () =>
                 {
                     // Получим все указанные пользователем команды
@@ -1283,16 +1265,6 @@ namespace ConfigMaker.Mvvm.Models
 
             volumeModel.PropertyChanged += (_, arg) =>
             {
-                //string prop = arg.PropertyName;
-
-                //if (prop == nameof(VolumeRegulatorModel.From) ||
-                //    prop == nameof(VolumeRegulatorModel.To) ||
-                //    prop == nameof(VolumeRegulatorModel.Step) ||
-                //    prop == nameof(VolumeRegulatorModel.Mode))
-                //{
-                //    this.AddEntry(volumeRegulatorEntryKey, true);
-                //}
-
                 string prop = arg.PropertyName;
                 
                 if (prop == nameof(VolumeRegulatorModel.From))
@@ -1455,7 +1427,7 @@ namespace ConfigMaker.Mvvm.Models
             aliasModel = new AliasSetModel()
             {
                 Key = aliasSetEntryKey,
-                IsSelectable = false,
+                IsClickable = false,
                 InputValidator = aliasValidator,
                 ItemCreator = itemCreator
             };
@@ -1467,7 +1439,6 @@ namespace ConfigMaker.Mvvm.Models
                     this.StateBinding = EntryStateBinding.Alias;
 
                 this.AddEntry(aliasModel.Key, false);
-                //AddAlias(aliasModel.Input, new List<Entry>());
             };
 
             aliasModel.OnDeleting += (_, __) =>
@@ -1510,9 +1481,6 @@ namespace ConfigMaker.Mvvm.Models
                 newItem.Tag = attachedEntries;
                 
                 aliasModel.InvokeAddition(newItem);
-                
-                //this.AddEntry(aliasModel.Key, false);
-                //UpdateAttachments();
             }
 
 
@@ -1629,8 +1597,8 @@ namespace ConfigMaker.Mvvm.Models
                     }
                 case EntryStateBinding.Alias:
                     {
-                        //string aliasName = (aliasSetVM.GetSelectedItem().Text.ToString());
-                        //prefixBuilder.Append($"{aliasName}");
+                        string aliasName = (this.AliasSetModel.GetSelectedItem().Text.ToString());
+                        prefixBuilder.Append($"{aliasName}");
                         break;
                     }
                 default:
@@ -1790,6 +1758,11 @@ namespace ConfigMaker.Mvvm.Models
             return this.entryControllers.FirstOrDefault(c => c.Model.Key == cmd);
         }
 
+        EntryController GetController<T>()
+        {
+            return this.entryControllers.FirstOrDefault(c => c.Model is T);
+        }
+
         void ResetAttachmentPanels()
         {
             // Получим предыдущие элементы и сбросим связанные с ними элементы интерфейса
@@ -1863,7 +1836,7 @@ namespace ConfigMaker.Mvvm.Models
             {
                 // Получаем все элементы по умолчанию, которые должны быть отображены в панели
                 List<Entry> attachedEntries = this.cfgManager.DefaultEntries
-                    .Where(e => this.GetController(e.PrimaryKey).Model.IsSelectable).ToList();
+                    .Where(e => this.GetController(e.PrimaryKey).Model.IsClickable).ToList();
 
                 // Теперь заполним панели новыми элементами
                 attachedEntries.ForEach(entry =>
@@ -1982,6 +1955,73 @@ namespace ConfigMaker.Mvvm.Models
                 return Directory.GetCurrentDirectory();
         }
 
+        void SearchGameSettings()
+        {
+            string input = this.SearchModel.SearchInput.Trim().ToLower();
+
+            IEnumerable<SettingsCategoryModel> categories = this.SettingsCategoryModels;
+
+            // Выводим все элементы, если ничего не ищем
+            if (input.Length == 0)
+            {
+                // То есть делаем видимыми все категории со всеми включенными в них элементами
+                foreach (SettingsCategoryModel category in categories)
+                {
+                    foreach (DynamicEntryModel entryController in category.Items)
+                        entryController.IsVisible = true;
+
+                    category.IsVisible = true;
+                }
+
+                this.SearchModel.IsUnknownCommand = false;
+            }
+            else
+            {
+                int foundCount = 0;
+
+                foreach (SettingsCategoryModel category in categories)
+                {
+                    foreach (DynamicEntryModel entryController in category.Items)
+                    {
+                        string entryKey = entryController.Key;
+                        if (entryKey.ToLower().Contains(input))
+                        {
+                            entryController.IsVisible = true;
+                            foundCount++;
+                        }
+                        else
+                        {
+                            entryController.IsVisible = false;
+                        }
+                    }
+
+                    // Если в категории нет ни одного подходящего элемента - скрываем всю категорию
+                    if (category.Items.All(controller => !controller.IsVisible))
+                        category.IsVisible = false;
+                    else
+                        category.IsVisible = true;
+                }
+
+                // Если ничего не выведено - предалагем добавить
+                if (foundCount == 0 && this.GetController<CustomCmdModel>().Model.IsEnabled)
+                {
+                    this.SearchModel.Hint = string.Format(Res.UnknownCommandExecution_Format, input);
+                    this.SearchModel.IsUnknownCommand = true;
+                }
+                else
+                    this.SearchModel.IsUnknownCommand = false;
+            }
+        }
+
+        public void AddUnknownCommand()
+        {
+            EntryController customCmdController = this.GetController<CustomCmdModel>();
+            customCmdController.Focus();
+
+            ((CustomCmdModel)customCmdController.Model)
+                .InvokeAddition(this.SearchModel.SearchInput);
+        }
+
         public void ClickButton(string key, SpecialKey flags)
         {
             //Определим новую последовательность
@@ -2012,8 +2052,6 @@ namespace ConfigMaker.Mvvm.Models
             // Зададим привязку к нажатию клавиши
             this.StateBinding = EntryStateBinding.KeyDown;
 
-            //ColorizeKeyboard();
-
             // Обновляем интерфейс под новую последовательность
             this.UpdateAttachments();
         }
@@ -2025,7 +2063,6 @@ namespace ConfigMaker.Mvvm.Models
                 controller.Restore();
 
             // Зададим привязку к дефолтному состоянию
-            //keyboardAliasCombobox.SelectedIndex = 0; // TODO:
             this.StateBinding = EntryStateBinding.Default;
 
             foreach (Entry entry in newCfgManager.DefaultEntries)
@@ -2033,7 +2070,6 @@ namespace ConfigMaker.Mvvm.Models
 
             this.cfgManager = newCfgManager;
             this.UpdateAttachments();
-            //this.ColorizeKeyboard(); // TODO:
         }
 
         public void SaveCfgManager(string path)

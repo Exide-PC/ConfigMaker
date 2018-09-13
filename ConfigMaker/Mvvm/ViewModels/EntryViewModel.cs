@@ -14,7 +14,7 @@ namespace ConfigMaker.Mvvm.ViewModels
         {
             this.SelectCommand = new DelegateCommand((obj) =>
             {
-                this.Model.Select();
+                this.Model.OnClick();
             });
         }
 
@@ -39,8 +39,8 @@ namespace ConfigMaker.Mvvm.ViewModels
 
         public bool IsSelectable
         {
-            get => this.Model.IsSelectable;
-            set => this.Model.IsSelectable = value;
+            get => this.Model.IsClickable;
+            set => this.Model.IsClickable = value;
         }
 
         public string Content

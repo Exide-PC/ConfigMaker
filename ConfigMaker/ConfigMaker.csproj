@@ -91,6 +91,7 @@
     <Compile Include="Mvvm\Models\GameSettings\DynamicEntryModel.cs" />
     <Compile Include="Mvvm\Models\EntryModel.cs" />
     <Compile Include="Mvvm\Models\GameSettings\ComboBoxControllerModel.cs" />
+    <Compile Include="Mvvm\Models\GameSettings\SearchModel.cs" />
     <Compile Include="Mvvm\Models\GameSettings\SettingsCategoryModel.cs" />
     <Compile Include="Mvvm\Models\GameSettings\IntervalControllerModel.cs" />
     <Compile Include="Mvvm\Models\GameSettings\TextboxControllerModel.cs" />
@@ -102,7 +103,8 @@
     <Compile Include="Mvvm\ViewModelBase.cs" />
     <Compile Include="Mvvm\ViewModels\AliasSetViewModel.cs" />
     <Compile Include="Mvvm\ViewModels\ComboBoxItemsViewModel.cs" />
-    <Compile Include="Mvvm\ViewModels\GameSettings\GameSettingsCategoryViewModel.cs" />
+    <Compile Include="Mvvm\ViewModels\GameSettings\SearchViewModel.cs" />
+    <Compile Include="Mvvm\ViewModels\GameSettings\SettingsCategoryViewModel.cs" />
     <Compile Include="Mvvm\ViewModels\InputItemsControllerViewModel.cs" />
     <Compile Include="Mvvm\ViewModels\KeyboardViewModel.cs" />
     <Compile Include="Mvvm\ViewModels\MainViewModel.cs" />

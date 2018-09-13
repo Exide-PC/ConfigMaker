@@ -7,7 +7,7 @@ namespace ConfigMaker.Mvvm.Models
 {
     public class InputItemsControllerModel: EntryModel
     {
-        string _input;
+        string _input = string.Empty;
         bool _addButtonEnabled = false;
         bool _deleteButtonEnabled = false;
         //Predicate<string> _inputValidator = (input) => true;
@@ -90,8 +90,17 @@ namespace ConfigMaker.Mvvm.Models
 
         public void InvokeAddition(ItemModel item)
         {
-            if (this.InputValidator(item.Text) == true)
+            // Проверим, что добавление возможно в текущем состоянии. 
+            // И если возможно - проверим правильность ввода
+            if (this.IsEnabled && this.InputValidator(item.Text) == true)
             {
+                // Если элемент не в конфиге, то имитируем нажатие пользователя
+                if (this.IsChecked == false)
+                {
+                    this.IsChecked = true;
+                    this.OnClick();
+                }
+
                 this.Items.Add(item);
                 this.Input = string.Empty;
             }

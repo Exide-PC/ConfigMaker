@@ -73,6 +73,10 @@ namespace ConfigMaker.Mvvm.Models
                                 this.Items[0].IsSelected = true;
                                 this.SelectedIndex = 0;
                             }   
+                            else
+                            {
+                                this.SelectedIndex = -1;
+                            }
 
                             ItemModel item = (ItemModel)arg.OldItems[0];
                             item.Dispose();

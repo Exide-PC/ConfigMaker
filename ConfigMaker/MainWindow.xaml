@@ -214,7 +214,7 @@
         </DataTemplate>
 
         <DataTemplate DataType="{x:Type viewmodels:SettingsCategoryViewModel}">
-            <StackPanel>
+            <StackPanel Visibility="{Binding IsVisible, Converter={StaticResource boolToVisibilityConverter}}">
                 <Border>
                     <TextBlock Text="{Binding Name}" HorizontalAlignment="Center" FontWeight="Bold"/>
                 </Border>
@@ -477,6 +477,20 @@
                 </Grid>
             </Border>-->
         </DataTemplate>
+
+        <DataTemplate DataType="{x:Type viewmodels:SearchViewModel}">
+            <materialDesign:ColorZone HorizontalAlignment="Left" Mode="Standard" >
+                <StackPanel Orientation="Horizontal">
+                    <TextBox Text="{Binding SearchInput, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" Width="180" Height="32" materialDesign:HintAssist.Hint="{x:Static res:Resources.Search_Hint}"/>
+                    <materialDesign:PackIcon VerticalAlignment="Center" Opacity="0.70" Kind="Magnify"/>
+                    <Button Style="{StaticResource MaterialDesignFlatButton}" 
+                            Margin="15 0 0 0" 
+                            Visibility="{Binding IsAddButtonVisible, Converter={StaticResource boolToVisibilityConverter}}" 
+                            Content="{Binding Hint}"
+                            Command="{Binding Path=DataContext.AddUnknownCommand, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=Window}}"/>
+                </StackPanel>
+            </materialDesign:ColorZone>
+        </DataTemplate>
     </Window.Resources>
     <Window.DataContext>
         <viewmodels:MainViewModel/>
@@ -596,13 +610,14 @@
                             </Grid.Style>
                             <Grid>
                                 <DockPanel>
-                                    <materialDesign:ColorZone HorizontalAlignment="Left" Mode="Standard" DockPanel.Dock="Top">
+                                    <ContentControl Content="{Binding SearchViewModel}" DockPanel.Dock="Top"/>
+                                    <!--<materialDesign:ColorZone HorizontalAlignment="Left" Mode="Standard" DockPanel.Dock="Top">
                                         <StackPanel Orientation="Horizontal">
-                                            <TextBox Name="searchCmdBox" Width="180" materialDesign:HintAssist.Hint="{x:Static res:Resources.Search_Hint}" TextChanged="SearchCmdTextbox"/>
+                                            <TextBox Text="{Binding SearchInput, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" Width="180" materialDesign:HintAssist.Hint="{x:Static res:Resources.Search_Hint}"/>
                                             <materialDesign:PackIcon VerticalAlignment="Center" Opacity="0.70" Kind="Magnify"/>
                                             <Button Style="{StaticResource MaterialDesignFlatButton}" Margin="15 0 0 0" Name="addUnknownCmdButton" Visibility="Hidden" Content="{x:Static res:Resources.UnknownCommandExecution_Format}"/>
                                         </StackPanel>
-                                    </materialDesign:ColorZone>
+                                    </materialDesign:ColorZone>-->
                                     <ScrollViewer Margin="0,2,0,0">
                                         <ItemsControl ItemsSource="{Binding GameSettingsCategoryViewModels}">
                                             <ItemsControl.ItemsPanel>

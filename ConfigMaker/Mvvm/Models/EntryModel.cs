@@ -24,7 +24,7 @@ namespace ConfigMaker.Mvvm.Models
 
         }
 
-        public void Select()
+        public void OnClick()
         {
             this.Click?.Invoke(this, null);
         }
@@ -47,7 +47,7 @@ namespace ConfigMaker.Mvvm.Models
             set => this.SetProperty(ref _isChecked, value);
         }
 
-        public bool IsSelectable
+        public bool IsClickable
         {
             get => _isSelectable;
             set => this.SetProperty(ref _isSelectable, value);

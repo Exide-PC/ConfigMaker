@@ -32,6 +32,7 @@ namespace ConfigMaker.Mvvm.ViewModels
         public AliasSetViewModel AliasSetViewModel { get; }
 
         public VirtualKeyboardViewModel KeyboardViewModel { get; }
+        public SearchViewModel SearchViewModel { get; }
 
         public EntryStateBinding StateBinding
         {
@@ -56,7 +57,7 @@ namespace ConfigMaker.Mvvm.ViewModels
             get => this.Model.SelectedTab;
             set => this.Model.SelectedTab = value;
         }
-        
+
         public AttachmentsViewModel KeyDownAttachmentsVM { get; }
         public AttachmentsViewModel KeyUpAttachmentsVM { get; }
         public AttachmentsViewModel SolidAttachmentsVM { get; }
@@ -73,11 +74,13 @@ namespace ConfigMaker.Mvvm.ViewModels
         public ICommand SaveAppCommand { get; }
         public ICommand ClickVirtualKey { get; }
         public ICommand GenerateCrosshairsCommand { get; }
+        public ICommand AddUnknownCommand { get; }
        
         
         public MainViewModel(): base(new MainModel())
         {
             this.KeyboardViewModel = new VirtualKeyboardViewModel(this.Model.KeyboardModel);
+            this.SearchViewModel = new SearchViewModel(this.Model.SearchModel);
 
             this.ClickVirtualKey = new DelegateCommand((obj) =>
             {
@@ -167,6 +170,8 @@ namespace ConfigMaker.Mvvm.ViewModels
             {
                 this.Model.GenerateRandomCrosshairs();
             });
+
+            this.AddUnknownCommand = new DelegateCommand((obj) => this.Model.AddUnknownCommand());
 
             this.KeyDownAttachmentsVM = new AttachmentsViewModel(this.Model.KeyDownAttachments) { Tag = 0 };
             this.KeyUpAttachmentsVM = new AttachmentsViewModel(this.Model.KeyUpAttachments) { Tag = 1 };
