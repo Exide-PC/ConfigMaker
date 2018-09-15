@@ -1721,10 +1721,14 @@ namespace ConfigMaker.Mvvm.Models
                         // Проверяем, что добавляется не основной узел со всеми алиасами
                         if (entry.PrimaryKey != this.AliasSetModel.Key)
                         {
-                            // Добавляем текущий элемент к коллекции, привязанной к выбранной кнопке
+                            // Получим элемент, отвечающий за выбранный алиас
                             ItemModel selectedItem = this.AliasSetModel.GetSelectedItem();
-                            List<Entry> attachedToAlias = (List<Entry>)(selectedItem.Tag);
+                            // Получим команды, привязанные к алиасу, 
+                            // при этом отсеивая элементы с совпадающими ключами
+                            List<Entry> attachedToAlias = ((List<Entry>)(selectedItem.Tag))
+                                .Where(e => e.PrimaryKey != entry.PrimaryKey).ToList();
 
+                            // Добавим новый элемент и зададим новый тег
                             attachedToAlias.Add(entry);
                             selectedItem.Tag = attachedToAlias;
 
