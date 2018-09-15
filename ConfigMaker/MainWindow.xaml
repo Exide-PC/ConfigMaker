@@ -23,6 +23,7 @@
         <converters:BoolToFontWeightConverter x:Key="boolToFontweightConverter"/>
         <converters:BoolToVisibilityConverter x:Key="boolToVisibilityConverter"/>
         <converters:EquivalenceChecker x:Key="equivalenceChecker"/>
+        <converters:MultiBindingToArrayConverter x:Key="multiBindingToArrayConverter"/>
         <Style x:Key="BubbleButton" TargetType="materialDesign:Chip">
             <Setter Property="FontSize" Value="10"/>
             <Setter Property="MinWidth" Value="40"/>
@@ -438,13 +439,33 @@
                                     </Style.Triggers>
                                 </Style>
                             </Border.Style>
-                            <ItemsControl ItemsSource="{Binding Items}">
-                                <ItemsControl.ItemsPanel>
-                                    <ItemsPanelTemplate>
-                                        <WrapPanel Orientation="Horizontal"/>
-                                    </ItemsPanelTemplate>
-                                </ItemsControl.ItemsPanel>
-                            </ItemsControl>
+                            <Grid>
+                                <ItemsControl ItemsSource="{Binding Items}">
+                                    <ItemsControl.ItemsPanel>
+                                        <ItemsPanelTemplate>
+                                            <WrapPanel Orientation="Horizontal"/>
+                                        </ItemsPanelTemplate>
+                                    </ItemsControl.ItemsPanel>
+                                </ItemsControl>
+                                <StackPanel Visibility="{Binding IsMovementEnabled, Converter={StaticResource boolToVisibilityConverter}}" Orientation="Horizontal" HorizontalAlignment="Right" VerticalAlignment="Bottom">
+                                    <Button Style="{StaticResource MaterialDesignFlatButton}" Padding="3,0,3,0" Command="{Binding Path=DataContext.MoveEntryCommand, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=Window}}">
+                                        <Button.CommandParameter>
+                                            <MultiBinding Converter="{StaticResource multiBindingToArrayConverter}" ConverterParameter="0">
+                                                <Binding Path="Tag"/>
+                                            </MultiBinding>
+                                        </Button.CommandParameter>
+                                        <materialDesign:PackIcon Kind="ArrowLeftThick"/>
+                                    </Button>
+                                    <Button Style="{StaticResource MaterialDesignFlatButton}" Padding="3,0,3,0" Command="{Binding Path=DataContext.MoveEntryCommand, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=Window}}">
+                                        <Button.CommandParameter>
+                                            <MultiBinding Converter="{StaticResource multiBindingToArrayConverter}" ConverterParameter="1">
+                                                <Binding Path="Tag"/>
+                                            </MultiBinding>
+                                        </Button.CommandParameter>
+                                        <materialDesign:PackIcon Kind="ArrowRightThick"/>
+                                    </Button>
+                                </StackPanel>
+                            </Grid>
                         </Border>
                     </ControlTemplate>
                 </Button.Template>

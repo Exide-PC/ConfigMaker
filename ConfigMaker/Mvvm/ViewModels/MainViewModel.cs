@@ -75,6 +75,7 @@ namespace ConfigMaker.Mvvm.ViewModels
         public ICommand ClickVirtualKey { get; }
         public ICommand GenerateCrosshairsCommand { get; }
         public ICommand AddUnknownCommand { get; }
+        public ICommand MoveEntryCommand { get; }
        
         
         public MainViewModel(): base(new MainModel())
@@ -172,6 +173,21 @@ namespace ConfigMaker.Mvvm.ViewModels
             });
 
             this.AddUnknownCommand = new DelegateCommand((obj) => this.Model.AddUnknownCommand());
+
+            this.MoveEntryCommand = new DelegateCommand((obj) =>
+            {
+                object[] arg = obj as object[];
+                int panelNumber = int.Parse(arg[0].ToString());
+                bool moveLeft = int.Parse(arg[1].ToString()) == 0;
+
+                AttachmentsModel targetModel = null;
+
+                if (panelNumber == 0) targetModel = this.KeyDownAttachmentsVM.Model;
+                else if (panelNumber == 1) targetModel = this.KeyUpAttachmentsVM.Model;
+                else targetModel = this.SolidAttachmentsVM.Model;
+
+                this.Model.MoveEntry(targetModel, moveLeft);
+            });
 
             this.KeyDownAttachmentsVM = new AttachmentsViewModel(this.Model.KeyDownAttachments) { Tag = 0 };
             this.KeyUpAttachmentsVM = new AttachmentsViewModel(this.Model.KeyUpAttachments) { Tag = 1 };

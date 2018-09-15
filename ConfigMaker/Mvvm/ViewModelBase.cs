@@ -9,7 +9,7 @@ namespace ConfigMaker.Mvvm
 {
     public class ViewModelBase<T>: BindableBase where T: BindableBase
     {
-        protected T Model => (T)_model;
+        public T Model => (T)_model;
 
         private T _model;
 

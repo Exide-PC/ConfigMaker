@@ -37,7 +37,7 @@ namespace ConfigMaker.Csgo.Commands
 
         public SingleCmd() { }
 
-        public SingleCmd(string cmd): this(cmd, true)
+        public SingleCmd(string cmd): this(cmd, false)
         {
 
         }

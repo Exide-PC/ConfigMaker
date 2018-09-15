@@ -120,6 +120,7 @@
     <Compile Include="Utils\Converters\CfgDirValidationRule.cs" />
     <Compile Include="Utils\Converters\EquivalenceChecker.cs" />
     <Compile Include="Utils\Converters\KeyToStyleConverter.cs" />
+    <Compile Include="Utils\Converters\MultiBindingToArrayConverter.cs" />
     <Compile Include="Utils\Converters\NameValidationRule.cs" />
     <Compile Include="Csgo\Config\Entries\Entry.cs" />
     <Compile Include="Csgo\Config\Entries\ParametrizedEntry.cs" />

@@ -20,11 +20,18 @@ namespace ConfigMaker.Mvvm.Models
             get => this._selectedIndex;
             set
             {
-                if (this._selectedIndex != value)
-                {
-                    this._selectedIndex = value;
+                // Сбросим все выделения
+                foreach (ItemModel item in this.Items)
+                    item.IsSelected = false;
+
+                if (value != -1)
+                    this.Items[value].IsSelected = true;
+
+                bool selectionChanged = this._selectedIndex != value;
+                this._selectedIndex = value;
+
+                if (selectionChanged)
                     this.SelectedIndexChanged?.Invoke(this, null);
-                }
             }
         }
 
@@ -39,47 +46,26 @@ namespace ConfigMaker.Mvvm.Models
                 {
                     case NotifyCollectionChangedAction.Add:
                         {
-                            // Сбросим выделения у всех пузырьков
-                            this.Items.Where(b => b.IsSelected).ToList().ForEach(b =>
-                            {
-                                b.IsSelected = false;
-                            });
-
-                            // И выделим первый добавленный
-                            ((ItemModel)arg.NewItems[0]).IsSelected = true;
                             this.SelectedIndex = arg.NewStartingIndex;
-                            //this.DeleteButtonEnabled = true;
 
                             foreach (object item in arg.NewItems)
                             {
                                 ItemModel castedItem = (ItemModel)item;
                                 castedItem.Click += ItemClickHandler;
-                                //if (clickHandler != null) castedItem.Click += clickHandler;
                             }
-
-                            // Проверим доступность кнопки добавления, т.к. возможно дублирование запрещено
-                            //this.AddButtonEnabled = this._inputValidator(this._input);
-
+                            
                             this.itemsCopy = this.Items.AsEnumerable();
                             break;
                         }
                     case NotifyCollectionChangedAction.Remove:
                         {
-                            this.Items.Where(b => b.IsSelected).ToList()
-                                .ForEach(b => b.IsSelected = false);
-
-                            if (this.Items.Count > 0)
-                            {
-                                this.Items[0].IsSelected = true;
-                                this.SelectedIndex = 0;
-                            }   
-                            else
-                            {
-                                this.SelectedIndex = -1;
-                            }
-
                             ItemModel item = (ItemModel)arg.OldItems[0];
                             item.Dispose();
+
+                            if (this.Items.Count > 0)
+                                this.SelectedIndex = 0;
+                            else
+                                this.SelectedIndex = -1;
 
                             this.itemsCopy = this.Items.AsEnumerable();
                             break;
@@ -102,18 +88,7 @@ namespace ConfigMaker.Mvvm.Models
 
         void ItemClickHandler(object sender, EventArgs args)
         {
-            for (int i = 0; i < this.Items.Count; i++)
-            {
-                ItemModel item = this.Items[i];
-
-                if (sender == item)
-                {
-                    ((ItemModel)sender).IsSelected = true;
-                    this.SelectedIndex = i;
-                }   
-                else
-                    item.IsSelected = false;
-            }
+            this.SelectedIndex = this.Items.IndexOf((ItemModel)sender);
         }
     }
 }

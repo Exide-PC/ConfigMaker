@@ -14,10 +14,17 @@ namespace ConfigMaker.Mvvm.ViewModels
     {
         public IEnumerable<ItemViewModel> Items
         {
-            get => this.Model.Items.Select(m => new ItemViewModel(m) { FontSize = 13, Height = 18 });
+            get
+            {
+                // Выведем или спрячем стрелки для перемещения элементов влево и вправо
+                this.IsMovementEnabled = this.Model.Items.Count > 1;
+                // И только после этого вернем сами элементы
+                return this.Model.Items.Select(m => new ItemViewModel(m) { FontSize = 13, Height = 18 });
+            }
         }
             
         bool _isSelected = false;
+        bool _isMovementEnabled = false;
         object _tag;
 
         public object Tag
@@ -41,6 +48,12 @@ namespace ConfigMaker.Mvvm.ViewModels
         {
             get => this._isSelected;
             set => this.SetProperty(ref _isSelected, value);
-        }   
+        }  
+        
+        public bool IsMovementEnabled
+        {
+            get => this._isMovementEnabled;
+            set => this.SetProperty(ref _isMovementEnabled, value);
+        }
     }
 }

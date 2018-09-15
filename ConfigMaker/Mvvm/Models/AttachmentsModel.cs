@@ -9,9 +9,6 @@ namespace ConfigMaker.Mvvm.Models
 {
     public class AttachmentsModel: BindableBase
     {
-        //public ObservableCollection<ItemModel> Items { get; } =
-        //new ObservableCollection<ItemModel>();
-
         public ObservableCollection<ItemModel> Items => this.itemsHolder.Items;
 
         ItemCollectionModel itemsHolder = new ItemCollectionModel();
@@ -26,6 +23,12 @@ namespace ConfigMaker.Mvvm.Models
         {
             get => this._hint;
             set => this.SetProperty(ref _hint, value);
+        }
+
+        public int SelectedIndex
+        {
+            get => this.itemsHolder.SelectedIndex;
+            set => this.itemsHolder.SelectedIndex = value;
         }
     }
 }

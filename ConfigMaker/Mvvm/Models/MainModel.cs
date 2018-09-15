@@ -937,7 +937,7 @@ namespace ConfigMaker.Mvvm.Models
                     },
                     Generate = () =>
                     {
-                        SingleCmd generatedCmd = new SingleCmd(entryModel.Content, false);
+                        SingleCmd generatedCmd = new SingleCmd(entryModel.Content);
 
                         return new ParametrizedEntry<string>()
                         {
@@ -1618,6 +1618,39 @@ namespace ConfigMaker.Mvvm.Models
 
             Entry generatedEntry = (Entry)controller.Generate();
             this.AddEntry(generatedEntry);
+        }
+
+        public void MoveEntry(AttachmentsModel attachmentsModel, bool moveLeft)
+        {
+            // Получим все ключи элементов, находящихся в выбранной панели
+            string[] targetKeys = attachmentsModel.Items.Select(i => i.Tag.ToString()).ToArray();
+
+            // Получим индекс первого выделенного элемента в панели
+            int selectedIndex = attachmentsModel.Items.IndexOf(
+                attachmentsModel.Items.First(i => i.IsSelected));
+
+            int totalEntries = attachmentsModel.Items.Count;
+
+            // Убедимся, что элементы действительно можно двигать
+            if (selectedIndex == 0 && moveLeft == true || selectedIndex == totalEntries - 1 && moveLeft == false) return;
+
+            // Извлекаем передвигаемый элемент, вычисляем его новый индекс
+            string targetKey = targetKeys[selectedIndex];
+            int newIndex = selectedIndex + (moveLeft ? -1 : 1);
+
+            // И меняем элементы местами
+            targetKeys[selectedIndex] = targetKeys[newIndex];
+            targetKeys[newIndex] = targetKey;
+
+            // Обновим элементы в панели
+            foreach (string entryKey in targetKeys)
+                this.AddEntry(entryKey, false);
+
+            // Обновим панели
+            this.UpdateAttachments();
+
+            // Выделим перемещенный элемент снова
+            attachmentsModel.SelectedIndex = newIndex;
         }
 
         void HandleEntryClick(string entryKey)
