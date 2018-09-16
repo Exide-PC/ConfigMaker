@@ -82,7 +82,12 @@ namespace ConfigMaker.Mvvm.Models
         public int SelectedTab
         {
             get => this._selectedTab;
-            set => this.SetProperty(ref _selectedTab, value);
+            set
+            {
+                // Сбрасываем поиск при смене вкладки
+                this.SetProperty(ref _selectedTab, value);
+                this.SearchModel.SearchInput = string.Empty;
+            }
         }
 
         public KeySequence KeySequence
@@ -309,6 +314,7 @@ namespace ConfigMaker.Mvvm.Models
             AddActionGroupHeader(Res.CategoryOther);
             AddAction("lookatweapon", true);
             AddAction("spray_menu", true);
+            AddAction("unbindall", false);
             AddAction("r_cleardecals", false);
             AddAction("callvote", false);
             AddAction("teammenu", false);
@@ -976,6 +982,7 @@ namespace ConfigMaker.Mvvm.Models
 
             AddGroupHeader(Res.CategoryClientCommands);
             AddComboboxCmdController("cl_autowepswitch", toggleStrings, 1, true);
+            AddComboboxCmdController("cl_showloadout", toggleStrings, 1, true);
             AddIntervalCmdController("cl_bob_lower_amt", 5, 30, 1, 21);
             AddIntervalCmdController("cl_bobamt_lat", 0.1, 2, 0.1, 0.4);
             AddIntervalCmdController("cl_bobamt_vert", 0.1, 2, 0.1, 0.25);
@@ -991,6 +998,7 @@ namespace ConfigMaker.Mvvm.Models
             AddIntervalCmdController("cl_hud_background_alpha", 0, 1, 0.1, 1);
             AddComboboxCmdController("cl_hud_playercount_pos", new string[] { Res.Top, Res.Bottom }, 0, true);
             AddComboboxCmdController("cl_hud_playercount_showcount", new string[] { Res.ShowAvatars, Res.ShowCount }, 0, true);
+            AddIntervalCmdController("hud_scaling", 0.5, 0.95, 0.05, 0.95);
             AddComboboxCmdController("cl_mute_enemy_team", toggleStrings, 0, true);
             AddTextboxNumberCmdController("cl_pdump", -1, true);
             AddComboboxCmdController("cl_radar_always_centered", toggleStrings, 0, true);
@@ -2055,10 +2063,11 @@ namespace ConfigMaker.Mvvm.Models
         public void AddUnknownCommand()
         {
             EntryController customCmdController = this.GetController<CustomCmdModel>();
-            customCmdController.Focus();
-
+            
             ((CustomCmdModel)customCmdController.Model)
                 .InvokeAddition(this.SearchModel.SearchInput);
+
+            customCmdController.Focus();
         }
 
         public void ClickButton(string key, SpecialKey flags)

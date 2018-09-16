@@ -669,4 +669,7 @@
   <data name="Disconnect" xml:space="preserve">
     <value>Отключиться</value>
   </data>
+  <data name="Unbindall" xml:space="preserve">
+    <value>unbindall</value>
+  </data>
 </root>

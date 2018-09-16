@@ -18,7 +18,7 @@
         Background="{DynamicResource MaterialDesignPaper}"
         FontFamily="{DynamicResource MaterialDesignFont}"
         mc:Ignorable="d"
-        Title="" Height="500" Width="1120" MinHeight="500" MinWidth="1120" Name="mainWindow" WindowState="Maximized">
+        Title="" Height="500" Width="1120" MinHeight="500" MinWidth="1120" Name="mainWindow" WindowState="Maximized" Closing="Window_Closing">
     <Window.Resources>
         <converters:BoolToFontWeightConverter x:Key="boolToFontweightConverter"/>
         <converters:BoolToVisibilityConverter x:Key="boolToVisibilityConverter"/>
@@ -579,7 +579,7 @@
                             </Grid.Style>
                             <ScrollViewer VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Auto">
                                 <Grid MinHeight="300" Height="{Binding Path=ActualHeight, RelativeSource={RelativeSource AncestorType=ScrollViewer}}">
-                                    <ItemsControl x:Name="itemsHolder" VerticalAlignment="Top" HorizontalAlignment="Left" ItemsSource="{Binding ActionTabItemViewModels}">
+                                    <ItemsControl VerticalAlignment="Top" HorizontalAlignment="Left" ItemsSource="{Binding ActionTabItemViewModels}">
                                         <ItemsControl.ItemsPanel>
                                             <ItemsPanelTemplate>
                                                 <WrapPanel Orientation="Vertical"/>

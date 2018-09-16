@@ -1636,6 +1636,15 @@ namespace ConfigMaker.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to unbindall.
+        /// </summary>
+        public static string Unbindall {
+            get {
+                return ResourceManager.GetString("Unbindall", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Add {0} command execution.
         /// </summary>
         public static string UnknownCommandExecution_Format {
