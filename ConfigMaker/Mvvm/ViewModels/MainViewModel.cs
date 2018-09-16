@@ -18,13 +18,13 @@ namespace ConfigMaker.Mvvm.ViewModels
 {
     public class MainViewModel : ViewModelBase<MainModel>
     {
-        public ObservableCollection<BindableBase> ActionTabItemViewModels { get; } =
-            new ObservableCollection<BindableBase>();
+        public ObservableCollection<CategoryViewModel> ActionTabItemViewModels { get; } =
+            new ObservableCollection<CategoryViewModel>();
         
         public BuyMenuViewModel BuyMenuViewModel { get; }
 
-        public ObservableCollection<SettingsCategoryViewModel> GameSettingsCategoryViewModels { get; } =
-            new ObservableCollection<SettingsCategoryViewModel>();
+        public ObservableCollection<CategoryViewModel> GameSettingsCategoryViewModels { get; } =
+            new ObservableCollection<CategoryViewModel>();
 
         public ObservableCollection<EntryViewModel> ExtraControllerViewModels { get; } =
             new ObservableCollection<EntryViewModel>();
@@ -205,31 +205,16 @@ namespace ConfigMaker.Mvvm.ViewModels
                 }
             };
 
-            foreach (BindableBase item in this.Model.ActionTabItems)
-            { 
-                if (item is TextModel)
-                {
-                    TextModel textModel = (TextModel)item;
-
-                    this.ActionTabItemViewModels.Add(new TextViewModel()
-                    {
-                        Text = textModel.Text,
-                        HorizontalAlignment = HorizontalAlignment.Center,
-                        VerticalAlignment = VerticalAlignment.Center
-                    });
-                }
-                else if (item is ActionModel)
-                {
-                    ActionModel actionModel = (ActionModel)item;
-                    this.ActionTabItemViewModels.Add(new ActionViewModel(actionModel));
-                }
+            foreach (CategoryModel item in this.Model.ActionTabItems)
+            {
+                this.ActionTabItemViewModels.Add(new CategoryViewModel(item));
             }
 
             this.BuyMenuViewModel = new BuyMenuViewModel(this.Model.BuyMenuModel);
 
-            foreach (SettingsCategoryModel category in this.Model.SettingsCategoryModels)
+            foreach (CategoryModel category in this.Model.SettingsCategoryModels)
             {
-                this.GameSettingsCategoryViewModels.Add(new SettingsCategoryViewModel(category));
+                this.GameSettingsCategoryViewModels.Add(new CategoryViewModel(category));
             }
 
             foreach (EntryModel model in this.Model.ExtraControllerModels)

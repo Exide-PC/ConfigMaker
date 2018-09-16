@@ -8,18 +8,11 @@ namespace ConfigMaker.Mvvm.Models
 {
     public class DynamicEntryModel: EntryModel
     {
-        bool _isVisible = true;
         bool _needToggle = false;
 
         public DynamicEntryModel(BindableBase controllerViewModel)
         {
             this.ControllerModel = controllerViewModel;
-        }
-
-        public bool IsVisible
-        {
-            get => this._isVisible;
-            set => this.SetProperty(ref _isVisible, value);
         }
 
         public bool NeedToggle

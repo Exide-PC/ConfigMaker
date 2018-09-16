@@ -35,11 +35,11 @@ namespace ConfigMaker.Mvvm.Models
             Alt = 0x0011
         }
 
-        public ObservableCollection<BindableBase> ActionTabItems { get; } = 
-            new ObservableCollection<BindableBase>();
+        public ObservableCollection<CategoryModel> ActionTabItems { get; } = 
+            new ObservableCollection<CategoryModel>();
         public BuyMenuModel BuyMenuModel { get; private set; }
-        public ObservableCollection<SettingsCategoryModel> SettingsCategoryModels { get; } =
-            new ObservableCollection<SettingsCategoryModel>();
+        public ObservableCollection<CategoryModel> SettingsCategoryModels { get; } =
+            new ObservableCollection<CategoryModel>();
         public ObservableCollection<EntryModel> ExtraControllerModels { get; } = 
             new ObservableCollection<EntryModel>();
         public AliasSetModel AliasSetModel { get; private set; }
@@ -186,7 +186,9 @@ namespace ConfigMaker.Mvvm.Models
 
         void InitActionTab()
         {
-            //// Локальный метод для подготовки и настройки нового чекбокса-контроллера
+            CategoryModel currentCategory = null;
+
+            // Локальный метод для подготовки и настройки нового чекбокса-контроллера
             ActionModel RegisterAction(string cmd, bool isMeta)
             {
                 ActionModel actionModel = new ActionModel()
@@ -196,7 +198,7 @@ namespace ConfigMaker.Mvvm.Models
                     ToolTip = isMeta ? $"+{cmd.ToLower()}" : $"{cmd.ToLower()}"
                 };
 
-                this.ActionTabItems.Add(actionModel);
+                currentCategory.Items.Add(actionModel);
                 return actionModel;
             }
 
@@ -238,30 +240,13 @@ namespace ConfigMaker.Mvvm.Models
             // Метод для добавления новой категории.
             void AddActionGroupHeader(string text)
             {
-                TextModel headerVM = new TextModel()
+                currentCategory = new CategoryModel()
                 {
-                    Text = text
+                    Name = text
                 };
 
-                this.ActionTabItems.Add(headerVM);
+                this.ActionTabItems.Add(currentCategory);
             };
-
-            AddActionGroupHeader(Res.CategoryCommonActions);
-            AddAction("attack", true);
-            AddAction("attack2", true);
-            AddAction("reload", true);
-            AddAction("drop", false);
-            AddAction("use", true);
-            AddAction("showscores", true);
-
-            AddActionGroupHeader(Res.CategoryMovement);
-            AddAction("forward", true);
-            AddAction("back", true);
-            AddAction("moveleft", true);
-            AddAction("moveright", true);
-            AddAction("jump", true);
-            AddAction("duck", true);
-            AddAction("speed", true);
 
             AddActionGroupHeader(Res.CategoryEquipment);
             AddAction("slot1", false);
@@ -284,6 +269,23 @@ namespace ConfigMaker.Mvvm.Models
             AddAction("buymenu", false);
             AddAction("autobuy", false);
             AddAction("rebuy", false);
+
+            AddActionGroupHeader(Res.CategoryCommonActions);
+            AddAction("attack", true);
+            AddAction("attack2", true);
+            AddAction("reload", true);
+            AddAction("drop", false);
+            AddAction("use", true);
+            AddAction("showscores", true);
+
+            AddActionGroupHeader(Res.CategoryMovement);
+            AddAction("forward", true);
+            AddAction("back", true);
+            AddAction("moveleft", true);
+            AddAction("moveright", true);
+            AddAction("jump", true);
+            AddAction("duck", true);
+            AddAction("speed", true);
 
             AddActionGroupHeader(Res.CategoryCommunication);
             AddAction("voicerecord", true);
@@ -444,7 +446,7 @@ namespace ConfigMaker.Mvvm.Models
             // Локальный метод для получения всего оружия
             List<EntryModel> GetWeapons()
             {
-                return buyMenuModel.Categories.SelectMany(c => c.Weapons).ToList();
+                return buyMenuModel.Categories.SelectMany(c => c.Items).ToList();
             };
 
             // Обработчик интерфейса настроек закупки
@@ -505,7 +507,7 @@ namespace ConfigMaker.Mvvm.Models
             });
 
             //StackPanel currentPanel = null;
-            WeaponCategoryModel currentCategory = null;
+            CategoryModel currentCategory = null;
 
             void AddWeapon(string weaponId, string localizedName)
             {
@@ -521,13 +523,13 @@ namespace ConfigMaker.Mvvm.Models
                         this.AddEntry(buyScenarioEntryKey, true);
                 };
 
-                currentCategory.Weapons.Add(weaponModel);
+                currentCategory.Items.Add(weaponModel);
             };
 
             // Метод для добавления новой категории. Определяет новый stackpanel и создает текстовую метку
             void AddGroupSeparator(string text)
             {
-                currentCategory = new WeaponCategoryModel() { Name = text };
+                currentCategory = new CategoryModel() { Name = text };
                 this.BuyMenuModel.Categories.Add(currentCategory);
             };
 
@@ -578,11 +580,11 @@ namespace ConfigMaker.Mvvm.Models
 
         void InitGameSettingsTab()
         {
-            SettingsCategoryModel currentCategory = null;
+            CategoryModel currentCategory = null;
             
             void AddGroupHeader(string header)
             {
-                currentCategory = new SettingsCategoryModel()
+                currentCategory = new CategoryModel()
                 {
                     Name = header
                 };
@@ -1996,15 +1998,15 @@ namespace ConfigMaker.Mvvm.Models
         {
             string input = this.SearchModel.SearchInput.Trim().ToLower();
 
-            IEnumerable<SettingsCategoryModel> categories = this.SettingsCategoryModels;
+            IEnumerable<CategoryModel> categories = this.SettingsCategoryModels;
 
             // Выводим все элементы, если ничего не ищем
             if (input.Length == 0)
             {
                 // То есть делаем видимыми все категории со всеми включенными в них элементами
-                foreach (SettingsCategoryModel category in categories)
+                foreach (CategoryModel category in categories)
                 {
-                    foreach (DynamicEntryModel entryController in category.Items)
+                    foreach (EntryModel entryController in category.Items)
                         entryController.IsVisible = true;
 
                     category.IsVisible = true;
@@ -2016,9 +2018,9 @@ namespace ConfigMaker.Mvvm.Models
             {
                 int foundCount = 0;
 
-                foreach (SettingsCategoryModel category in categories)
+                foreach (CategoryModel category in categories)
                 {
-                    foreach (DynamicEntryModel entryController in category.Items)
+                    foreach (EntryModel entryController in category.Items)
                     {
                         string entryKey = entryController.Key;
                         if (entryKey.ToLower().Contains(input))

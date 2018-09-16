@@ -8,7 +8,6 @@ namespace ConfigMaker.Mvvm.Models
 {
     public class BuyMenuModel: EntryModel
     {
-        public List<WeaponCategoryModel> Categories { get; } = 
-            new List<WeaponCategoryModel>();
+        public List<CategoryModel> Categories { get; } = new List<CategoryModel>();
     }
 }

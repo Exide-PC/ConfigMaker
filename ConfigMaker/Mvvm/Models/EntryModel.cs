@@ -9,6 +9,7 @@ namespace ConfigMaker.Mvvm.Models
 {
     public class EntryModel: BindableBase
     {
+        bool _isVisible = true;
         bool _isEnabled = true;
         bool _isChecked = false;
         bool _isSelectable = true;
@@ -70,6 +71,12 @@ namespace ConfigMaker.Mvvm.Models
                 // Сбросим свойство обратно, чтобы можно было фокусить элемент снова
                 //this.SetProperty(ref _isFocused, false);
             }
+        }
+
+        public bool IsVisible
+        {
+            get => this._isVisible;
+            set => this.SetProperty(ref _isVisible, value);
         }
 
         public object Arg

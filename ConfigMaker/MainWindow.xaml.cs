@@ -142,6 +142,16 @@ namespace ConfigMaker
             //}
         }
 
+        private void actionScroll_SizeChanged(object sender, SizeChangedEventArgs e)
+        {
+
+        }
+
+        private void Grid_SizeChanged(object sender, SizeChangedEventArgs e)
+        {
+
+        }
+
 
         //#region Proxy methods
         //private void CmdInputTextbox_TextChanged(object sender, TextChangedEventArgs e)

@@ -12,14 +12,14 @@ namespace ConfigMaker.Mvvm.ViewModels
     {
         public BuyMenuViewModel(BuyMenuModel buyMenuModel): base(buyMenuModel)
         {
-            foreach (WeaponCategoryModel category in buyMenuModel.Categories)
+            foreach (CategoryModel category in buyMenuModel.Categories)
             {
-                WeaponCategoryViewModel weaponCategoryVM = new WeaponCategoryViewModel(category);
+                CategoryViewModel weaponCategoryVM = new CategoryViewModel(category);
                 this.Categories.Add(weaponCategoryVM);
             }
         }
 
-        public ObservableCollection<WeaponCategoryViewModel> Categories { get; } =
-            new ObservableCollection<WeaponCategoryViewModel>();
+        public ObservableCollection<CategoryViewModel> Categories { get; } =
+            new ObservableCollection<CategoryViewModel>();
     }
 }

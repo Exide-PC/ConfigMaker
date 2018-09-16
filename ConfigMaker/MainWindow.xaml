@@ -166,20 +166,6 @@
                 </ItemsControl>
             </StackPanel>
         </DataTemplate>
-        <DataTemplate DataType="{x:Type viewmodels:WeaponCategoryViewModel}">
-            <StackPanel>
-                <Border>
-                    <TextBlock Text="{Binding Name}" HorizontalAlignment="Center" FontWeight="Bold"/>
-                </Border>
-                <ItemsControl ItemsSource="{Binding Path=Weapons}">
-                    <ItemsControl.ItemsPanel>
-                        <ItemsPanelTemplate>
-                            <StackPanel/>
-                        </ItemsPanelTemplate>
-                    </ItemsControl.ItemsPanel>
-                </ItemsControl>
-            </StackPanel>
-        </DataTemplate>
 
         <DataTemplate DataType="{x:Type viewmodels:DynamicEntryViewModel}">
             <Grid Height="30" Visibility="{Binding IsVisible, Converter={StaticResource boolToVisibilityConverter}}">
@@ -212,21 +198,6 @@
                     HorizontalAlignment="Center"
                     VerticalAlignment="Center"/>
             </Grid>
-        </DataTemplate>
-
-        <DataTemplate DataType="{x:Type viewmodels:SettingsCategoryViewModel}">
-            <StackPanel Visibility="{Binding IsVisible, Converter={StaticResource boolToVisibilityConverter}}">
-                <Border>
-                    <TextBlock Text="{Binding Name}" HorizontalAlignment="Center" FontWeight="Bold"/>
-                </Border>
-                <ItemsControl ItemsSource="{Binding Path=Items}">
-                    <ItemsControl.ItemsPanel>
-                        <ItemsPanelTemplate>
-                            <StackPanel/>
-                        </ItemsPanelTemplate>
-                    </ItemsControl.ItemsPanel>
-                </ItemsControl>
-            </StackPanel>
         </DataTemplate>
 
         <DataTemplate DataType="{x:Type viewmodels:IntervalControllerViewModel}">
@@ -512,6 +483,21 @@
                 </StackPanel>
             </materialDesign:ColorZone>
         </DataTemplate>
+
+        <DataTemplate DataType="{x:Type viewmodels:CategoryViewModel}">
+            <StackPanel Visibility="{Binding IsVisible, Converter={StaticResource boolToVisibilityConverter}}">
+                <Border>
+                    <TextBlock Text="{Binding Name}" HorizontalAlignment="Center" FontWeight="Bold"/>
+                </Border>
+                <ItemsControl ItemsSource="{Binding Path=Items}">
+                    <ItemsControl.ItemsPanel>
+                        <ItemsPanelTemplate>
+                            <StackPanel/>
+                        </ItemsPanelTemplate>
+                    </ItemsControl.ItemsPanel>
+                </ItemsControl>
+            </StackPanel>
+        </DataTemplate>
     </Window.Resources>
     <Window.DataContext>
         <viewmodels:MainViewModel/>
@@ -591,14 +577,16 @@
                                     </Style.Triggers>
                                 </Style>
                             </Grid.Style>
-                            <ScrollViewer VerticalScrollBarVisibility="Disabled" HorizontalScrollBarVisibility="Auto">
-                                <ItemsControl ItemsSource="{Binding ActionTabItemViewModels}">
-                                    <ItemsControl.ItemsPanel>
-                                        <ItemsPanelTemplate>
-                                            <WrapPanel Orientation="Vertical"/>
-                                        </ItemsPanelTemplate>
-                                    </ItemsControl.ItemsPanel>
-                                </ItemsControl>
+                            <ScrollViewer VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Auto">
+                                <Grid MinHeight="300" Height="{Binding Path=ActualHeight, RelativeSource={RelativeSource AncestorType=ScrollViewer}}">
+                                    <ItemsControl x:Name="itemsHolder" VerticalAlignment="Top" HorizontalAlignment="Left" ItemsSource="{Binding ActionTabItemViewModels}">
+                                        <ItemsControl.ItemsPanel>
+                                            <ItemsPanelTemplate>
+                                                <WrapPanel Orientation="Vertical"/>
+                                            </ItemsPanelTemplate>
+                                        </ItemsControl.ItemsPanel>
+                                    </ItemsControl>
+                                </Grid>
                             </ScrollViewer>
                         </Grid>
                         <!--buy tab grid-->
