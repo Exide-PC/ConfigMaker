@@ -58,6 +58,14 @@ namespace ConfigMaker.Mvvm.ViewModels
             set => this.Model.SelectedTab = value;
         }
 
+        double _maxActionHeight = -1;
+
+        public double MaxActionHeight
+        {
+            get => this._maxActionHeight;
+            set => this.SetProperty(ref _maxActionHeight, value);
+        }
+
         public AttachmentsViewModel KeyDownAttachmentsVM { get; }
         public AttachmentsViewModel KeyUpAttachmentsVM { get; }
         public AttachmentsViewModel SolidAttachmentsVM { get; }

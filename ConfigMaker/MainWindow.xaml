@@ -485,7 +485,7 @@
         </DataTemplate>
 
         <DataTemplate DataType="{x:Type viewmodels:CategoryViewModel}">
-            <StackPanel Visibility="{Binding IsVisible, Converter={StaticResource boolToVisibilityConverter}}">
+            <StackPanel Visibility="{Binding IsVisible, Converter={StaticResource boolToVisibilityConverter}}" SizeChanged="StackPanel_SizeChanged">
                 <Border>
                     <TextBlock Text="{Binding Name}" HorizontalAlignment="Center" FontWeight="Bold"/>
                 </Border>
@@ -578,15 +578,13 @@
                                 </Style>
                             </Grid.Style>
                             <ScrollViewer VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Auto">
-                                <Grid MinHeight="300" Height="{Binding Path=ActualHeight, RelativeSource={RelativeSource AncestorType=ScrollViewer}}">
-                                    <ItemsControl VerticalAlignment="Top" HorizontalAlignment="Left" ItemsSource="{Binding ActionTabItemViewModels}">
-                                        <ItemsControl.ItemsPanel>
-                                            <ItemsPanelTemplate>
-                                                <WrapPanel Orientation="Vertical"/>
-                                            </ItemsPanelTemplate>
-                                        </ItemsControl.ItemsPanel>
-                                    </ItemsControl>
-                                </Grid>
+                                <ItemsControl MinHeight="{Binding MaxActionHeight}" ItemsSource="{Binding ActionTabItemViewModels}" Height="{Binding Path=ActualHeight, RelativeSource={RelativeSource AncestorType=ScrollViewer}}" VerticalAlignment="Top" HorizontalAlignment="Left">
+                                    <ItemsControl.ItemsPanel>
+                                        <ItemsPanelTemplate>
+                                            <WrapPanel Orientation="Vertical"/>
+                                        </ItemsPanelTemplate>
+                                    </ItemsControl.ItemsPanel>
+                                </ItemsControl>
                             </ScrollViewer>
                         </Grid>
                         <!--buy tab grid-->
