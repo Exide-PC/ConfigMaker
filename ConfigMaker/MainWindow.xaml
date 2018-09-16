@@ -545,11 +545,11 @@
                                         </Binding>
                                     </TextBox.Text>
                                 </TextBox>
-                                <TextBox Width="465" Margin="10 0 0 0" Style="{StaticResource MaterialDesignFloatingHintTextBox}" materialDesign:HintAssist.Hint="{x:Static res:Resources.CsgoCfgPath_Hint}">
+                                <TextBox Width="465" Margin="10 0 0 0" Style="{StaticResource MaterialDesignFloatingHintTextBox}" materialDesign:HintAssist.Hint="{x:Static res:Resources.CsgoPath_Hint}">
                                     <TextBox.Text>
-                                        <Binding Path="CustomCfgPath">
+                                        <Binding Path="CsgoPath">
                                             <Binding.ValidationRules>
-                                                <converters:CfgDirValidationRule ValidatesOnTargetUpdated="True"/>
+                                                <converters:CsgoPathValidationRule ValidatesOnTargetUpdated="True"/>
                                             </Binding.ValidationRules>
                                         </Binding>
                                     </TextBox.Text>

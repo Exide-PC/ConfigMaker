@@ -116,7 +116,7 @@
     <Compile Include="Mvvm\BindableBase.cs" />
     <Compile Include="Utils\Converters\BoolToFontWeightConverter.cs" />
     <Compile Include="Utils\Converters\BoolToVisibilityConverter.cs" />
-    <Compile Include="Utils\Converters\CfgDirValidationRule.cs" />
+    <Compile Include="Utils\Converters\CsgoPathValidationRule.cs" />
     <Compile Include="Utils\Converters\EquivalenceChecker.cs" />
     <Compile Include="Utils\Converters\KeyToStyleConverter.cs" />
     <Compile Include="Utils\Converters\MultiBindingToArrayConverter.cs" />

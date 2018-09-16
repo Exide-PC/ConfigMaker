@@ -522,8 +522,8 @@
   <data name="ConfigName_Hint" xml:space="preserve">
     <value>Config name</value>
   </data>
-  <data name="CsgoCfgPath_Hint" xml:space="preserve">
-    <value>Path to csgo/cfg</value>
+  <data name="CsgoPath_Hint" xml:space="preserve">
+    <value>CS:GO path</value>
   </data>
   <data name="ActionCategory_Button" xml:space="preserve">
     <value>Actions</value>
@@ -648,8 +648,8 @@
   <data name="CategoryVoiceAndSound" xml:space="preserve">
     <value>Voice and sound</value>
   </data>
-  <data name="NotCsgoCfgDir_Error" xml:space="preserve">
-    <value>Not csgo/cfg directory</value>
+  <data name="NotCsgoPath_Error" xml:space="preserve">
+    <value>Not CS:GO path</value>
   </data>
   <data name="CanNotBeEmpty_Error" xml:space="preserve">
     <value>Can not be empty</value>

@@ -40,10 +40,10 @@ namespace ConfigMaker.Mvvm.ViewModels
             set => this.Model.StateBinding = value;
         }
 
-        public string CustomCfgPath
+        public string CsgoPath
         {
-            get => this.Model.CustomCfgPath;
-            set => this.Model.CustomCfgPath = value;
+            get => this.Model.CsgoPath;
+            set => this.Model.CsgoPath = value;
         }
 
         public string CustomCfgName
@@ -124,7 +124,7 @@ namespace ConfigMaker.Mvvm.ViewModels
                 OpenFileDialog openFileDialog = new OpenFileDialog
                 {
                     Filter = "Config Maker Config (*.cmc)|*.cmc",
-                    InitialDirectory = this.Model.GetTargetFolder()
+                    InitialDirectory = this.Model.TargetFolder
                 };
 
                 if (openFileDialog.ShowDialog() == true)
@@ -153,13 +153,13 @@ namespace ConfigMaker.Mvvm.ViewModels
             this.SaveCfgCommand = new DelegateCommand((obj) =>
             {
                 // Определим путь к файлу и передедим его на обработку модели
-                string path = Path.Combine(this.Model.GetTargetFolder(), $"{this.CustomCfgName}.cmc");
+                string path = Path.Combine(this.Model.TargetFolder, $"{this.CustomCfgName}.cmc");
                 this.Model.SaveCfgManager(path);
             });
 
             this.GenerateCommand = new DelegateCommand((obj) =>
             {
-                string cfgPath = Path.Combine(this.Model.GetTargetFolder(), $"{this.CustomCfgName}.cfg");
+                string cfgPath = Path.Combine(this.Model.TargetFolder, $"{this.CustomCfgName}.cfg");
                 this.Model.GenerateConfig(cfgPath);
             });
 
@@ -173,7 +173,7 @@ namespace ConfigMaker.Mvvm.ViewModels
                 this.Model.SetToggleCommand(obj.ToString());
             });
 
-            this.SaveAppCommand = new DelegateCommand((obj) => this.Model.SaveApp());
+            this.SaveAppCommand = new DelegateCommand((obj) => this.Model.SaveRegistry());
 
             this.GenerateCrosshairsCommand = new DelegateCommand((obj) =>
             {

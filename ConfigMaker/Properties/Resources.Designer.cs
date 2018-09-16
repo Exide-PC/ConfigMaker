@@ -448,11 +448,11 @@ namespace ConfigMaker.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Path to csgo/cfg.
+        ///   Looks up a localized string similar to CS:GO path.
         /// </summary>
-        public static string CsgoCfgPath_Hint {
+        public static string CsgoPath_Hint {
             get {
-                return ResourceManager.GetString("CsgoCfgPath_Hint", resourceCulture);
+                return ResourceManager.GetString("CsgoPath_Hint", resourceCulture);
             }
         }
         
@@ -1051,11 +1051,11 @@ namespace ConfigMaker.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Not csgo/cfg directory.
+        ///   Looks up a localized string similar to Not CS:GO path.
         /// </summary>
-        public static string NotCsgoCfgDir_Error {
+        public static string NotCsgoPath_Error {
             get {
-                return ResourceManager.GetString("NotCsgoCfgDir_Error", resourceCulture);
+                return ResourceManager.GetString("NotCsgoPath_Error", resourceCulture);
             }
         }
         

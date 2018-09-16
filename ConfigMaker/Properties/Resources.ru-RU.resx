@@ -522,8 +522,8 @@
   <data name="ConfigName_Hint" xml:space="preserve">
     <value>Название конфига</value>
   </data>
-  <data name="CsgoCfgPath_Hint" xml:space="preserve">
-    <value>Путь к csgo/cfg</value>
+  <data name="CsgoPath_Hint" xml:space="preserve">
+    <value>Путь CS:GO</value>
   </data>
   <data name="ActionCategory_Button" xml:space="preserve">
     <value>Действия</value>
@@ -648,8 +648,8 @@
   <data name="CategoryVoiceAndSound" xml:space="preserve">
     <value>Голос и звук</value>
   </data>
-  <data name="NotCsgoCfgDir_Error" xml:space="preserve">
-    <value>Укажите путь к csgo/cfg</value>
+  <data name="NotCsgoPath_Error" xml:space="preserve">
+    <value>Укажите путь к CS:GO</value>
   </data>
   <data name="CanNotBeEmpty_Error" xml:space="preserve">
     <value>Укажите имя</value>

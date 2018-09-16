@@ -4,6 +4,7 @@ using ConfigMaker.Csgo.Config.Entries;
 using ConfigMaker.Csgo.Config.Entries.interfaces;
 using ConfigMaker.Csgo.Config.Enums;
 using ConfigMaker.Utils;
+using Microsoft.Win32;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -67,16 +68,29 @@ namespace ConfigMaker.Mvvm.Models
             }   
         }
 
-        public string CustomCfgPath
+        public string CsgoPath
         {
-            get => _customCfgPath;
-            set => SetProperty(ref _customCfgPath, value);
+            get => _csgoPath;
+            set => SetProperty(ref _csgoPath, value);
         }
 
         public string CustomCfgName
         {
             get => string.IsNullOrEmpty(_customCfgName.Trim()) ? "Config" : _customCfgName;
             set => SetProperty(ref _customCfgName, value.Trim());
+        }
+
+        public string TargetFolder
+        {
+            get
+            {
+                string cfgPath = Path.Combine(this.CsgoPath, @"csgo\cfg");
+
+                if (Directory.Exists(cfgPath))
+                    return cfgPath;
+                else
+                    return Directory.GetCurrentDirectory();
+            }
         }
 
         public int SelectedTab
@@ -103,13 +117,13 @@ namespace ConfigMaker.Mvvm.Models
         ConfigManager cfgManager = new ConfigManager();
         ObservableCollection<EntryController> entryControllers = new ObservableCollection<EntryController>();
         KeySequence _currentKeySequence = null;
-        AppConfig cfg = null;
+        RegistryKey cfgMakerRegistryKey = null;
         string cfgPath = $"{nameof(AppConfig)}.xml";
         string _customCfgName = string.Empty;
-        string _customCfgPath = string.Empty;
+        string _csgoPath = string.Empty;
         int _selectedTab = 0;
         EntryStateBinding _stateBinding;
-
+        
         public MainModel()
         {
             this.KeyboardModel = new VirtualKeyboardModel();
@@ -132,30 +146,7 @@ namespace ConfigMaker.Mvvm.Models
             // Делаем поиск по ресурсам регистронезависимым
             Res.ResourceManager.IgnoreCase = true;
 
-            // Возьмем данные из конфига, если такой есть. Иначе создадим
-            XmlSerializer ser = new XmlSerializer(typeof(AppConfig));
-
-            if (!File.Exists(this.cfgPath))
-            {
-                using (FileStream fs = File.OpenWrite(this.cfgPath))
-                {
-                    AppConfig defaultCfg = new AppConfig()
-                    {
-                        CfgName = this.CustomCfgName,
-                        CsgoCfgPath = this.CustomCfgPath
-                    };
-                    ser.Serialize(fs, defaultCfg);
-                }
-            }
-            // К этому моменту у нас гарантированно создан конфигурационный файл
-            using (FileStream fs = File.OpenRead(this.cfgPath))
-            {
-
-                this.cfg = (AppConfig)ser.Deserialize(fs);
-
-                this.CustomCfgName = this.cfg.CfgName;
-                this.CustomCfgPath = this.cfg.CsgoCfgPath;
-            }
+            this.ReadRegistry();
             
             // Пусть коллекция сама добавляет слушатель нажатия новым элементам
             this.entryControllers.CollectionChanged += (_, arg) =>
@@ -1562,18 +1553,53 @@ namespace ConfigMaker.Mvvm.Models
             });
         }
 
-        public void SaveApp()
+        void ReadRegistry()
         {
-            // Удалим прошлый файл
-            File.Delete(this.cfgPath);
-            // И создадим новый
-            using (FileStream fs = File.OpenWrite(this.cfgPath))
+            // Проверим, что нужный путь в реестре существует
+            this.cfgMakerRegistryKey = Registry.CurrentUser.OpenSubKey(@"Software\ExideProd\ConfigMaker", true);
+
+            // Если не существует - создадим его и заполним данными
+            if (cfgMakerRegistryKey == null)
             {
-                XmlSerializer ser = new XmlSerializer(typeof(AppConfig));
-                this.cfg.CfgName = this.CustomCfgName;
-                this.cfg.CsgoCfgPath = this.CustomCfgPath;
-                ser.Serialize(fs, this.cfg);
+                string csgoPath = string.Empty;
+
+                // Получим ключ реестра, отвечающий за информацию о стиме
+                RegistryKey steamKey = Registry.CurrentUser.OpenSubKey(@"Software\Valve\Steam");
+
+                if (steamKey != null)
+                {
+                    // Получим путь к стиму
+                    string steamPath = ((string)steamKey.GetValue("SteamPath")).Replace('/','\\');
+                    // Предположим по какому пути лежат конфиги
+                    string expectedCsgoPath = Path.Combine(steamPath, @"steamapps\common\Counter-Strike Global Offensive");
+
+                    // --- DEBUG ---
+                    //expectedCsgoPath = expectedCsgoPath.Replace(@"d:\steam", @"c:\SteamLibrary");
+                    // -------------
+
+                    if (Directory.Exists(Path.Combine(expectedCsgoPath, @"csgo\cfg")))
+                    {
+                        // Если путь корректный, то задаем в настройках путь к CS:GO
+                        csgoPath = expectedCsgoPath;
+                    }
+                }
+
+                cfgMakerRegistryKey = Registry.CurrentUser.CreateSubKey(@"Software\ExideProd\ConfigMaker");
+                cfgMakerRegistryKey.SetValue(nameof(CustomCfgName), "ConfigName", RegistryValueKind.String);
+                cfgMakerRegistryKey.SetValue(nameof(CsgoPath), csgoPath, RegistryValueKind.String);
             }
+
+            // К этому моменту у нас гарантированно есть данные в регистре, получим их
+            this.CustomCfgName = (string) cfgMakerRegistryKey.GetValue(nameof(CustomCfgName));
+            this.CsgoPath = (string)cfgMakerRegistryKey.GetValue(nameof(CsgoPath));
+        }
+
+        public void SaveRegistry()
+        {
+            cfgMakerRegistryKey.SetValue(nameof(CustomCfgName), this.CustomCfgName, RegistryValueKind.String);
+            cfgMakerRegistryKey.SetValue(nameof(CsgoPath), this.CsgoPath, RegistryValueKind.String);
+
+            cfgMakerRegistryKey.Dispose();
         }
 
         string Localize(string primaryKey)
@@ -1918,7 +1944,7 @@ namespace ConfigMaker.Mvvm.Models
             if (this.CustomCfgName.Length == 0)
                 this.CustomCfgName = "Config";
 
-            string resultCfgPath = Path.Combine(GetTargetFolder(), $"{this.CustomCfgName}.cfg");
+            string resultCfgPath = Path.Combine(this.TargetFolder, $"{this.CustomCfgName}.cfg");
 
             this.cfgManager.GenerateCfg(resultCfgPath);
             //System.Diagnostics.Process.Start("explorer.exe", $"/select,\"{resultCfgPath}\"");
@@ -1967,7 +1993,7 @@ namespace ConfigMaker.Mvvm.Models
 
             for (int i = 0; i < count; i++)
             {
-                string crosshairPath = $@"{GetTargetFolder()}\{prefix}_ch{i + 1}.cfg";
+                string crosshairPath = $@"{this.TargetFolder}\{prefix}_ch{i + 1}.cfg";
                 if (firstCrosshair == null) firstCrosshair = crosshairPath;
 
                 string[] lines = new string[]
@@ -1992,16 +2018,6 @@ namespace ConfigMaker.Mvvm.Models
             //System.Diagnostics.Process.Start("explorer.exe", $"/select,\"{firstCrosshair}\"");
         }
         
-        public string GetTargetFolder()
-        {
-            string cfgPath = this.CustomCfgPath;
-
-            if (cfgPath.Length > 0 && Directory.Exists(cfgPath))
-                return cfgPath;
-            else
-                return Directory.GetCurrentDirectory();
-        }
-
         void SearchGameSettings()
         {
             string input = this.SearchModel.SearchInput.Trim().ToLower();
