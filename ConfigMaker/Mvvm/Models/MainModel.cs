@@ -10,6 +10,7 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.IO;
 using System.Linq;
+using System.Text.RegularExpressions;
 using System.Windows;
 using System.Xml.Serialization;
 using static ConfigMaker.Mvvm.Models.VirtualKeyboardModel;
@@ -1553,51 +1554,79 @@ namespace ConfigMaker.Mvvm.Models
             });
         }
 
+        bool TryFindCsgo(string steamLibraryRoot, out string csgoPath)
+        {
+            // Предположим по какому пути лежит CS:GO
+            steamLibraryRoot = steamLibraryRoot.Replace(@"\\", @"\");
+            string expectedCsgoPath = Path.Combine(steamLibraryRoot, @"steamapps\common\Counter-Strike Global Offensive");
+
+            // Проверяем, что в ней есть папка cfg
+            if (Directory.Exists(Path.Combine(expectedCsgoPath, @"csgo\cfg")))
+            {
+                csgoPath = expectedCsgoPath;
+                return true;
+            }
+            else
+            {
+                csgoPath = string.Empty;
+                return false;
+            }
+        }
+
         void ReadRegistry()
         {
+            string csgoPath = string.Empty;
+
+            // Получим ключ реестра, отвечающий за информацию о стиме
+            RegistryKey steamKey = Registry.CurrentUser.OpenSubKey(@"Software\Valve\Steam");
+
+            if (steamKey != null)
+            {
+                // Получим путь к стиму
+                string steamPath = ((string)steamKey.GetValue("SteamPath")).Replace('/', '\\');
+
+                if (!this.TryFindCsgo(steamPath, out csgoPath))
+                {
+                    // Иначе пытаемся найти путь к другим библиотекам игр в конфиге Steam
+                    // "BaseInstallFolder_1"		"C:\\SteamLibrary"
+                    Regex libraryEntryPattern = new Regex(
+                        "^.*\"BaseInstallFolder_[0-9]+\".*$",
+                        RegexOptions.Compiled | RegexOptions.Multiline);
+
+                    string cfgPath = Path.Combine(steamPath, @"config\config.vdf");
+                    MatchCollection matchCollection = libraryEntryPattern.Matches(File.ReadAllText(cfgPath));
+
+                    // Пройдемся по всем совпадениям в конфиге Steam
+                    foreach (Match match in matchCollection)
+                    {
+                        // \"BaseInstallFolder_1\"\t\t\"C:\\\\SteamLibrary\"
+                        string line = match.Value.Trim();
+                        string libraryPath = line.Substring(line.LastIndexOf('\t') + 1).Replace("\"", "");
+
+                        // И проверим есть ли в одной из библиотек папка с CS:GO
+                        if (this.TryFindCsgo(libraryPath, out csgoPath)) break;
+                    }
+                }
+            }
+
             // Проверим, что нужный путь в реестре существует
             this.cfgMakerRegistryKey = Registry.CurrentUser.OpenSubKey(@"Software\ExideProd\ConfigMaker", true);
 
             // Если не существует - создадим его и заполним данными
             if (cfgMakerRegistryKey == null)
             {
-                string csgoPath = string.Empty;
-
-                // Получим ключ реестра, отвечающий за информацию о стиме
-                RegistryKey steamKey = Registry.CurrentUser.OpenSubKey(@"Software\Valve\Steam");
-
-                if (steamKey != null)
-                {
-                    // Получим путь к стиму
-                    string steamPath = ((string)steamKey.GetValue("SteamPath")).Replace('/','\\');
-                    // Предположим по какому пути лежат конфиги
-                    string expectedCsgoPath = Path.Combine(steamPath, @"steamapps\common\Counter-Strike Global Offensive");
-
-                    // --- DEBUG ---
-                    //expectedCsgoPath = expectedCsgoPath.Replace(@"d:\steam", @"c:\SteamLibrary");
-                    // -------------
-
-                    if (Directory.Exists(Path.Combine(expectedCsgoPath, @"csgo\cfg")))
-                    {
-                        // Если путь корректный, то задаем в настройках путь к CS:GO
-                        csgoPath = expectedCsgoPath;
-                    }
-                }
-
                 cfgMakerRegistryKey = Registry.CurrentUser.CreateSubKey(@"Software\ExideProd\ConfigMaker");
                 cfgMakerRegistryKey.SetValue(nameof(CustomCfgName), "ConfigName", RegistryValueKind.String);
-                cfgMakerRegistryKey.SetValue(nameof(CsgoPath), csgoPath, RegistryValueKind.String);
             }
 
             // К этому моменту у нас гарантированно есть данные в регистре, получим их
             this.CustomCfgName = (string) cfgMakerRegistryKey.GetValue(nameof(CustomCfgName));
-            this.CsgoPath = (string)cfgMakerRegistryKey.GetValue(nameof(CsgoPath));
+            this.CsgoPath = csgoPath;
         }
 
         public void SaveRegistry()
         {
             cfgMakerRegistryKey.SetValue(nameof(CustomCfgName), this.CustomCfgName, RegistryValueKind.String);
-            cfgMakerRegistryKey.SetValue(nameof(CsgoPath), this.CsgoPath, RegistryValueKind.String);
 
             cfgMakerRegistryKey.Dispose();
         }
