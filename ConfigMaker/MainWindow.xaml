@@ -228,7 +228,6 @@
             <ComboBox 
                 ItemsSource="{Binding Items}" 
                 SelectedIndex="{Binding SelectedIndex, Mode=TwoWay}"
-                SelectedItem="{Binding SelectedItem, Mode=OneWayToSource}"
                 materialDesign:ComboBoxAssist.ClassicMode="True"/>
         </DataTemplate>
 

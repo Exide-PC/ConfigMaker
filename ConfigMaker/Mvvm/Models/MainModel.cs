@@ -798,7 +798,7 @@ namespace ConfigMaker.Mvvm.Models
                         if (isIntegerArg)
                             resultCmdStr = $"{cmd} {comboboxController.SelectedIndex + baseIndex}";
                         else
-                            resultCmdStr = $"{cmd} {comboboxController.SelectedItem}";
+                            resultCmdStr = $"{cmd} {names[comboboxController.SelectedIndex]}";
 
                         entryModel.Content = new SingleCmd(resultCmdStr).ToString();
                         entryModel.Arg = comboboxController.SelectedIndex;
@@ -807,7 +807,7 @@ namespace ConfigMaker.Mvvm.Models
                     }
                 };
 
-                // Команда по умолчанию обновится, т.к. уже есть обработчик
+                // Начальное значение обновится, т.к. уже есть обработчик
                 comboboxController.SelectedIndex = defaultIndex;
             };
 
@@ -1616,7 +1616,7 @@ namespace ConfigMaker.Mvvm.Models
             if (cfgMakerRegistryKey == null)
             {
                 cfgMakerRegistryKey = Registry.CurrentUser.CreateSubKey(@"Software\ExideProd\ConfigMaker");
-                cfgMakerRegistryKey.SetValue(nameof(CustomCfgName), "ConfigName", RegistryValueKind.String);
+                cfgMakerRegistryKey.SetValue(nameof(CustomCfgName), "Config", RegistryValueKind.String);
             }
 
             // К этому моменту у нас гарантированно есть данные в регистре, получим их

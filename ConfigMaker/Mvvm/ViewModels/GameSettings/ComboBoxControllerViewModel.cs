@@ -17,11 +17,5 @@ namespace ConfigMaker.Mvvm.ViewModels
             get => this.Model.SelectedIndex;
             set => this.Model.SelectedIndex = value;
         }
-
-        public object SelectedItem
-        {
-            get => this.Model.SelectedItem;
-            set => this.Model.SelectedItem = value;
-        }
     }
 }
