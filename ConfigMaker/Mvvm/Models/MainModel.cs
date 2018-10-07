@@ -123,6 +123,7 @@ namespace ConfigMaker.Mvvm.Models
         string _customCfgName = string.Empty;
         string _csgoPath = string.Empty;
         int _selectedTab = 0;
+        bool attachmentsUpdateMode = false;
         EntryStateBinding _stateBinding;
         
         public MainModel()
@@ -1677,9 +1678,10 @@ namespace ConfigMaker.Mvvm.Models
         {
             EntryController controller = this.GetController(cfgEntryKey);
 
-            // Если сказано, что отмена, если добавление идет не из-за действий пользователя
-            // То значит гарантированно AttachedCheckbox не может быть равен null
-            if (abortIfNotUser && !controller.Model.IsChecked) return;
+            // Если abortIfNotUser равен true, то гарантированно 
+            // это не ExtraAliasSet и для элемента есть галочка в интерфейсе
+            //if (abortIfNotUser && !controller.Model.IsChecked) return;
+            if (abortIfNotUser && (attachmentsUpdateMode || !controller.Model.IsChecked)) return;
 
             Entry generatedEntry = (Entry)controller.Generate();
             this.AddEntry(generatedEntry);
@@ -1764,7 +1766,7 @@ namespace ConfigMaker.Mvvm.Models
             Entry generatedEntry = (Entry)this.GetController(cfgEntryKey).Generate();
             this.RemoveEntry(generatedEntry);
         }
-
+        
         void AddEntry(Entry entry)
         {
             switch (this.StateBinding)
@@ -1788,13 +1790,24 @@ namespace ConfigMaker.Mvvm.Models
                         {
                             // Получим элемент, отвечающий за выбранный алиас
                             ItemModel selectedItem = this.AliasSetModel.GetSelectedItem();
-                            // Получим команды, привязанные к алиасу, 
+                            // Получим команды, привязанные к алиасу 
+                            List<Entry> attachedToAlias = ((List<Entry>)(selectedItem.Tag));
+                            // Найдем элемент, который надо заменить
+                            Entry replacedEntry = attachedToAlias.FirstOrDefault(e => e.PrimaryKey == entry.PrimaryKey);
+                            // Если он есть, то узнаем его индекс, иначе вставим в конец
+                            int targetIndex = replacedEntry != null ? attachedToAlias.IndexOf(replacedEntry) : -1;
                             // при этом отсеивая элементы с совпадающими ключами
-                            List<Entry> attachedToAlias = ((List<Entry>)(selectedItem.Tag))
-                                .Where(e => e.PrimaryKey != entry.PrimaryKey).ToList();
+                            
+                            // Добавим новый элемент, предварительно убрав предыдыщий, если такой есть
+                            if (targetIndex != -1)
+                            {
+                                attachedToAlias.RemoveAt(targetIndex);
+                                attachedToAlias.Insert(targetIndex, entry);
+                            }
+                            else
+                                attachedToAlias.Add(entry);
 
-                            // Добавим новый элемент и зададим новый тег
-                            attachedToAlias.Add(entry);
+                            // Полученный список зададим в качестве нового аргумента
                             selectedItem.Tag = attachedToAlias;
 
                             // И вызываем обработчика пользовательских алиасов
@@ -1894,6 +1907,8 @@ namespace ConfigMaker.Mvvm.Models
         ///// </summary>
         void UpdateAttachments()
         {
+            this.attachmentsUpdateMode = true;
+
             // Очистим панели и сбросим настройки интерфейса
             ResetAttachmentPanels();
 
@@ -1966,6 +1981,7 @@ namespace ConfigMaker.Mvvm.Models
             else { } // InvalidState
 
             this.UpdateKeyboard();
+            this.attachmentsUpdateMode = false;
         }
 
         private void GenerateConfig(object sender, RoutedEventArgs e)

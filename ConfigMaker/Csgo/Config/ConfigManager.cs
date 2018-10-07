@@ -55,13 +55,14 @@ namespace ConfigMaker.Csgo.Config
             if (cfgEntry.Type == EntryType.Semistatic)
                 this.UpdateSemistaticEntry(cfgEntry);
 
-            this.RemoveEntry(cfgEntry);
-            this.defaultEntries.Add(cfgEntry);
-        }
+            // Определим по какому индексу вставить элемент
+            Entry replacedEntry = this.defaultEntries.FirstOrDefault(e => e.PrimaryKey == cfgEntry.PrimaryKey);
+            // Если есть заменяемый элемент, то вставляем новый на его место, иначе вставляем в конец
+            int targetIndex = replacedEntry != null ? this.defaultEntries.IndexOf(replacedEntry) : this.defaultEntries.Count;
 
-        public void RemoveEntry(Entry cfgEntry)
-        {
-            this.defaultEntries = this.defaultEntries.Where(entry => entry.PrimaryKey != cfgEntry.PrimaryKey).ToList();
+            // Удаляем прошлый элемент и вставляем на нужный индекс новый
+            this.RemoveEntry(cfgEntry);
+            this.defaultEntries.Insert(targetIndex, cfgEntry);
         }
 
         public void AddEntry(KeySequence keySequence, BindEntry cfgEntry)
@@ -77,18 +78,35 @@ namespace ConfigMaker.Csgo.Config
             // Добавляем список для последовательности клавиш, если такой еще нет
             if (this.entries.ContainsKey(keySequence))
             {
+                // Получим коллекцию элементов, привязанных к клавише/сочетанию клавиш
+                List<BindEntry> entries = this.entries[keySequence];
+
+                // Найдем первый несовместимый элемент на место которого будем вставлять новый
+                BindEntry replacedEntry = entries.FirstOrDefault(e => !AreCompatible(cfgEntry, e));
+                int targetIndex = replacedEntry != null ? entries.IndexOf(replacedEntry) : entries.Count;
+
                 // Обновляем список элементов для последовательности клавиш, оставив только совместимые с новым элементы
-                this.entries[keySequence] = this.entries[keySequence]
-                        .Where(e => AreCompatible(e, cfgEntry))
-                        .ToList();
+                entries = entries.Where(e => AreCompatible(e, cfgEntry)).ToList();
+                entries.Insert(targetIndex, cfgEntry);
+
+                //this.entries[keysequence] = this.entries[keysequence]
+                //        .where(e => arecompatible(e, cfgentry))
+                //        .tolist();
+
+                // Вставляем по вычисленному индексу наш элемент
+                this.entries[keySequence] = entries; // .Insert(targetIndex, cfgEntry);
             }
             else
             {
                 this.entries.Add(keySequence, new List<BindEntry>());
+                // Добавляем в список наш элемент
+                this.entries[keySequence].Add(cfgEntry);
             }                
+        }
 
-            // Добавляем в список наш элемент
-            this.entries[keySequence].Add(cfgEntry);
+        public void RemoveEntry(Entry cfgEntry)
+        {
+            this.defaultEntries = this.defaultEntries.Where(entry => entry.PrimaryKey != cfgEntry.PrimaryKey).ToList();
         }
 
         void UpdateArg(IEntry source, IEntry target)
