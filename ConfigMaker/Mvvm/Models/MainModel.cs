@@ -327,11 +327,11 @@ namespace ConfigMaker.Mvvm.Models
 
             // jumpthrow script
             const string jumpthrowEntryKey = "Jumpthrow";
-            ActionModel jumpthrowVM = RegisterAction(jumpthrowEntryKey, true);
+            ActionModel jumpthrowModel = RegisterAction(jumpthrowEntryKey, true);
 
             this.entryControllers.Add(new EntryController()
             {
-                Model = jumpthrowVM,
+                Model = jumpthrowModel,
                 Focus = () =>
                 {
                     this.SelectedTab = 0;
@@ -352,18 +352,18 @@ namespace ConfigMaker.Mvvm.Models
                         Dependencies = metaCmd
                     };
                 },
-                UpdateUI = (entry) => jumpthrowVM.IsChecked = true,
-                Restore = () => jumpthrowVM.IsChecked = false,
-                CoerceAccess = (state) => jumpthrowVM.IsEnabled = state == EntryStateBinding.KeyDown
+                UpdateUI = (entry) => jumpthrowModel.IsChecked = true,
+                Restore = () => jumpthrowModel.IsChecked = false,
+                CoerceAccess = (state) => jumpthrowModel.IsEnabled = state == EntryStateBinding.KeyDown
             });
 
             // DisplayDamageOn
             const string displayDamageOnEntryKey = "DisplayDamage_On";
-            ActionModel displayDamageOnVM = RegisterAction(displayDamageOnEntryKey, false);
+            ActionModel displayDamageOnModel = RegisterAction(displayDamageOnEntryKey, false);
 
             this.entryControllers.Add(new EntryController()
             {
-                Model = displayDamageOnVM,
+                Model = displayDamageOnModel,
                 Focus = () =>
                 {
                     this.SelectedTab = 0;
@@ -389,18 +389,18 @@ namespace ConfigMaker.Mvvm.Models
                         Dependencies = new CommandCollection(new AliasCmd(displayDamageOnEntryKey, cmds))
                     };
                 },
-                UpdateUI = (entry) => displayDamageOnVM.IsChecked = true,
-                Restore = () => displayDamageOnVM.IsChecked = false,
-                CoerceAccess = (state) => displayDamageOnVM.IsEnabled = state != EntryStateBinding.InvalidState
+                UpdateUI = (entry) => displayDamageOnModel.IsChecked = true,
+                Restore = () => displayDamageOnModel.IsChecked = false,
+                CoerceAccess = (state) => displayDamageOnModel.IsEnabled = state != EntryStateBinding.InvalidState
             });
 
             // DisplayDamageOff
             const string displayDamageOffEntryKey = "DisplayDamage_Off";
-            ActionModel displayDamageOffVM = RegisterAction(displayDamageOffEntryKey, false);
+            ActionModel displayDamageOffModel = RegisterAction(displayDamageOffEntryKey, false);
 
             this.entryControllers.Add(new EntryController()
             {
-                Model = displayDamageOffVM,
+                Model = displayDamageOffModel,
                 Focus = () =>
                 {
                     this.SelectedTab = 0;
@@ -425,9 +425,41 @@ namespace ConfigMaker.Mvvm.Models
                         Dependencies = new CommandCollection(new AliasCmd(displayDamageOffEntryKey, cmds))
                     };
                 },
-                UpdateUI = (entry) => displayDamageOffVM.IsChecked = true,
-                Restore = () => displayDamageOffVM.IsChecked = false,
-                CoerceAccess = (state) => displayDamageOffVM.IsEnabled = state != EntryStateBinding.InvalidState
+                UpdateUI = (entry) => displayDamageOffModel.IsChecked = true,
+                Restore = () => displayDamageOffModel.IsChecked = false,
+                CoerceAccess = (state) => displayDamageOffModel.IsEnabled = state != EntryStateBinding.InvalidState
+            });
+
+            // jumpthrow script
+            const string bombDropEntryKey = "FastBombDrop";
+            ActionModel bombDropModel = RegisterAction(bombDropEntryKey, true);
+
+            this.entryControllers.Add(new EntryController()
+            {
+                Model = bombDropModel,
+                Focus = () =>
+                {
+                    this.SelectedTab = 0;
+                },
+                Generate = () =>
+                {
+                    MetaCmd metaCmd = new MetaCmd(
+                        bombDropEntryKey,
+                        new CommandCollection("slot5"),
+                        new CommandCollection("drop"));
+
+                    return new Entry()
+                    {
+                        PrimaryKey = bombDropEntryKey,
+                        Cmd = new SingleCmd(bombDropEntryKey),
+                        IsMetaScript = true,
+                        Type = EntryType.Static,
+                        Dependencies = metaCmd
+                    };
+                },
+                UpdateUI = (entry) => bombDropModel.IsChecked = true,
+                Restore = () => bombDropModel.IsChecked = false,
+                CoerceAccess = (state) => bombDropModel.IsEnabled = state == EntryStateBinding.KeyDown
             });
         }
 
@@ -1678,9 +1710,8 @@ namespace ConfigMaker.Mvvm.Models
         {
             EntryController controller = this.GetController(cfgEntryKey);
 
-            // Если abortIfNotUser равен true, то гарантированно 
-            // это не ExtraAliasSet и для элемента есть галочка в интерфейсе
-            //if (abortIfNotUser && !controller.Model.IsChecked) return;
+            // Если abortIfNotUser равен true, то проверяем стоит ли флаг этапа обновления интерфейса.
+            // Если не стоит, то проверяем стоит ли галочка у элемента
             if (abortIfNotUser && (attachmentsUpdateMode || !controller.Model.IsChecked)) return;
 
             Entry generatedEntry = (Entry)controller.Generate();
@@ -1722,7 +1753,7 @@ namespace ConfigMaker.Mvvm.Models
 
         void HandleEntryClick(string entryKey)
         {
-            // Получим обработчика и 
+            // Получим обработчика и сгенерируем элемент для конфига
             EntryController entryController = this.GetController(entryKey);
             EntryModel entryModel = entryController.Model;
             Entry entry = (Entry)entryController.Generate();
@@ -1907,6 +1938,8 @@ namespace ConfigMaker.Mvvm.Models
         ///// </summary>
         void UpdateAttachments()
         {
+            // Задаем флаг обновления интерфейса, т.к. действия в этом 
+            // методе не должны вызывать метод AddEntry(entry)
             this.attachmentsUpdateMode = true;
 
             // Очистим панели и сбросим настройки интерфейса

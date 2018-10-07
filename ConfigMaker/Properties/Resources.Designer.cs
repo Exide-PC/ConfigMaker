@@ -574,6 +574,15 @@ namespace ConfigMaker.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Fast bomb drop.
+        /// </summary>
+        public static string FastBombDrop {
+            get {
+                return ResourceManager.GetString("FastBombDrop", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Forward.
         /// </summary>
         public static string Forward {

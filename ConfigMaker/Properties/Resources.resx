@@ -672,4 +672,7 @@
   <data name="Unbindall" xml:space="preserve">
     <value>unbindall</value>
   </data>
+  <data name="FastBombDrop" xml:space="preserve">
+    <value>Fast bomb drop</value>
+  </data>
 </root>
