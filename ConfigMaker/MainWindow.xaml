@@ -410,13 +410,15 @@
                                 </Style>
                             </Border.Style>
                             <Grid>
-                                <ItemsControl ItemsSource="{Binding Items}">
-                                    <ItemsControl.ItemsPanel>
-                                        <ItemsPanelTemplate>
-                                            <WrapPanel Orientation="Horizontal"/>
-                                        </ItemsPanelTemplate>
-                                    </ItemsControl.ItemsPanel>
-                                </ItemsControl>
+                                <ScrollViewer VerticalScrollBarVisibility="Auto">
+                                    <ItemsControl ItemsSource="{Binding Items}">
+                                        <ItemsControl.ItemsPanel>
+                                            <ItemsPanelTemplate>
+                                                <WrapPanel Orientation="Horizontal"/>
+                                            </ItemsPanelTemplate>
+                                        </ItemsControl.ItemsPanel>
+                                    </ItemsControl>
+                                </ScrollViewer>
                                 <StackPanel Visibility="{Binding IsMovementEnabled, Converter={StaticResource boolToVisibilityConverter}}" Orientation="Horizontal" HorizontalAlignment="Right" VerticalAlignment="Bottom">
                                     <Button Style="{StaticResource MaterialDesignFlatButton}" Padding="3,0,3,0" Command="{Binding Path=DataContext.MoveEntryCommand, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=Window}}">
                                         <Button.CommandParameter>
@@ -515,7 +517,7 @@
                             <Button Content="{x:Static res:Resources.About_Button}" Command="{Binding AboutCommand}"/>
                         </StackPanel>
                     </materialDesign:PopupBox>
-                    <TextBlock Text="ConfigMaker by Exide"  Style="{StaticResource MaterialDesignHeadlineTextBlock}"/>
+                    <TextBlock Text="ConfigMaker by Exide v1.1"  Style="{StaticResource MaterialDesignHeadlineTextBlock}"/>
                 </DockPanel>
             </materialDesign:ColorZone>
             <Grid Margin="5 0 5 3">
