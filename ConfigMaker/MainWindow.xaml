@@ -517,7 +517,7 @@
                             <Button Content="{x:Static res:Resources.About_Button}" Command="{Binding AboutCommand}"/>
                         </StackPanel>
                     </materialDesign:PopupBox>
-                    <TextBlock Text="ConfigMaker by Exide v1.1"  Style="{StaticResource MaterialDesignHeadlineTextBlock}"/>
+                    <TextBlock Text="ConfigMaker by Exide v1.1.5"  Style="{StaticResource MaterialDesignHeadlineTextBlock}"/>
                 </DockPanel>
             </materialDesign:ColorZone>
             <Grid Margin="5 0 5 3">

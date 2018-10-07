@@ -1742,7 +1742,10 @@ namespace ConfigMaker.Mvvm.Models
 
             // Обновим элементы в панели
             foreach (string entryKey in targetKeys)
+            {
+                this.RemoveEntry(entryKey);
                 this.AddEntry(entryKey, false);
+            }   
 
             // Обновим панели
             this.UpdateAttachments();
