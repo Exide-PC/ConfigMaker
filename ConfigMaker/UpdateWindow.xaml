@@ -1,0 +1,24 @@
+﻿<Window x:Class="ConfigMaker.UpdateWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:ConfigMaker"
+        xmlns:res="clr-namespace:ConfigMaker.Properties"
+        TextElement.Foreground="{DynamicResource MaterialDesignBody}"
+        TextElement.FontWeight="Regular"
+        TextElement.FontSize="13"
+        TextOptions.TextFormattingMode="Ideal"
+        TextOptions.TextRenderingMode="Auto"
+        Background="{DynamicResource MaterialDesignPaper}"
+        FontFamily="{DynamicResource MaterialDesignFont}"
+        mc:Ignorable="d"
+        Title="UpdateWindow" Height="170" Width="400" Loaded="Window_Loaded">
+    <Grid>
+        <StackPanel VerticalAlignment="Center" Margin="15" Orientation="Vertical">
+            <TextBlock HorizontalAlignment="Center" Name="tip1" FontSize="20" Text="{x:Static res:Resources.CheckingUpdates_Hint}"/>
+            <TextBlock HorizontalAlignment="Center" Margin="0 10 0 10" Name="tip2" FontSize="20"/>
+            <Button IsEnabled="False" Name="installButton" Content="{x:Static res:Resources.InstallUpdate_Button}" Click="installButton_Click"/>
+        </StackPanel>
+    </Grid>
+</Window>

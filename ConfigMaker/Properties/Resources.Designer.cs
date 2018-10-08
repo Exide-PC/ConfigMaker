@@ -79,6 +79,15 @@ namespace ConfigMaker.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Actual version: {0}.
+        /// </summary>
+        public static string ActualVersion_Format {
+            get {
+                return ResourceManager.GetString("ActualVersion_Format", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Add.
         /// </summary>
         public static string Add_Button {
@@ -376,6 +385,24 @@ namespace ConfigMaker.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Checking for updates.
+        /// </summary>
+        public static string CheckingUpdates_Hint {
+            get {
+                return ResourceManager.GetString("CheckingUpdates_Hint", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Check for update.
+        /// </summary>
+        public static string CheckUpdate_Button {
+            get {
+                return ResourceManager.GetString("CheckUpdate_Button", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Clear hint history.
         /// </summary>
         public static string Cl_clearhinthistory {
@@ -453,6 +480,15 @@ namespace ConfigMaker.Properties {
         public static string CsgoPath_Hint {
             get {
                 return ResourceManager.GetString("CsgoPath_Hint", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Current version: {0}.
+        /// </summary>
+        public static string CurrentVersion_Format {
+            get {
+                return ResourceManager.GetString("CurrentVersion_Format", resourceCulture);
             }
         }
         
@@ -822,6 +858,15 @@ namespace ConfigMaker.Properties {
         public static string Impulse_101 {
             get {
                 return ResourceManager.GetString("Impulse 101", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Close app and install update.
+        /// </summary>
+        public static string InstallUpdate_Button {
+            get {
+                return ResourceManager.GetString("InstallUpdate_Button", resourceCulture);
             }
         }
         
@@ -1659,6 +1704,24 @@ namespace ConfigMaker.Properties {
         public static string UnknownCommandExecution_Format {
             get {
                 return ResourceManager.GetString("UnknownCommandExecution_Format", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Update check failed.
+        /// </summary>
+        public static string UpdateCheckFailed_Hint1 {
+            get {
+                return ResourceManager.GetString("UpdateCheckFailed_Hint1", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Try again later.
+        /// </summary>
+        public static string UpdateCheckFailed_Hint2 {
+            get {
+                return ResourceManager.GetString("UpdateCheckFailed_Hint2", resourceCulture);
             }
         }
         

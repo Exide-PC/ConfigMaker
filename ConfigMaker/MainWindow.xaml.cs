@@ -61,6 +61,9 @@ namespace ConfigMaker
         public MainWindow()
         {
             InitializeComponent();
+
+            Version a = System.Reflection.Assembly.GetExecutingAssembly().GetName().Version;
+            //title.Text += $" {a.ToString()}";
         }
 
         private void Window_Closing(object sender, System.ComponentModel.CancelEventArgs e)

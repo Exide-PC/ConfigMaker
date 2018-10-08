@@ -22,7 +22,17 @@ namespace ConfigMaker
 
         void App_DispatcherUnhandledException(object sender, DispatcherUnhandledExceptionEventArgs e)
         {
-            File.AppendAllText("Log.txt", $"{e.Exception.Message}\r\n{e.Exception.StackTrace}\r\n\r\n");
+            LogException(e.Exception);
+        }
+
+        public static void LogException(Exception ex)
+        {
+            LogText($"{ex.Message}\r\n{ex.StackTrace}\r\n\r\n");
+        }
+
+        public static void LogText(string text)
+        {
+            File.AppendAllText("Log.txt", text);
         }
     }
 }

@@ -58,6 +58,8 @@ namespace ConfigMaker.Mvvm.ViewModels
             set => this.Model.SelectedTab = value;
         }
 
+        public string Title { get; }
+
         double _maxActionHeight = -1;
 
         public double MaxActionHeight
@@ -78,6 +80,7 @@ namespace ConfigMaker.Mvvm.ViewModels
         public ICommand SaveCfgCommand { get; }
         public ICommand GenerateCommand { get; }
         public ICommand AboutCommand { get; }
+        public ICommand CheckUpdateCommand { get; }
         public ICommand ToggleCommand { get; }
         public ICommand SaveAppCommand { get; }
         public ICommand ClickVirtualKey { get; }
@@ -88,6 +91,8 @@ namespace ConfigMaker.Mvvm.ViewModels
         
         public MainViewModel(): base(new MainModel())
         {
+            this.Title += $"ConfigMaker by Exide v{this.GetVersion()}";
+
             this.KeyboardViewModel = new VirtualKeyboardViewModel(this.Model.KeyboardModel);
             this.SearchViewModel = new SearchViewModel(this.Model.SearchModel);
 
@@ -166,6 +171,11 @@ namespace ConfigMaker.Mvvm.ViewModels
             this.AboutCommand = new DelegateCommand((obj) =>
             {
                 new AboutWindow().ShowDialog();
+            });
+
+            this.CheckUpdateCommand = new DelegateCommand((obj) =>
+            {
+                this.Model.CheckUpdate();
             });
 
             this.ToggleCommand = new DelegateCommand((obj) =>
@@ -274,7 +284,6 @@ namespace ConfigMaker.Mvvm.ViewModels
             // Разово вызовем метод для обновления моделей представления, 
             // т.к. PropertyChanged был вызван давно в конструкторе модели
             HandleStateBinding(this.StateBinding);
-
         }
 
         void HandleStateBinding(EntryStateBinding state)
@@ -306,7 +315,15 @@ namespace ConfigMaker.Mvvm.ViewModels
             }
         }
 
-        
+        string GetVersion()
+        {
+            string version = System.Reflection.Assembly.GetExecutingAssembly().GetName().Version.ToString();
+
+            while (version.LastIndexOf(".0") == version.Length - 2 && version.Length > 1) // 1.2.3.0
+                version = version.Substring(0, version.Length - 2);
+
+            return version;
+        }
 
         void HandleException(string userMsg, Exception ex)
         {

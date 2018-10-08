@@ -8,6 +8,7 @@ using Microsoft.Win32;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Text.RegularExpressions;
@@ -2232,6 +2233,12 @@ namespace ConfigMaker.Mvvm.Models
         {
             this.cfgManager.GenerateCfg(path);
             OpenExplorer(path);
+        }
+
+        public void CheckUpdate()
+        {
+            UpdateWindow updateWindow = new UpdateWindow();
+            updateWindow.ShowDialog();
         }
 
         void OpenExplorer(string path)

@@ -514,10 +514,11 @@
                             <Button Content="{x:Static res:Resources.SaveConfig_Button}" Command="{Binding SaveCfgCommand}"/>
                             <Button Content="{x:Static res:Resources.GenerateConfig_Button}" Command="{Binding GenerateCommand}"/>
                             <Border BorderBrush="{StaticResource MaterialDesignDivider}" BorderThickness="0,1,0,0"/>
+                            <Button Content="{x:Static res:Resources.CheckUpdate_Button}" Command="{Binding CheckUpdateCommand}"/>
                             <Button Content="{x:Static res:Resources.About_Button}" Command="{Binding AboutCommand}"/>
                         </StackPanel>
                     </materialDesign:PopupBox>
-                    <TextBlock Text="ConfigMaker by Exide v1.1.5"  Style="{StaticResource MaterialDesignHeadlineTextBlock}"/>
+                    <TextBlock Text="{Binding Title}" Name="title" Style="{StaticResource MaterialDesignHeadlineTextBlock}"/>
                 </DockPanel>
             </materialDesign:ColorZone>
             <Grid Margin="5 0 5 3">

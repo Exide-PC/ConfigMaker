@@ -675,4 +675,25 @@
   <data name="FastBombDrop" xml:space="preserve">
     <value>Fast bomb drop</value>
   </data>
+  <data name="CheckUpdate_Button" xml:space="preserve">
+    <value>Check for update</value>
+  </data>
+  <data name="InstallUpdate_Button" xml:space="preserve">
+    <value>Close app and install update</value>
+  </data>
+  <data name="CheckingUpdates_Hint" xml:space="preserve">
+    <value>Checking for updates</value>
+  </data>
+  <data name="CurrentVersion_Format" xml:space="preserve">
+    <value>Current version: {0}</value>
+  </data>
+  <data name="ActualVersion_Format" xml:space="preserve">
+    <value>Actual version: {0}</value>
+  </data>
+  <data name="UpdateCheckFailed_Hint1" xml:space="preserve">
+    <value>Update check failed</value>
+  </data>
+  <data name="UpdateCheckFailed_Hint2" xml:space="preserve">
+    <value>Try again later</value>
+  </data>
 </root>

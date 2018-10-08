@@ -675,4 +675,25 @@
   <data name="FastBombDrop" xml:space="preserve">
     <value>Бросить бомбу</value>
   </data>
+  <data name="CheckUpdate_Button" xml:space="preserve">
+    <value>Проверить обновления</value>
+  </data>
+  <data name="InstallUpdate_Button" xml:space="preserve">
+    <value>Закрыть приложение и обновиться</value>
+  </data>
+  <data name="CheckingUpdates_Hint" xml:space="preserve">
+    <value>Проверка обновлений</value>
+  </data>
+  <data name="CurrentVersion_Format" xml:space="preserve">
+    <value>Текущая версия: {0}</value>
+  </data>
+  <data name="ActualVersion_Format" xml:space="preserve">
+    <value>Актуальная версия: {0}</value>
+  </data>
+  <data name="UpdateCheckFailed_Hint1" xml:space="preserve">
+    <value>Невозможно проверить обновления</value>
+  </data>
+  <data name="UpdateCheckFailed_Hint2" xml:space="preserve">
+    <value>Повторите позже</value>
+  </data>
 </root>
