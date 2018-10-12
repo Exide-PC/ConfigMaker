@@ -91,7 +91,7 @@ namespace ConfigMaker.Mvvm.ViewModels
         
         public MainViewModel(): base(new MainModel())
         {
-            this.Title += $"ConfigMaker by Exide v{this.GetVersion()}";
+            this.Title += $"ConfigMaker by Exide v{App.GetShoftVersion()}";
 
             this.KeyboardViewModel = new VirtualKeyboardViewModel(this.Model.KeyboardModel);
             this.SearchViewModel = new SearchViewModel(this.Model.SearchModel);
@@ -313,16 +313,6 @@ namespace ConfigMaker.Mvvm.ViewModels
                         break;
                     }
             }
-        }
-
-        string GetVersion()
-        {
-            string version = System.Reflection.Assembly.GetExecutingAssembly().GetName().Version.ToString();
-
-            while (version.LastIndexOf(".0") == version.Length - 2 && version.Length > 1) // 1.2.3.0
-                version = version.Substring(0, version.Length - 2);
-
-            return version;
         }
 
         void HandleException(string userMsg, Exception ex)

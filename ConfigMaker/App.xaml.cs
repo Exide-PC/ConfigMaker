@@ -34,5 +34,15 @@ namespace ConfigMaker
         {
             File.AppendAllText("Log.txt", text);
         }
+
+        public static string GetShoftVersion()
+        {
+            string version = System.Reflection.Assembly.GetExecutingAssembly().GetName().Version.ToString();
+
+            while (version.LastIndexOf(".0") == version.Length - 2 && version.Length > 1) // 1.2.3.0
+                version = version.Substring(0, version.Length - 2);
+
+            return version;
+        }
     }
 }

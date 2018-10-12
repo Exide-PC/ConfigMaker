@@ -22,32 +22,10 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 */
 
-using ConfigMaker.Csgo.Commands;
-using ConfigMaker.Csgo.Config;
-using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Xml.Serialization;
 using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Media;
-using System.Globalization;
-using System.Windows.Data;
-using ConfigMaker.Csgo.Config.Entries;
-using ConfigMaker.Utils.Converters;
-using System.Windows.Controls.Primitives;
-using Microsoft.Win32;
-using MaterialDesignThemes.Wpf;
-using System.Windows.Documents;
-using Res = ConfigMaker.Properties.Resources;
-using ConfigMaker.Csgo.Config.Enums;
-using ConfigMaker.Csgo.Config.Entries.interfaces;
-using ConfigMaker.Utils;
-using System.Collections.ObjectModel;
-using System.Windows.Input;
 using ConfigMaker.Mvvm.ViewModels;
-using ConfigMaker.Mvvm;
 
 namespace ConfigMaker
 {
@@ -61,9 +39,6 @@ namespace ConfigMaker
         public MainWindow()
         {
             InitializeComponent();
-
-            Version a = System.Reflection.Assembly.GetExecutingAssembly().GetName().Version;
-            //title.Text += $" {a.ToString()}";
         }
 
         private void Window_Closing(object sender, System.ComponentModel.CancelEventArgs e)

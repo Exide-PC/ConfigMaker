@@ -46,6 +46,8 @@ namespace ConfigMaker
         public AboutWindow()
         {
             InitializeComponent();
+
+            this.versionBlock.Text = $"v{App.GetShoftVersion()}";
         }
 
         private void Button_Click(object sender, RoutedEventArgs e)
