@@ -64,8 +64,8 @@ namespace ConfigMaker
         private void installButton_Click(object sender, RoutedEventArgs e)
         {
             // При нажатии на обновление - запускаем апдейтер с соответствующими параметрами
-            Process.Start("Updater.exe", $"{freshVersionUrl} ConfigMaker.exe");
-            Process.GetCurrentProcess().Kill();
+            //Process.Start("Updater.exe", $"{freshVersionUrl} ConfigMaker.exe");
+            //Process.GetCurrentProcess().Kill();
         }
     }
 }

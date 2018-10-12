@@ -13,7 +13,7 @@
         TextOptions.TextRenderingMode="Auto"
         Background="{DynamicResource MaterialDesignPaper}"
         FontFamily="{DynamicResource MaterialDesignFont}"
-        Title="{x:Static res:Resources.About_Button}" ResizeMode="NoResize" Height="270" Width="300">
+        Title="{x:Static res:Resources.About_Button}" ResizeMode="NoResize" Height="200" Width="300">
     <Grid>
         <StackPanel Margin="5" Orientation="Vertical" Grid.ColumnSpan="2">
             <StackPanel Orientation="Horizontal">
@@ -25,15 +25,15 @@
                     <TextBlock HorizontalAlignment="Center" Text="ig.roman95@mail.ru"/>
                 </StackPanel>
             </StackPanel>
-            <StackPanel Margin="0 5 0 0" HorizontalAlignment="Center" Orientation="Horizontal">
+            <!--<StackPanel Margin="0 5 0 0" HorizontalAlignment="Center" Orientation="Horizontal">
                 <Button Width="120" Click="Button_Click">Blog [rus]</Button>
                 <Button Width="120" Click="Button_Click_1">Group [rus]</Button>
             </StackPanel>
             <StackPanel HorizontalAlignment="Center" Orientation="Horizontal">
                 <Button Width="120" Click="Button_Click_2">Steam profile</Button>
                 <Button Width="120" Click="Button_Click_3">GitHub</Button>
-            </StackPanel>
-            <TextBlock Margin="0 5 0 0" FontSize="16" HorizontalAlignment="Center">Credits</TextBlock>
+            </StackPanel>-->
+            <TextBlock Margin="0 10 0 0" FontSize="16" HorizontalAlignment="Center">Credits</TextBlock>
             <TextBlock HorizontalAlignment="Center">Icon made by Freepik from www.flaticon.com</TextBlock>
         </StackPanel>
     </Grid>

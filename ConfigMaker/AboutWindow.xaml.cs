@@ -52,22 +52,22 @@ namespace ConfigMaker
 
         private void Button_Click(object sender, RoutedEventArgs e)
         {
-            System.Diagnostics.Process.Start("http://blog.exideprod.com/");
+            //System.Diagnostics.Process.Start("http://blog.exideprod.com/");
         }
 
         private void Button_Click_1(object sender, RoutedEventArgs e)
         {
-            System.Diagnostics.Process.Start("https://vk.com/exideprod");
+            //System.Diagnostics.Process.Start("https://vk.com/exideprod");
         }
 
         private void Button_Click_2(object sender, RoutedEventArgs e)
         {
-            System.Diagnostics.Process.Start("http://steamcommunity.com/profiles/76561198047353088/");
+            //System.Diagnostics.Process.Start("http://steamcommunity.com/profiles/76561198047353088/");
         }
 
         private void Button_Click_3(object sender, RoutedEventArgs e)
         {
-            System.Diagnostics.Process.Start("https://github.com/Exide-PC/ConfigMaker");
+            //System.Diagnostics.Process.Start("https://github.com/Exide-PC/ConfigMaker");
         }
     }
 }
