@@ -585,8 +585,8 @@
   <data name="CommandsByDefault_Hint" xml:space="preserve">
     <value>Команды, вызываемые по умолчанию</value>
   </data>
-  <data name="CommandsInAlias_Hint" xml:space="preserve">
-    <value>Команды, привязанные к пользовательскому алиасу</value>
+  <data name="CommandsInAlias_Format" xml:space="preserve">
+    <value>Команды, вызываемые при прописывании '{0}' в консоль</value>
   </data>
   <data name="ToggleWindow_Hint" xml:space="preserve">
     <value>Введите значения через пробел</value>

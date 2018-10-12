@@ -410,7 +410,7 @@
                                 </Style>
                             </Border.Style>
                             <Grid>
-                                <ScrollViewer IsHitTestVisible="False" VerticalScrollBarVisibility="Auto">
+                                <ScrollViewer Focusable="False" VerticalScrollBarVisibility="Auto">
                                     <ItemsControl ItemsSource="{Binding Items}">
                                         <ItemsControl.ItemsPanel>
                                             <ItemsPanelTemplate>
@@ -419,23 +419,26 @@
                                         </ItemsControl.ItemsPanel>
                                     </ItemsControl>
                                 </ScrollViewer>
-                                <StackPanel Visibility="{Binding IsMovementEnabled, Converter={StaticResource boolToVisibilityConverter}}" Orientation="Horizontal" HorizontalAlignment="Right" VerticalAlignment="Bottom">
-                                    <Button Style="{StaticResource MaterialDesignFlatButton}" Padding="3,0,3,0" Command="{Binding Path=DataContext.MoveEntryCommand, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=Window}}">
-                                        <Button.CommandParameter>
-                                            <MultiBinding Converter="{StaticResource multiBindingToArrayConverter}" ConverterParameter="0">
-                                                <Binding Path="Tag"/>
-                                            </MultiBinding>
-                                        </Button.CommandParameter>
-                                        <materialDesign:PackIcon Kind="ArrowLeftThick"/>
-                                    </Button>
-                                    <Button Style="{StaticResource MaterialDesignFlatButton}" Padding="3,0,3,0" Command="{Binding Path=DataContext.MoveEntryCommand, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=Window}}">
-                                        <Button.CommandParameter>
-                                            <MultiBinding Converter="{StaticResource multiBindingToArrayConverter}" ConverterParameter="1">
-                                                <Binding Path="Tag"/>
-                                            </MultiBinding>
-                                        </Button.CommandParameter>
-                                        <materialDesign:PackIcon Kind="ArrowRightThick"/>
-                                    </Button>
+                                <StackPanel IsHitTestVisible="False" Orientation="Vertical" HorizontalAlignment="Right" VerticalAlignment="Bottom">
+                                    <StackPanel Visibility="{Binding IsMovementEnabled, Converter={StaticResource boolToVisibilityConverter}}" HorizontalAlignment="Right" Orientation="Horizontal">
+                                        <Button Style="{StaticResource MaterialDesignFlatButton}" Padding="3,0,3,0" Command="{Binding Path=DataContext.MoveEntryCommand, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=Window}}">
+                                            <Button.CommandParameter>
+                                                <MultiBinding Converter="{StaticResource multiBindingToArrayConverter}" ConverterParameter="0">
+                                                    <Binding Path="Tag"/>
+                                                </MultiBinding>
+                                            </Button.CommandParameter>
+                                            <materialDesign:PackIcon Kind="ArrowLeftThick"/>
+                                        </Button>
+                                        <Button Style="{StaticResource MaterialDesignFlatButton}" Padding="3,0,3,0" Command="{Binding Path=DataContext.MoveEntryCommand, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=Window}}">
+                                            <Button.CommandParameter>
+                                                <MultiBinding Converter="{StaticResource multiBindingToArrayConverter}" ConverterParameter="1">
+                                                    <Binding Path="Tag"/>
+                                                </MultiBinding>
+                                            </Button.CommandParameter>
+                                            <materialDesign:PackIcon Kind="ArrowRightThick"/>
+                                        </Button>
+                                    </StackPanel>
+                                    <TextBlock VerticalAlignment="Bottom" Margin="0 0 2 0" TextElement.Foreground="{DynamicResource MaterialDesignBody}" FontSize="10" FontWeight="Normal" FontStyle="Italic" Text="{Binding Path=Hint}"/>
                                 </StackPanel>
                             </Grid>
                         </Border>

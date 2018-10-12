@@ -57,6 +57,9 @@ namespace ConfigMaker.Mvvm.Models
             {
                 if (SetProperty(ref _stateBinding, (CoerceStateBinding(value))))
                 {
+                    if (this.StateBinding != EntryStateBinding.KeyDown && this.StateBinding != EntryStateBinding.KeyUp)
+                        this.KeySequence = null;
+
                     foreach (EntryController controller in this.entryControllers)
                     {
                         controller.CoerceAccess(this.StateBinding);
@@ -65,7 +68,7 @@ namespace ConfigMaker.Mvvm.Models
                         if (!controller.Model.IsEnabled) controller.Restore();
                     }
 
-                    UpdateAttachments();
+                    UpdateAttachmentsAndPanels();
                 }
             }   
         }
@@ -1475,6 +1478,7 @@ namespace ConfigMaker.Mvvm.Models
                     this.StateBinding = EntryStateBinding.Alias;
 
                 this.AddEntry(aliasModel.Key, false);
+                this.UpdateAttachmentsAndPanels();
             };
 
             aliasModel.OnDeleting += (_, __) =>
@@ -1483,7 +1487,9 @@ namespace ConfigMaker.Mvvm.Models
                 
                 if (aliasModel.Items.Count > 0)
                 {
-                    UpdateAttachments();
+                    // Обновим панели на случай, если было 2 элемента, фокус на первом и после 
+                    // удаления фокусный индекс не изменился и вызова события обновления индекса не будет
+                    this.UpdateAttachmentsAndPanels();
 
                     // Так же для удобства сделаем фокус на первом элементе панели, если такой есть
                     if (this.SolidAttachments.Items.Count > 0)
@@ -1506,7 +1512,10 @@ namespace ConfigMaker.Mvvm.Models
 
             aliasModel.SelectedIndexChanged += (_, __) =>
             {
-                UpdateAttachments();
+                // Обновим интерфейс только если еще есть элементы
+                // Иначе далее интерфейс перестроится из-за вызова StateBinding = InvalidState
+                if (aliasModel.SelectedIndex != -1)
+                    UpdateAttachmentsAndPanels();
             };
             
             void AddAlias(string name, List<Entry> attachedEntries)
@@ -1749,7 +1758,7 @@ namespace ConfigMaker.Mvvm.Models
             }   
 
             // Обновим панели
-            this.UpdateAttachments();
+            this.UpdateAttachmentsAndPanels();
 
             // Выделим перемещенный элемент снова
             attachmentsModel.SelectedIndex = newIndex;
@@ -1768,7 +1777,7 @@ namespace ConfigMaker.Mvvm.Models
                 this.RemoveEntry(entry);
 
             // Обновим панели
-            this.UpdateAttachments();
+            this.UpdateAttachmentsAndPanels();
         }
         
         BindEntry ConvertToBindEntry(Entry entry)
@@ -1940,7 +1949,7 @@ namespace ConfigMaker.Mvvm.Models
         ///// <summary>
         ///// Метод для обновления панелей с привязанными к сочетанию клавиш элементами конфига
         ///// </summary>
-        void UpdateAttachments()
+        void UpdateAttachmentsAndPanels()
         {
             // Задаем флаг обновления интерфейса, т.к. действия в этом 
             // методе не должны вызывать метод AddEntry(entry)
@@ -2017,6 +2026,7 @@ namespace ConfigMaker.Mvvm.Models
             }
             else { } // InvalidState
 
+            this.UpdateAttachmentPanelHints();
             this.UpdateKeyboard();
             this.attachmentsUpdateMode = false;
         }
@@ -2168,6 +2178,50 @@ namespace ConfigMaker.Mvvm.Models
             customCmdController.Focus();
         }
 
+        void UpdateAttachmentPanelHints()
+        {
+            switch (this.StateBinding)
+            {
+                case EntryStateBinding.Default:
+                    {
+                        this.SolidAttachments.Hint = Res.CommandsByDefault_Hint;
+                        break;
+                    }
+                case EntryStateBinding.KeyDown:
+                case EntryStateBinding.KeyUp:
+                    {
+                        if (_currentKeySequence.Keys.Length == 1)
+                        {
+                            string keyUpper = _currentKeySequence[0].ToUpper();
+
+                            this.KeyDownAttachments.Hint = string.Format(Res.KeyDown1_Format, keyUpper);
+                            this.KeyUpAttachments.Hint = string.Format(Res.KeyUp1_Format, keyUpper);
+                        }
+                        else
+                        {
+                            string key1Upper = _currentKeySequence[0].ToUpper();
+                            string key2Upper = _currentKeySequence[1].ToUpper();
+
+                            this.KeyDownAttachments.Hint = string.Format(Res.KeyDown2_Format, key2Upper, key1Upper);
+                            this.KeyUpAttachments.Hint = string.Format(Res.KeyUp2_Format, key2Upper, key1Upper);
+                        }
+                        break;
+                    }
+                case EntryStateBinding.Alias:
+                    {
+                        this.SolidAttachments.Hint = string.Format(Res.CommandsInAlias_Format, this.AliasSetModel.GetSelectedItem().Text);
+                        break;
+                    }
+                case EntryStateBinding.InvalidState:
+                    {
+                        this.SolidAttachments.Hint = string.Empty;
+                        this.KeyDownAttachments.Hint = string.Empty;
+                        this.KeyUpAttachments.Hint = string.Empty;
+                        break;
+                    }
+            }
+        }
+
         public void ClickButton(string key, SpecialKey flags)
         {
             //Определим новую последовательность
@@ -2180,8 +2234,8 @@ namespace ConfigMaker.Mvvm.Models
                 this.KeySequence = new KeySequence(key);
 
                 // Отредактируем текст у панелей
-                this.KeyDownAttachments.Hint = string.Format(Res.KeyDown1_Format, _currentKeySequence[0].ToUpper());
-                this.KeyUpAttachments.Hint = string.Format(Res.KeyUp1_Format, _currentKeySequence[0].ToUpper());
+                //this.KeyDownAttachments.Hint = string.Format(Res.KeyDown1_Format, _currentKeySequence[0].ToUpper());
+                //this.KeyUpAttachments.Hint = string.Format(Res.KeyUp1_Format, _currentKeySequence[0].ToUpper());
             }
             // Проверяем, что выбрана не та же кнопка
             else if (_currentKeySequence.Keys.Length == 1 && _currentKeySequence[0] != key)
@@ -2191,15 +2245,16 @@ namespace ConfigMaker.Mvvm.Models
                 string key1Upper = _currentKeySequence[0].ToUpper();
                 string key2Upper = _currentKeySequence[1].ToUpper();
 
-                this.KeyDownAttachments.Hint = string.Format(Res.KeyDown2_Format, key2Upper, key1Upper);
-                this.KeyUpAttachments.Hint = string.Format(Res.KeyUp2_Format, key2Upper, key1Upper);
+                //this.KeyDownAttachments.Hint = string.Format(Res.KeyDown2_Format, key2Upper, key1Upper);
+                //this.KeyUpAttachments.Hint = string.Format(Res.KeyUp2_Format, key2Upper, key1Upper);
             }
 
             // Зададим привязку к нажатию клавиши
             this.StateBinding = EntryStateBinding.KeyDown;
 
+
             // Обновляем интерфейс под новую последовательность
-            this.UpdateAttachments();
+            this.UpdateAttachmentsAndPanels();
         }
 
         public void LoadCfgManager(ConfigManager newCfgManager)
@@ -2215,7 +2270,7 @@ namespace ConfigMaker.Mvvm.Models
                 this.GetController(entry.PrimaryKey).UpdateUI(entry);
 
             this.cfgManager = newCfgManager;
-            this.UpdateAttachments();
+            this.UpdateAttachmentsAndPanels();
         }
 
         public void SaveCfgManager(string path)
@@ -2307,11 +2362,11 @@ namespace ConfigMaker.Mvvm.Models
                     EntryStateBinding.Default :
                     EntryStateBinding.Alias;
 
-                this.SolidAttachments.Hint = coercedState == EntryStateBinding.Default ?
-                    Res.CommandsByDefault_Hint :
-                    Res.CommandsInAlias_Hint;
+                //this.SolidAttachments.Hint = coercedState == EntryStateBinding.Default ?
+                //    Res.CommandsByDefault_Hint :
+                //    Res.CommandsInAlias_Hint;
 
-                this.KeySequence = null;
+                //this.KeySequence = null;
                 //this.ColorizeKeyboard();
 
                 if (coercedState == EntryStateBinding.Alias)

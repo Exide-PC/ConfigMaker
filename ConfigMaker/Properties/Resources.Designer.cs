@@ -448,11 +448,11 @@ namespace ConfigMaker.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Commands bound to custom alias.
+        ///   Looks up a localized string similar to Commands executed when &apos;{0}&apos; is typed in console.
         /// </summary>
-        public static string CommandsInAlias_Hint {
+        public static string CommandsInAlias_Format {
             get {
-                return ResourceManager.GetString("CommandsInAlias_Hint", resourceCulture);
+                return ResourceManager.GetString("CommandsInAlias_Format", resourceCulture);
             }
         }
         
