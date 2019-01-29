@@ -1205,9 +1205,7 @@ namespace ConfigMaker.Mvvm.Models
                     customCmdModel.Items.Clear();
 
                     foreach (string cmd in cmds)
-                    {
                         customCmdModel.InvokeAddition(cmd);
-                    }
                 }
             });
 
@@ -2015,13 +2013,14 @@ namespace ConfigMaker.Mvvm.Models
 
                 if (selectedItem != null)
                 {
-                    List<Entry> attachedToAlias = (List<Entry>)(this.AliasSetModel.GetSelectedItem().Tag);
-                    attachedToAlias.ForEach(entry =>
+                    List<Entry> attachedToAlias = (List<Entry>)(selectedItem.Tag);
+
+                    foreach (Entry entry in attachedToAlias.ToList())
                     {
                         AddAttachment(entry.PrimaryKey, this.SolidAttachments);
                         // Обновим интерфейс согласно элементам, привязанным к текущему состоянию
                         this.GetController(entry.PrimaryKey).UpdateUI(entry);
-                    });
+                    }
                 }
             }
             else { } // InvalidState
